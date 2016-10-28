@@ -358,6 +358,10 @@ namespace AssetBundleGraph {
 						// if point is output node, then label position offset is minus. otherwise plus.
 						var xOffset = (point.IsOutput) ? - m_baseRect.width : AssetBundleGraphSettings.GUI.INPUT_POINT_WIDTH;
 						var labelStyle = (point.IsOutput) ? connectionNodeStyleOutput : connectionNodeStyleInput;
+                        if(point.LabelColor != default(Color))
+                        {
+                            labelStyle.normal.textColor = point.LabelColor;
+                        }
 						var labelRect = new Rect(region.x + xOffset, region.y - (region.height/2), m_baseRect.width, region.height*2);
 
 						GUI.Label(labelRect, label, labelStyle);

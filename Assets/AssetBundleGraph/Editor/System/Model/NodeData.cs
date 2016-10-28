@@ -34,12 +34,14 @@ namespace AssetBundleGraph {
 	public class FilterEntry {
 		[SerializeField] private string m_filterKeyword;
 		[SerializeField] private string m_filterKeytype;
-		[SerializeField] private ConnectionPointData m_point;
+        [SerializeField] private bool m_isExclusion;
+        [SerializeField] private ConnectionPointData m_point;
 
-		public FilterEntry(string keyword, string keytype, ConnectionPointData point) {
+		public FilterEntry(string keyword, string keytype, bool isExclusion, ConnectionPointData point) {
 			m_filterKeyword = keyword;
 			m_filterKeytype = keytype;
 			m_point = point;
+            m_isExclusion = isExclusion;
 		}
 
 		public string FilterKeyword {
@@ -51,6 +53,20 @@ namespace AssetBundleGraph {
 				m_point.Label = value;
 			}
 		}
+        public bool IsExclusion{
+            get{
+                return m_isExclusion;
+            }
+            set{
+                m_isExclusion = value;
+                if(value){
+                    m_point.LabelColor = Color.red;
+                }
+                else{
+                    m_point.LabelColor = default(Color);
+                }
+            }
+        }
 		public string FilterKeytype {
 			get {
 				return m_filterKeytype; 
@@ -123,8 +139,9 @@ namespace AssetBundleGraph {
 		//filter settings
 		private const string NODE_FILTER = "filter";
 		private const string NODE_FILTER_KEYWORD = "keyword";
-		private const string NODE_FILTER_KEYTYPE = "keytype";
-		private const string NODE_FILTER_POINTID = "pointId";
+        private const string NODE_FILTER_KEYTYPE = "keytype";
+        private const string NODE_FILTER_EXCLUSION = "excludes";
+        private const string NODE_FILTER_POINTID = "pointId";
 
 		//group settings
 		private const string NODE_GROUPING_KEYWORD = "groupingKeyword";
@@ -397,12 +414,13 @@ namespace AssetBundleGraph {
 						var f = filters[i] as Dictionary<string, object>;
 
 						var keyword = f[NODE_FILTER_KEYWORD] as string;
-						var keytype = f[NODE_FILTER_KEYTYPE] as string;
-						var pointId = f[NODE_FILTER_POINTID] as string;
+                        var keytype = f[NODE_FILTER_KEYTYPE] as string;
+                        var isExclusion = (bool)f[NODE_FILTER_EXCLUSION];
+                        var pointId = f[NODE_FILTER_POINTID] as string;
 
 						var point = m_outputPoints.Find(p => p.Id == pointId);
 						UnityEngine.Assertions.Assert.IsNotNull(point, "Output point not found for " + keyword);
-						m_filter.Add(new FilterEntry(keyword, keytype, point));
+						m_filter.Add(new FilterEntry(keyword, keytype, isExclusion, point));
 					}
 				}
 				break;
@@ -537,7 +555,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.FILTER_GUI:
 				foreach(var f in m_filter) {
-					newData.AddFilterCondition(f.FilterKeyword, f.FilterKeytype);
+					newData.AddFilterCondition(f.FilterKeyword, f.FilterKeytype, f.IsExclusion);
 				}
 				break;
 
@@ -618,14 +636,15 @@ namespace AssetBundleGraph {
 			return overlap != null;
 		}
 
-		public void AddFilterCondition(string keyword, string keytype) {
+		public void AddFilterCondition(string keyword, string keytype, bool isExclusion) {
 			ValidateAccess(
 				NodeKind.FILTER_GUI
 			);
 
-			var point = new ConnectionPointData(keyword, this, false);
+            Color color = isExclusion ? Color.red : default(Color);
+			var point = new ConnectionPointData(keyword, this, false, color);
 			m_outputPoints.Add(point);
-			var newEntry = new FilterEntry(keyword, keytype, point);
+			var newEntry = new FilterEntry(keyword, keytype, isExclusion, point);
 			m_filter.Add(newEntry);
 		}
 
@@ -744,6 +763,7 @@ namespace AssetBundleGraph {
 					var df = new Dictionary<string, object>();
 					df[NODE_FILTER_KEYWORD] = f.FilterKeyword;
 					df[NODE_FILTER_KEYTYPE] = f.FilterKeytype;
+                    df[NODE_FILTER_EXCLUSION] = f.IsExclusion;
 					df[NODE_FILTER_POINTID] = f.ConnectionPoint.Id;
 					filterDict.Add(df);
 				}

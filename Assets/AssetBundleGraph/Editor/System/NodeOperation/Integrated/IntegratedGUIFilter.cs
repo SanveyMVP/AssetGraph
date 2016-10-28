@@ -64,7 +64,7 @@ namespace AssetBundleGraph {
 					List<FilterableAsset> keywordContainsAssets = filteringAssets.Where(
 						assetData => 
 						!assetData.isFiltered && 
-						Regex.IsMatch(assetData.asset.importFrom, filter.FilterKeyword, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)
+						(filter.IsExclusion ^ Regex.IsMatch(assetData.asset.importFrom, filter.FilterKeyword, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
 					).ToList();
 
 					List<FilterableAsset> finalFilteredAsset = new List<FilterableAsset>();
@@ -81,7 +81,7 @@ namespace AssetBundleGraph {
 					}
 
 					// mark assets as exhausted.
-					foreach (var a in finalFilteredAsset) {
+					foreach (var a in finalFilteredAsset) {                        
 						a.isFiltered = true;
 					}
 

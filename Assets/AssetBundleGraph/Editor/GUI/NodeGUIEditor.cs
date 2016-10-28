@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 using System;
@@ -80,8 +80,9 @@ namespace AssetBundleGraph {
 						}
 						else {
 							var newContainsKeyword = cond.FilterKeyword;
+                            bool newIsExclusion;
 
-							GUIStyle s = new GUIStyle((GUIStyle)"TextFieldDropDownText");
+                            GUIStyle s = new GUIStyle((GUIStyle)"TextFieldDropDownText");
 
 							using (new EditorGUILayout.HorizontalScope()) {
 								newContainsKeyword = EditorGUILayout.TextField(cond.FilterKeyword, s, GUILayout.Width(120));
@@ -96,11 +97,19 @@ namespace AssetBundleGraph {
 										} 
 									);
 								}
-							}
 
+                                newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Excludes", GUILayout.MaxWidth(80));
+							}
 							if (newContainsKeyword != cond.FilterKeyword) {
 								using(new RecordUndoScope("Modify Filter Keyword", node, true)){
 									cond.FilterKeyword = newContainsKeyword;
+									// event must raise to propagate change to connection associated with point
+									NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED, node, Vector2.zero, cond.ConnectionPoint));
+								}
+							}
+                            if (newIsExclusion != cond.IsExclusion) {
+								using(new RecordUndoScope("Modify Filter Exclusion", node, true)){
+									cond.IsExclusion = newIsExclusion;
 									// event must raise to propagate change to connection associated with point
 									NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED, node, Vector2.zero, cond.ConnectionPoint));
 								}
@@ -119,8 +128,10 @@ namespace AssetBundleGraph {
 				if (GUILayout.Button("+")) {
 					using(new RecordUndoScope("Add Filter Condition", node)){
 						node.Data.AddFilterCondition(
-							AssetBundleGraphSettings.DEFAULT_FILTER_KEYWORD, 
-							AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE);
+							AssetBundleGraphSettings.DEFAULT_FILTER_KEYWORD,
+                            AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,
+                            AssetBundleGraphSettings.DEFAULT_FILTER_EXCLUSION
+                            );
 					}
 				}
 

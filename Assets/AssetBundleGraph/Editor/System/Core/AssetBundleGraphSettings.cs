@@ -123,9 +123,10 @@ namespace AssetBundleGraph {
 		public const string BUNDLECONFIG_VARIANTNAME_DEFAULT = "";
 
 		public const string DEFAULT_FILTER_KEYWORD = "";
-		public const string DEFAULT_FILTER_KEYTYPE = "Any";
+        public const string DEFAULT_FILTER_KEYTYPE = "Any";
+        public const bool DEFAULT_FILTER_EXCLUSION = false;
 
-		public const string FILTER_KEYWORD_WILDCARD = "*";
+        public const string FILTER_KEYWORD_WILDCARD = "*";
 
 		public const string NODE_INPUTPOINT_FIXED_LABEL = "FIXED_INPUTPOINT_ID";
 
