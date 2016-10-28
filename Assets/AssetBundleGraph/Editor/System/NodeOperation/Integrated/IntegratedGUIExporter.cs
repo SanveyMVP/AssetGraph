@@ -76,7 +76,9 @@ namespace AssetBundleGraph {
 				var exportedAssets = new List<Asset>();
 				var inputSources = inputGroupAssets[groupKey];
 
-				foreach (var source in inputSources) {					
+                var relativeExportPathIdx = exportPath.IndexOf("Assets");
+
+                foreach (var source in inputSources) {					
 					var destinationSourcePath = source.importFrom;
 					
 					// in bundleBulider, use platform-package folder for export destination.
@@ -90,7 +92,19 @@ namespace AssetBundleGraph {
 						var fromDepthToEnd = string.Join(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR.ToString(), reducedArray);
 						
 						destinationSourcePath = fromDepthToEnd;
-					}
+                    }else if(relativeExportPathIdx != -1){
+                        List<string> splitted = new List<string>(destinationSourcePath.Split(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR));
+                        List<string> splittedExportPath = new List<string>(exportPath.Substring(relativeExportPathIdx).Split(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR));                        
+
+                        for(int i = 0; i < splitted.Count;){
+                            if(!splittedExportPath.Contains(splitted[i]))
+                            {
+                                break;
+                            }
+                            splitted.RemoveAt(i);
+                        }                           
+                        destinationSourcePath = string.Join(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR.ToString(), splitted.ToArray());
+                    }
 					
 					var destination = FileUtility.PathCombine(exportPath, destinationSourcePath);
 					

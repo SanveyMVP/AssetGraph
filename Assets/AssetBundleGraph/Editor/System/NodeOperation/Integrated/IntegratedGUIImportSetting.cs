@@ -142,6 +142,7 @@ namespace AssetBundleGraph {
 				var importer = AssetImporter.GetAtPath(asset.importFrom);
 				if(!configurator.IsEqual(importer)) {
 					configurator.OverwriteImportSettings(importer);
+                    AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
 				}
 			}
 		}
