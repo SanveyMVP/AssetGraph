@@ -23,6 +23,7 @@ AssetBundles*
 
 Assets/AssetGraph/Cache/*
 
+*.csproj
 
 Assembly-CSharp-Editor.csproj
 
