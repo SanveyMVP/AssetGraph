@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
@@ -43,9 +43,9 @@ namespace AssetBundleGraph {
 			try {
 				var arguments = new List<string>(System.Environment.GetCommandLineArgs());
 
-				Application.SetStackTraceLogType(LogType.Log, 		StackTraceLogType.None);
-				Application.SetStackTraceLogType(LogType.Error, 	StackTraceLogType.None);
-				Application.SetStackTraceLogType(LogType.Warning, 	StackTraceLogType.None);
+				Application.stackTraceLogType = StackTraceLogType.None;
+                Application.stackTraceLogType = StackTraceLogType.None;
+                Application.stackTraceLogType = StackTraceLogType.None;
 
 				BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
 

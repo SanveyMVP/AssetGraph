@@ -62,8 +62,8 @@ namespace AssetBundleGraph {
 			new BuildAssetBundleOption("Ignore TypeTree Changes", BuildAssetBundleOptions.IgnoreTypeTreeChanges),
 			new BuildAssetBundleOption("Append Hash To AssetBundle Name", BuildAssetBundleOptions.AppendHashToAssetBundleName),
 			new BuildAssetBundleOption("ChunkBased Compression", BuildAssetBundleOptions.ChunkBasedCompression),
-			new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
-			new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
+			//new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
+			//new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
 		};
 
 		//public const string PLATFORM_DEFAULT_NAME = "Default";

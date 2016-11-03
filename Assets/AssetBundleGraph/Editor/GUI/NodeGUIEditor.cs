@@ -176,7 +176,7 @@ namespace AssetBundleGraph {
 					EditorGUILayout.HelpBox("Press Refresh to configure.", MessageType.Info);
 					break;
 				case IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound:
-					if (GUILayout.Button("Configure Import Setting")) {
+					if (GUILayout.Button("Configure Import Setting")) {        
 						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data);
 					}
 					if (GUILayout.Button("Reset Import Setting")) {
@@ -445,7 +445,7 @@ namespace AssetBundleGraph {
 					}
 				}
 
-				using (new EditorGUI.DisabledScope(newUseGroupAsVariantValue)) {
+				using (new EditorGUI.DisabledGroupScope(newUseGroupAsVariantValue)) {
 					GUILayout.Label("Variants:");
 					var variantNames = node.Data.Variants.Select(v => v.Name).ToList();
 					Variant removing = null;
@@ -559,7 +559,7 @@ namespace AssetBundleGraph {
 							(option.option == BuildAssetBundleOptions.DisableWriteTypeTree  && isIgnoreTypeTreeChangesEnabled) ||
 							(option.option == BuildAssetBundleOptions.IgnoreTypeTreeChanges && isDisableWriteTypeTreeEnabled);
 
-						using(new EditorGUI.DisabledScope(isToggleDisabled)) {
+						using(new EditorGUI.DisabledGroupScope(isToggleDisabled)) {
 							var result = EditorGUILayout.ToggleLeft(option.description, isEnabled);
 							if (result != isEnabled) {
 								using(new RecordUndoScope("Change Bundle Options", node, true)){
@@ -804,10 +804,10 @@ namespace AssetBundleGraph {
 			return editGroupChanged;
 		}
 
-		private EditorGUI.DisabledScope DrawOverrideTargetToggle(NodeGUI node, bool status, Action<bool> onStatusChange) {
+		private EditorGUI.DisabledGroupScope DrawOverrideTargetToggle(NodeGUI node, bool status, Action<bool> onStatusChange) {
 
 			if( currentEditingGroup == BuildTargetUtility.DefaultTarget ) {
-				return new EditorGUI.DisabledScope(false);
+				return new EditorGUI.DisabledGroupScope(false);
 			}
 
 			bool newStatus = GUILayout.Toggle(status, 
@@ -816,7 +816,7 @@ namespace AssetBundleGraph {
 			if(newStatus != status && onStatusChange != null) {
 				onStatusChange(newStatus);
 			}
-			return new EditorGUI.DisabledScope(!newStatus);
+			return new EditorGUI.DisabledGroupScope(!newStatus);
 		}
 	}
 }

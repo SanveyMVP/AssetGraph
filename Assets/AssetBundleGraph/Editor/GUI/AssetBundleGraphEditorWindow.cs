@@ -236,6 +236,7 @@ namespace AssetBundleGraph {
 			}
 			if(selectObject != null) {
 				selectObject.SetActive();
+                Selection.activeObject = selectObject.NodeInspectorHelper;
 			}
 		}
 
@@ -438,7 +439,7 @@ namespace AssetBundleGraph {
 		/**
 		 * Execute the build.
 		 */
-		private void Run (BuildTarget target) {
+		private void Run (BuildTarget target, List<string> exportOnly = null) {
 
 			try {
 				ResetNodeExceptionPool();
@@ -481,7 +482,7 @@ namespace AssetBundleGraph {
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
 					// run datas.
-					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler);
+					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, exportOnly);
 				}
 				RefreshInspector(s_assetStreamMap);
 				AssetDatabase.Refresh();
@@ -554,12 +555,22 @@ namespace AssetBundleGraph {
 					GUILayout.FlexibleSpace();
 				}
 
-				GUIStyle tbLabel = new GUIStyle(EditorStyles.toolbar);
+				GUIStyle tbLabel = new GUIStyle(EditorStyles.toolbarButton);
 
 				tbLabel.alignment = TextAnchor.MiddleCenter;
 
 				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
 				tbLabelTarget.fontStyle = FontStyle.Bold;
+                
+
+                using(new EditorGUI.DisabledGroupScope(!Selection.objects.All(x=> (x is NodeGUIInspectorHelper) && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI))) {
+                    if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+                        SaveGraph();
+                        var exportOnly = new List<string>();
+                        exportOnly.AddRange(Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x=> x.node.Id));
+                        Run(ActiveBuildTarget, exportOnly);
+                    }
+                }
 
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 //				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
@@ -576,14 +587,15 @@ namespace AssetBundleGraph {
 					Setup(ActiveBuildTarget);
 				}
 
-				using(new EditorGUI.DisabledScope(isAnyIssueFound)) {
+				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound)) {
 					if (GUILayout.Button("Build", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 						SaveGraph();
 						Run(ActiveBuildTarget);
 					}
 				}
 			}		
-		}
+		}        
+
 
 		private void DrawGUINodeErrors() {
 
@@ -1139,8 +1151,10 @@ namespace AssetBundleGraph {
 							foreach (var connection in connections) {
 								connection.SetActive();
 							}
-							
-							Event.current.Use();
+
+                            UpdateUnitySelection();
+
+                            Event.current.Use();
 							break;
 						}
 
@@ -1616,6 +1630,7 @@ namespace AssetBundleGraph {
 							foreach (var con in connections) {
 								if (con.Id == tappedConnectionId) {
 									con.SetActive();
+                                    Selection.activeObject = con.ConnectionInspectorHelper;
 									activeObject = RenewActiveObject(new List<string>{con.Id});
 								} else {
 									con.SetInactive();
@@ -1666,7 +1681,18 @@ namespace AssetBundleGraph {
 				
 				connection.SetInactive();
 			}
-		}
+            UpdateUnitySelection();
+
+        }
+
+        private void UpdateUnitySelection() {
+            List<UnityEngine.Object> activeObjs = new List<UnityEngine.Object>();
+
+            activeObjs.AddRange(nodes.FindAll(x => x.IsActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
+            activeObjs.AddRange(connections.FindAll(x => x.IsActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
+
+            Selection.objects = activeObjs.ToArray();
+        }
 
 		/**
 			create new connection if same relationship is not exist yet.

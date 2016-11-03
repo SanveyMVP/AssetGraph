@@ -129,7 +129,21 @@ namespace AssetBundleGraph {
 			return AssetImporter.GetAtPath(sampleFiles[0]);	
 		}
 
-		private void ApplyImportSetting(NodeData node, List<Asset> assets) {
+        public static UnityEngine.Object GetReferenceAsset(NodeData node)
+        {
+            var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
+
+            UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
+
+            var sampleFiles = FileUtility.GetFilePathsInFolder(sampleFileDir)
+                .Where(path => !path.EndsWith(AssetBundleGraphSettings.UNITY_METAFILE_EXTENSION))
+                .ToList();
+
+            UnityEngine.Assertions.Assert.IsTrue(sampleFiles.Count == 1);
+
+            return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(sampleFiles[0]);
+        }
+        private void ApplyImportSetting(NodeData node, List<Asset> assets) {
 
 			if(!assets.Any()) {
 				return;

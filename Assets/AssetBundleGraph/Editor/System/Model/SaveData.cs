@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
@@ -121,23 +121,36 @@ namespace AssetBundleGraph {
 			};
 		}
 
-		public List<NodeData> CollectAllLeafNodes() {
+        public List<NodeData> CollectAllLeafNodes() {
 
-			var nodesWithChild = new List<NodeData>();
-			foreach (var c in m_allConnections) {
-				NodeData n = m_allNodes.Find(v => v.Id == c.FromNodeId);
-				if(n != null) {
-					nodesWithChild.Add(n);
-				}
-			}
-			return m_allNodes.Except(nodesWithChild).ToList();
-		}
+            var nodesWithChild = new List<NodeData>();
+            foreach(var c in m_allConnections) {
+                NodeData n = m_allNodes.Find(v => v.Id == c.FromNodeId);
+                if(n != null) {
+                    nodesWithChild.Add(n);
+                }
+            }
+            return m_allNodes.Except(nodesWithChild).ToList();
+        }
 
-		//
-		// Save/Load to disk
-		//
+        public List<NodeData> CollectAllRootNodes() {
+            var nodesWithParents = new List<NodeData>();
 
-		private static string SaveDataDirectoryPath {
+            foreach(var c in m_allConnections) {
+                NodeData node = m_allNodes.Find(n => n.Id == c.ToNodeId);
+                if(node != null) {
+                    nodesWithParents.Add(node);
+                }
+            }
+
+            return m_allNodes.Except(nodesWithParents).ToList();
+        }
+
+        //
+        // Save/Load to disk
+        //
+
+        private static string SaveDataDirectoryPath {
 			get {
 				return FileUtility.PathCombine(Application.dataPath, AssetBundleGraphSettings.ASSETNBUNDLEGRAPH_DATA_PATH);
 			}

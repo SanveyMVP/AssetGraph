@@ -24,6 +24,9 @@ namespace AssetBundleGraph {
 		[SerializeField] private string m_nodeSyle;
 		[SerializeField] private NodeGUIInspectorHelper m_nodeInsp;
 
+        [NonSerialized]
+        private bool isActive;
+
 		/*
 			show error on node functions.
 		*/
@@ -71,7 +74,22 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public void ResetErrorStatus () {
+        public bool IsActive {
+            get {
+                return isActive;
+            }
+            set {
+                isActive = value;
+            }
+        }
+
+        public NodeGUIInspectorHelper NodeInspectorHelper {
+            get {
+                return m_nodeInsp;
+            }
+        }
+
+        public void ResetErrorStatus () {
 			m_hasErrors = false;
 			this.m_nodeInsp.UpdateNode(this);
 			this.m_nodeInsp.UpdateErrors(new List<string>());
@@ -116,12 +134,13 @@ namespace AssetBundleGraph {
 
 		public void SetActive () {
 			m_nodeInsp.UpdateNode(this);
-			Selection.activeObject = m_nodeInsp;
+            isActive = true;
 			this.m_nodeSyle = NodeGUIUtility.SelectedStyle[m_data.Kind];
 		}
 
 		public void SetInactive () {
 			this.m_nodeSyle = NodeGUIUtility.UnselectedStyle[m_data.Kind];
+            isActive = false;
 		}
 			
 		private void RefreshConnectionPos () {

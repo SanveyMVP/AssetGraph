@@ -17,7 +17,10 @@ namespace AssetBundleGraph {
 
 		[SerializeField] private string connectionButtonStyle;
 
-		public string Label {
+        [NonSerialized]
+        private bool isActive;
+
+        public string Label {
 			get {
 				return label;
 			}
@@ -56,7 +59,22 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		private Rect buttonRect;
+        public ConnectionGUIInspectorHelper ConnectionInspectorHelper {
+            get {
+                return conInsp;
+            }
+        }
+
+        public bool IsActive {
+            get {
+                return isActive;
+            }
+            set {
+                isActive = value;
+            }
+        }
+
+        private Rect buttonRect;
 
 		public static ConnectionGUI LoadConnection (string label, string id, ConnectionPointData output, ConnectionPointData input) {
 			return new ConnectionGUI(
@@ -203,13 +221,14 @@ namespace AssetBundleGraph {
 		}
 		
 		public void SetActive () {
-			Selection.activeObject = conInsp;
+            isActive = true;
 			connectionButtonStyle = "sv_label_1";
 		}
 
 		public void SetInactive () {
 			connectionButtonStyle = "sv_label_0";
-		}
+            isActive = false;
+        }
 
 		public void Delete () {
 			ConnectionGUIUtility.ConnectionEventHandler(new ConnectionEvent(ConnectionEvent.EventType.EVENT_CONNECTION_DELETED, this));
