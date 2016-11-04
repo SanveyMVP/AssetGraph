@@ -563,7 +563,7 @@ namespace AssetBundleGraph {
 				tbLabelTarget.fontStyle = FontStyle.Bold;
                 
 
-                using(new EditorGUI.DisabledGroupScope(!Selection.objects.All(x=> (x is NodeGUIInspectorHelper) && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI))) {
+                using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
                     if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
                         SaveGraph();
                         var exportOnly = new List<string>();
@@ -1375,7 +1375,7 @@ namespace AssetBundleGraph {
 								}
 								break;
 							}
-
+                            
 							if (Event.current.shift) {
 								Undo.RecordObject(this, "Select Objects");
 
