@@ -131,6 +131,7 @@ namespace AssetBundleGraph {
 
 		//loader settings
 		private const string NODE_LOADER_LOAD_PATH = "loadPath";
+        private const string NODE_LOADER_PREPROCESS = "preProcess";
 
 		//exporter settings
 		private const string NODE_EXPORTER_EXPORT_PATH = "exportTo";
@@ -166,6 +167,7 @@ namespace AssetBundleGraph {
 		[SerializeField] private float m_x;
 		[SerializeField] private float m_y;
 		[SerializeField] private string m_scriptClassName;
+        [SerializeField] private bool m_isPreProcess;
 		[SerializeField] private List<FilterEntry> m_filter;
 		[SerializeField] private List<ConnectionPointData> 	m_inputPoints; 
 		[SerializeField] private List<ConnectionPointData> 	m_outputPoints;
@@ -230,16 +232,27 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public float Y {
-			get {
-				return m_y;
-			}
-			set {
-				m_y = value;
-			}
-		}
+        public float Y {
+            get {
+                return m_y;
+            }
+            set {
+                m_y = value;
+            }
+        }
 
-		public List<ConnectionPointData> InputPoints {
+        public bool PreProcess {
+            get {
+                ValidateAccess(NodeKind.LOADER_GUI);
+                return m_isPreProcess;
+            }
+            set {
+                ValidateAccess(NodeKind.LOADER_GUI);
+                m_isPreProcess = value;
+            }
+        }
+
+        public List<ConnectionPointData> InputPoints {
 			get {
 				return m_inputPoints;
 			}
@@ -402,6 +415,9 @@ namespace AssetBundleGraph {
 			case NodeKind.LOADER_GUI:
 				{
 					m_loaderLoadPath = new SerializableMultiTargetString(_SafeGet(jsonData, NODE_LOADER_LOAD_PATH));
+                    if(jsonData.ContainsKey(NODE_LOADER_PREPROCESS)) {
+                        m_isPreProcess = Convert.ToBoolean(jsonData[NODE_LOADER_PREPROCESS]);
+                    }
 				}
 				break;
 			case NodeKind.FILTER_GUI:
@@ -415,7 +431,10 @@ namespace AssetBundleGraph {
 
 						var keyword = f[NODE_FILTER_KEYWORD] as string;
                         var keytype = f[NODE_FILTER_KEYTYPE] as string;
-                        var isExclusion = (bool)f[NODE_FILTER_EXCLUSION];
+                        bool isExclusion = false;
+                        if(f.ContainsKey(NODE_FILTER_EXCLUSION)) {
+                            isExclusion = Convert.ToBoolean(f[NODE_FILTER_EXCLUSION]);
+                        }
                         var pointId = f[NODE_FILTER_POINTID] as string;
 
 						var point = m_outputPoints.Find(p => p.Id == pointId);

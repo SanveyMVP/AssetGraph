@@ -32,6 +32,8 @@ namespace AssetBundleGraph {
 			EditorGUILayout.HelpBox("Loader: Load assets in given directory path.", MessageType.Info);
 			UpdateNodeName(node);
 
+            node.Data.PreProcess = EditorGUILayout.Toggle("Pre-Processing", node.Data.PreProcess);
+
 			GUILayout.Space(10f);
 
 			//Show target configuration tab
