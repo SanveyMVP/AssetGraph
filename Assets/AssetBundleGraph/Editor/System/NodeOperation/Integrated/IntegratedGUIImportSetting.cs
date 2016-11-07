@@ -115,8 +115,8 @@ namespace AssetBundleGraph {
 			FileUtility.RemakeDirectory(sampleFileDir);
 		}
 
-		public static AssetImporter GetReferenceAssetImporter(NodeData node) {
-			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
+		public static AssetImporter GetReferenceAssetImporter(string nodeId) {
+			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, nodeId);
 
 			UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
 
@@ -149,7 +149,7 @@ namespace AssetBundleGraph {
 				return;
 			}
 
-			var referenceImporter = GetReferenceAssetImporter(node);	
+			var referenceImporter = GetReferenceAssetImporter(node.Id);	
 			var configurator = new ImportSettingsConfigurator(referenceImporter);
 
 			foreach(var asset in assets) {
@@ -213,7 +213,7 @@ namespace AssetBundleGraph {
 				// if there is no incoming assets, there is no way to check if 
 				// right type of asset is coming in - so we'll just skip the test
 				if(incomingAssets.Any() && status == ConfigStatus.GoodSampleFound) {
-					Type targetType = GetReferenceAssetImporter(node).GetType();
+					Type targetType = GetReferenceAssetImporter(node.Id).GetType();
 					if( targetType != expectedType ) {
 						incomingTypeMismatch(targetType, expectedType);
 					}

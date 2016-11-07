@@ -72,7 +72,7 @@ namespace AssetBundleGraph {
 			var cacheDict  = new Dictionary<NodeData, List<string>>();
 
             if(exportOnly != null) {
-                var rootNodes = saveData.CollectAllRootNodes().FindAll(x => !exportOnly.Contains(x.Id));
+                var rootNodes = saveData.CollectAllNodes(x => !exportOnly.Contains(x.Id));
                 performedIds.AddRange(rootNodes.ConvertAll(x=>x.Id));
             }
 			// if validation failed, node may contain looped connections, so we are not going to 

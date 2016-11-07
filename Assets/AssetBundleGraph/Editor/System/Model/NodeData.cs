@@ -530,6 +530,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.LOADER_GUI:
 				m_loaderLoadPath = new SerializableMultiTargetString();
+                m_isPreProcess = false;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -580,6 +581,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.LOADER_GUI:
 				newData.m_loaderLoadPath = new SerializableMultiTargetString(m_loaderLoadPath);
+                newData.m_isPreProcess = m_isPreProcess;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -774,6 +776,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.LOADER_GUI:
 				nodeDict[NODE_LOADER_LOAD_PATH] = m_loaderLoadPath.ToJsonDictionary();
+                nodeDict[NODE_LOADER_PREPROCESS] = m_isPreProcess;
 				break;
 
 			case NodeKind.FILTER_GUI:

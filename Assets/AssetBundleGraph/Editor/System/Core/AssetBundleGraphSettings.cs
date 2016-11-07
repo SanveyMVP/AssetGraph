@@ -22,9 +22,10 @@ namespace AssetBundleGraph {
 		public const string GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS = "Window/AssetBundleGraph/Clear Saved ImportSettings";
 
 		public const string ASSETNBUNDLEGRAPH_DATA_PATH = "AssetBundleGraph/SettingFiles";
-		public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
-		
-		public const string ASSETS_PATH = "Assets/";
+        public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
+        public const string ASSETBUNDLEGRAPH_LOADER_DATA_NAME = "LoaderFolders.json";
+
+        public const string ASSETS_PATH = "Assets/";
 		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
 		public const string SCRIPT_TEMPLATE_PATH = ASSETBUNDLEGRAPH_PATH + "Editor/ScriptTemplate/";

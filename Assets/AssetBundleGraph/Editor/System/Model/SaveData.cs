@@ -46,6 +46,8 @@ namespace AssetBundleGraph {
 		private List<ConnectionData> m_allConnections;
 		private DateTime m_lastModified;
 
+        private LoaderSaveData loaderSaveData = new LoaderSaveData();
+
 		public SaveData() {
 			m_lastModified = DateTime.UtcNow;
 			m_allNodes = new List<NodeData>();
@@ -121,6 +123,7 @@ namespace AssetBundleGraph {
 			};
 		}
 
+
         public List<NodeData> CollectAllLeafNodes() {
 
             var nodesWithChild = new List<NodeData>();
@@ -133,36 +136,28 @@ namespace AssetBundleGraph {
             return m_allNodes.Except(nodesWithChild).ToList();
         }
 
-        public List<NodeData> CollectAllRootNodes() {
-            var nodesWithParents = new List<NodeData>();
-
-            foreach(var c in m_allConnections) {
-                NodeData node = m_allNodes.Find(n => n.Id == c.ToNodeId);
-                if(node != null) {
-                    nodesWithParents.Add(node);
-                }
-            }
-
-            return m_allNodes.Except(nodesWithParents).ToList();
+        public List<NodeData> CollectAllNodes(Predicate<NodeData> condition) { 
+            return m_allNodes.FindAll(condition);
         }
 
         //
         // Save/Load to disk
         //
 
-        private static string SaveDataDirectoryPath {
+        public static string SaveDataDirectoryPath {
 			get {
 				return FileUtility.PathCombine(Application.dataPath, AssetBundleGraphSettings.ASSETNBUNDLEGRAPH_DATA_PATH);
 			}
 		}
 
-		private static string SaveDataPath {
-			get {
-				return FileUtility.PathCombine(SaveDataDirectoryPath, AssetBundleGraphSettings.ASSETBUNDLEGRAPH_DATA_NAME);
-			}
-		}
+        private static string SaveDataPath {
+            get {
+                return FileUtility.PathCombine(SaveDataDirectoryPath, AssetBundleGraphSettings.ASSETBUNDLEGRAPH_DATA_NAME);
+            }
+        }
 
-		public void Save () {
+
+        public void Save () {
 			var dir = SaveDataDirectoryPath;
 			if (!Directory.Exists(dir)) {
 				Directory.CreateDirectory(dir);
@@ -176,11 +171,26 @@ namespace AssetBundleGraph {
 			using (var sw = new StreamWriter(SaveDataPath)) {
 				sw.Write(prettified);
 			}
-			// reflect change of data.
-			AssetDatabase.Refresh();
+            
+            loaderSaveData.Save(ToJsonRootNodes());
+          
+            // reflect change of data.
+            AssetDatabase.Refresh();
 		}
 
-		public static bool IsSaveDataAvailableAtDisk() {
+        private Dictionary<string, object> ToJsonRootNodes() {
+            Dictionary<string, object> res = new Dictionary<string, object>();
+
+            var rootNodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && x.LoaderLoadPath != null);
+
+            foreach(var loaderNode in rootNodes) {
+                res.Add(loaderNode.Id, loaderNode.LoaderLoadPath.ToJsonDictionary());
+            }
+
+            return res;
+        }
+
+        public static bool IsSaveDataAvailableAtDisk() {
 			return File.Exists(SaveDataPath);
 		}
 
@@ -259,4 +269,100 @@ namespace AssetBundleGraph {
 			return !changed;
 		}
 	}
+
+    public class LoaderSaveData {
+        public class LoaderDataPath {
+            public string id;
+            public SerializableMultiTargetString paths;
+
+            public LoaderDataPath(string id, SerializableMultiTargetString paths) {
+                this.id = id;
+                this.paths = paths;
+            }
+        }
+
+        private List<LoaderDataPath> loaderPaths;
+        public List<LoaderDataPath> LoaderPaths {
+            get {
+                return loaderPaths;
+            }
+        }
+
+
+        private static string SaveLoaderDataPath {
+            get {
+                return FileUtility.PathCombine(SaveData.SaveDataDirectoryPath, AssetBundleGraphSettings.ASSETBUNDLEGRAPH_LOADER_DATA_NAME);
+            }
+        }
+
+        public LoaderSaveData() {
+            loaderPaths = new List<LoaderDataPath>();
+        }
+
+        public LoaderSaveData(Dictionary<string, object> rawLoaderPaths) {
+            loaderPaths = new List<LoaderDataPath>();
+
+            foreach(KeyValuePair<string,object> pair in rawLoaderPaths) {
+                loaderPaths.Add(new LoaderDataPath(pair.Key, new SerializableMultiTargetString(pair.Value as Dictionary<string, object>)));
+            }
+        }     
+        
+        public void Save(Dictionary<string, object> newLoaderPaths) {
+            var serializedData = Json.Serialize(newLoaderPaths);
+            var loaderPrettyfied = Json.Prettify(serializedData);
+
+            using(var sw = new StreamWriter(SaveLoaderDataPath)) {
+                sw.Write(loaderPrettyfied);
+            }
+        }
+
+        /// <summary>
+        /// Finds the best suitable loader for the provided asset path
+        /// </summary>
+        /// <param name="path">Path of the asset</param>
+        /// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
+        public LoaderDataPath GetBestLoaderData(string assetPath) {
+            LoaderDataPath res = null;
+
+            foreach(LoaderDataPath dataPath in loaderPaths) {
+                if(assetPath.Contains(dataPath.paths.CurrentPlatformValue)) {                 
+                    if(res == null || res.paths.CurrentPlatformValue.Length < dataPath.paths.CurrentPlatformValue.Length) {
+                        res = dataPath;
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        public static LoaderSaveData RecreateDataOnDisk() {
+            LoaderSaveData lSaveData = new LoaderSaveData();
+            lSaveData.Save(new Dictionary<string, object>());
+            return lSaveData;
+        }
+
+        public static LoaderSaveData LoadFromDisk() {
+            if(!IsLoaderDataAvailableAtDisk()) {
+                return RecreateDataOnDisk();
+            }
+
+            try {
+                var dataStr = string.Empty;
+                using(var sr = new StreamReader(SaveLoaderDataPath)) {
+                    dataStr = sr.ReadToEnd();
+                }
+                var deserialized = Json.Deserialize(dataStr) as Dictionary<string, object>;
+
+                return new LoaderSaveData(deserialized);
+            } catch(Exception e) {
+                Debug.LogError("Failed to deserialize AssetBundleGraph settings. Error:" + e + " File:" + SaveLoaderDataPath);
+            }
+
+            return new LoaderSaveData();
+        }
+
+        public static bool IsLoaderDataAvailableAtDisk() {
+            return File.Exists(SaveLoaderDataPath);
+        }
+    }
 }

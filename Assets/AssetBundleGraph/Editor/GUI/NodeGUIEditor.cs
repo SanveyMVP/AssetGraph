@@ -32,9 +32,15 @@ namespace AssetBundleGraph {
 			EditorGUILayout.HelpBox("Loader: Load assets in given directory path.", MessageType.Info);
 			UpdateNodeName(node);
 
-            node.Data.PreProcess = EditorGUILayout.Toggle("Pre-Processing", node.Data.PreProcess);
+            bool newPreProcess = EditorGUILayout.Toggle("Pre-Processing", node.Data.PreProcess);
 
-			GUILayout.Space(10f);
+            if(newPreProcess != node.Data.PreProcess) {
+                using(new RecordUndoScope("PreProcess Changed", node, true)) {
+                    node.Data.PreProcess = newPreProcess;
+                }
+            }
+
+            GUILayout.Space(10f);
 
 			//Show target configuration tab
 			DrawPlatformSelector(node);
@@ -165,7 +171,7 @@ namespace AssetBundleGraph {
 				if(incomingType == null) {
 					// try to retrieve incoming type from configuration
 					if(status == IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound) {
-						incomingType = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data).GetType();
+						incomingType = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id).GetType();
 					} else {
 						EditorGUILayout.HelpBox("ImportSetting needs a single type of incoming assets.", MessageType.Info);
 						return;
@@ -179,7 +185,7 @@ namespace AssetBundleGraph {
 					break;
 				case IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound:
 					if (GUILayout.Button("Configure Import Setting")) {        
-						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data);
+						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id);
 					}
 					if (GUILayout.Button("Reset Import Setting")) {
 						IntegratedGUIImportSetting.ResetConfig(node.Data);
