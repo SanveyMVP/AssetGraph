@@ -82,7 +82,6 @@ Assets/AssetGraph/SavedSettings/ModifierSettings/*
 
 Assets/AssetBundleGraph/Cache/*
 
-Assets/AssetBundleGraph/SettingFiles*
 Assets/AssetBundleGraph/Generated*
 
 obj/*
