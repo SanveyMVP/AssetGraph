@@ -194,7 +194,27 @@ namespace AssetBundleGraph {
 			return File.Exists(SaveDataPath);
 		}
 
-		private static SaveData Load() {
+        /// <summary>
+        /// Finds the best suitable loader for the provided asset path
+        /// </summary>
+        /// <param name="path">Path of the asset</param>
+        /// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
+        public NodeData GetBestLoaderData(string assetPath) {
+            NodeData res = null;
+            var nodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
+
+            foreach(NodeData node in nodes) {
+                if(assetPath.Contains(node.LoaderLoadPath.CurrentPlatformValue)) {
+                    if(res == null || res.LoaderLoadPath.CurrentPlatformValue.Length < node.LoaderLoadPath.CurrentPlatformValue.Length) {
+                        res = node;
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        private static SaveData Load() {
 			var dataStr = string.Empty;
 			using (var sr = new StreamReader(SaveDataPath)) {
 				dataStr = sr.ReadToEnd();

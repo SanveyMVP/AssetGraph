@@ -396,6 +396,10 @@ namespace AssetBundleGraph {
 		}
 
 
+        //public static void SetupAndRunSingleAsset(BuildTarget target, string loaderMockupId) {
+
+        //}
+
 		private void Setup (BuildTarget target) {
 
 			EditorUtility.ClearProgressBar();
@@ -439,7 +443,7 @@ namespace AssetBundleGraph {
 		/**
 		 * Execute the build.
 		 */
-		private void Run (BuildTarget target, List<string> exportOnly = null) {
+		private void Run (BuildTarget target, List<string> selectedLoaders = null) {
 
 			try {
 				ResetNodeExceptionPool();
@@ -481,8 +485,14 @@ namespace AssetBundleGraph {
 
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
-					// run datas.
-					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, exportOnly);
+                    // run datas.
+
+                    Dictionary<string, List<string>> fakeLoaders = new Dictionary<string, List<string>>();
+                    foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
+                        fakeLoaders.Add(loader.Id, new List<string>());
+                    }
+
+					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, fakeLoaders);
 				}
 				RefreshInspector(s_assetStreamMap);
 				AssetDatabase.Refresh();
@@ -566,9 +576,8 @@ namespace AssetBundleGraph {
                 using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
                     if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
                         SaveGraph();
-                        var exportOnly = new List<string>();
-                        exportOnly.AddRange(Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x=> x.node.Id));
-                        Run(ActiveBuildTarget, exportOnly);
+                        var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
+                        Run(ActiveBuildTarget, selectedLoaderIds.ToList());
                     }
                 }
 

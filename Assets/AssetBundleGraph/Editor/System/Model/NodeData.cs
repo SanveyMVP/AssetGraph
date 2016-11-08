@@ -82,7 +82,7 @@ namespace AssetBundleGraph {
 		}
 		public string Hash {
 			get {
-				return m_filterKeyword+m_filterKeytype;
+				return m_filterKeyword+m_filterKeytype+m_isExclusion;
 			}
 		}
 	}

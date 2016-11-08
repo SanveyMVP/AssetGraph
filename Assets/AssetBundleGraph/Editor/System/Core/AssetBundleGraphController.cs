@@ -57,7 +57,8 @@ namespace AssetBundleGraph {
 			bool isRun,
 			Action<NodeException> errorHandler,
 			Action<NodeData, float> updateHandler,
-            List<string> exportOnly = null) 
+            Dictionary<string,List<string>> fakeLoaders = null,
+            AssetImporter preImporter = null) 
 		{
 			bool validateFailed = false;
 			try {
@@ -70,29 +71,26 @@ namespace AssetBundleGraph {
 			var resultDict = new Dictionary<ConnectionData, Dictionary<string, List<Asset>>>();
 			var performedIds = new List<string>();
 			var cacheDict  = new Dictionary<NodeData, List<string>>();
+            
+            // if validation failed, node may contain looped connections, so we are not going to 
+            // go into each operations.
 
-            if(exportOnly != null) {
-                var rootNodes = saveData.CollectAllNodes(x => !exportOnly.Contains(x.Id));
-                performedIds.AddRange(rootNodes.ConvertAll(x=>x.Id));
-            }
-			// if validation failed, node may contain looped connections, so we are not going to 
-			// go into each operations.
-			if(!validateFailed) {
+            if(!validateFailed) {
 				var leaf = saveData.CollectAllLeafNodes();
 
 				foreach (var leafNode in leaf) {
 					if( leafNode.InputPoints.Count == 0 ) {
-						DoNodeOperation(target, leafNode, null, null, saveData, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler);
+						DoNodeOperation(target, leafNode, null, null, saveData, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, fakeLoaders, preImporter);
 					} else {
 						foreach(var inputPoint in leafNode.InputPoints) {
-							DoNodeOperation(target, leafNode, inputPoint, null, saveData, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler);
+							DoNodeOperation(target, leafNode, inputPoint, null, saveData, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, fakeLoaders, preImporter);
 						}
 					}
 				}
 			}
 			return resultDict;
-		}
-			
+		}		
+
 		/**
 			Perform Run or Setup from parent of given terminal node recursively.
 		*/
@@ -107,11 +105,13 @@ namespace AssetBundleGraph {
 			List<string> performedIds,
 			bool isActualRun,
 			Action<NodeException> errorHandler,
-			Action<NodeData, float> updateHandler
+			Action<NodeData, float> updateHandler,
+            Dictionary<string, List<string>> fakeLoaders,
+            AssetImporter preImporter
 		) {
 			if (performedIds.Contains(currentNodeData.Id) || (currentInputPoint != null && performedIds.Contains(currentInputPoint.Id))) {
 				return;
-			}
+			}           
 
 			/*
 			 * Find connections coming into this node from parent node, and traverse recursively
@@ -128,12 +128,12 @@ namespace AssetBundleGraph {
 				if( parentNode.InputPoints.Count > 0 ) {
 					// if node has multiple input, node is operated per input
 					foreach(var parentInputPoint in parentNode.InputPoints) {
-						DoNodeOperation(target, parentNode, parentInputPoint, c, saveData, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler);
+						DoNodeOperation(target, parentNode, parentInputPoint, c, saveData, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, fakeLoaders, preImporter);
 					}
 				} 
 				// if parent does not have input point, call with inputPoint==null
 				else {
-					DoNodeOperation(target, parentNode, null, c, saveData, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler);
+					DoNodeOperation(target, parentNode, null, c, saveData, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, fakeLoaders, preImporter);
 				}
 			}
 
@@ -218,16 +218,23 @@ namespace AssetBundleGraph {
 			};
 
 			try {
-				INodeOperation executor = CreateOperation(saveData, currentNodeData, errorHandler);
-				if(executor != null) {
-					if(isActualRun) {
-						executor.Run(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
-					}
-					else {
-						executor.Setup(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
-					}
-				}
+                INodeOperation executor = CreateOperation(saveData, currentNodeData, errorHandler);
+                if(executor != null) {
+                    if(fakeLoaders != null && fakeLoaders.ContainsKey(currentNodeData.Id)) {
+                        var loader = executor as IntegratedGUILoader;
+                        loader.FakeLoad(currentNodeData,connectionToOutput, fakeLoaders[currentNodeData.Id], Output, preImporter);
+                    } else {
+                        if(isActualRun) {
+                            if(executor is IntegratedGUIImportSetting) {
 
+                            }
+
+                            executor.Run(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
+                        } else {
+                            executor.Setup(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
+                        }
+                    }
+                }
 			} catch (NodeException e) {
 				errorHandler(e);
 				// since error occured, this node should stop running for other inputpoints. Adding node id to stop.

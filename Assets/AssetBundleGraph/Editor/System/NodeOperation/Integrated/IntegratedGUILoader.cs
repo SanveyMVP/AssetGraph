@@ -86,6 +86,47 @@ namespace AssetBundleGraph {
 			Output(connectionToOutput, outputDir, null);
 		}
 
+
+        public void FakeLoad(NodeData node,
+            ConnectionData connectionToOutput,
+            List<string> fakeAssets,
+            Action<ConnectionData, Dictionary<string, List<Asset>>, List<string>> Output,
+            AssetImporter preImporter) {
+
+            // SOMEWHERE_FULLPATH/PROJECT_FOLDER/Assets/
+            var assetsFolderPath = Application.dataPath + AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR;
+
+            var outputSource = new List<Asset>();
+
+            foreach(string targetFilePath in fakeAssets) {
+
+                if(targetFilePath.StartsWith(assetsFolderPath)) {
+                    var relativePath = targetFilePath.Replace(assetsFolderPath, AssetBundleGraphSettings.ASSETS_PATH);
+
+                    if(preImporter != null && preImporter.assetPath == relativePath) {
+                        outputSource.Add(Asset.CreateNewAssetFromImporter(preImporter));
+                        continue;
+                    }
+                    
+                    var assetType = TypeUtility.GetTypeOfAsset(relativePath);
+                    if(assetType == typeof(object)) {
+                        continue;
+                    } 
+                    outputSource.Add(Asset.CreateNewAssetFromLoader(targetFilePath, relativePath));
+                    
+                }else {
+                    throw new NodeException(node.Name + ": Invalid Load Path. Path must start with Assets/", node.Name);
+                }
+            }
+
+            var outputDir = new Dictionary<string, List<Asset>> {
+                {"0", outputSource}
+            };
+
+            Output(connectionToOutput, outputDir, null);
+        }
+
+
 		public static void ValidateLoadPath (string currentLoadPath, string combinedPath, Action NullOrEmpty, Action NotExist) {
 			if (string.IsNullOrEmpty(currentLoadPath)) NullOrEmpty();
 			if (!Directory.Exists(combinedPath)) NotExist();
