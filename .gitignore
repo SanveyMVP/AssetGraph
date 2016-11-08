@@ -87,6 +87,8 @@ Assets/AssetBundleGraph/Generated*
 
 obj/*
 
+.vs/*
+
 *.sln
 *.vcproj
 *.unityproj
