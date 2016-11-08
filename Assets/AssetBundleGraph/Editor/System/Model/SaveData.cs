@@ -172,8 +172,9 @@ namespace AssetBundleGraph {
 				sw.Write(prettified);
 			}
 			
-			loaderSaveData.Save(ToJsonRootNodes());
-		  
+			loaderSaveData.UpdateLoaderData(CollectAllNodes(x=>x.Kind == NodeKind.LOADER_GUI));
+			loaderSaveData.Save();
+
 			// reflect change of data.
 			AssetDatabase.Refresh();
 		}
@@ -291,23 +292,45 @@ namespace AssetBundleGraph {
 	}
 
 	public class LoaderSaveData {
-		public class LoaderDataPath {
+		private const string LOADER_SAVE_DATA = "loaders";
+		public class LoaderData {
+			private const string LOADER_ID = "id";
+			private const string LOADER_PATH = "path";
+			private const string LOADER_PREPROCESS = "preprocess";
+
 			public string id;
 			public SerializableMultiTargetString paths;
+			public bool isPreProcess;
 
-			public LoaderDataPath(string id, SerializableMultiTargetString paths) {
+			public LoaderData(string id, SerializableMultiTargetString paths, bool isPreProcess) {
 				this.id = id;
 				this.paths = paths;
+				this.isPreProcess = isPreProcess;
+			}
+
+			public LoaderData(Dictionary<string, object> rawData) {
+				this.id = rawData[LOADER_ID] as string;
+				this.paths = new SerializableMultiTargetString(rawData[LOADER_PATH] as Dictionary<string, object>);
+				this.isPreProcess = Convert.ToBoolean(rawData[LOADER_PREPROCESS]);
+			}
+
+			public Dictionary<string, object> ToJsonDictionary() {
+				Dictionary<string, object> jsonDict = new Dictionary<string, object>();
+
+				jsonDict.Add(LOADER_ID, id);
+				jsonDict.Add(LOADER_PATH, paths.ToJsonDictionary());
+				jsonDict.Add(LOADER_PREPROCESS, isPreProcess);
+
+				return jsonDict;
 			}
 		}
 
-		private List<LoaderDataPath> loaderPaths;
-		public List<LoaderDataPath> LoaderPaths {
+		private List<LoaderData> loaders;
+		public List<LoaderData> LoaderPaths {
 			get {
-				return loaderPaths;
+				return loaders;
 			}
 		}
-
 
 		private static string SaveLoaderDataPath {
 			get {
@@ -316,19 +339,30 @@ namespace AssetBundleGraph {
 		}
 
 		public LoaderSaveData() {
-			loaderPaths = new List<LoaderDataPath>();
+			loaders = new List<LoaderData>();
 		}
 
-		public LoaderSaveData(Dictionary<string, object> rawLoaderPaths) {
-			loaderPaths = new List<LoaderDataPath>();
 
-			foreach(KeyValuePair<string,object> pair in rawLoaderPaths) {
-				loaderPaths.Add(new LoaderDataPath(pair.Key, new SerializableMultiTargetString(pair.Value as Dictionary<string, object>)));
+		public LoaderSaveData(SaveData savedata) {
+			var fullLoaders = savedata.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
+			UpdateLoaderData(fullLoaders);
+		}
+
+		public LoaderSaveData(Dictionary<string, object> rawData) {
+			var rawLoaders = rawData[LOADER_SAVE_DATA] as List<object>;
+			loaders = new List<LoaderData>();
+
+			foreach(var rawLoader in rawLoaders) {
+				loaders.Add(new LoaderData(rawLoader as Dictionary<string, object>));
 			}
 		}     
 		
-		public void Save(Dictionary<string, object> newLoaderPaths) {
-			var serializedData = Json.Serialize(newLoaderPaths);
+		public void UpdateLoaderData(List<NodeData> fullLoaders) {
+			loaders = fullLoaders.ConvertAll(x => new LoaderData(x.Id, x.LoaderLoadPath, x.PreProcess));
+		}
+
+		public void Save() {
+			var serializedData = Json.Serialize(ToJsonDictionary());
 			var loaderPrettyfied = Json.Prettify(serializedData);
 
 			using(var sw = new StreamWriter(SaveLoaderDataPath)) {
@@ -336,15 +370,28 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		public Dictionary<string, object> ToJsonDictionary() {
+			Dictionary<string, object> dictionary = new Dictionary<string, object>();
+			List<Dictionary<string, object>> loadersData = new List<Dictionary<string, object>>();
+
+			foreach(var loader in loaders) {
+				loadersData.Add(loader.ToJsonDictionary());
+			}
+
+			dictionary.Add(LOADER_SAVE_DATA, loadersData);
+
+			return dictionary;
+		}
+		
 		/// <summary>
 		/// Finds the best suitable loader for the provided asset path
 		/// </summary>
 		/// <param name="path">Path of the asset</param>
 		/// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
-		public LoaderDataPath GetBestLoaderData(string assetPath) {
-			LoaderDataPath res = null;
+		public LoaderData GetBestLoaderData(string assetPath) {
+			LoaderData res = null;
 
-			foreach(LoaderDataPath dataPath in loaderPaths) {
+			foreach(LoaderData dataPath in loaders) {
 				if(assetPath.Contains(dataPath.paths.CurrentPlatformValue)) {                 
 					if(res == null || res.paths.CurrentPlatformValue.Length < dataPath.paths.CurrentPlatformValue.Length) {
 						res = dataPath;
@@ -357,7 +404,7 @@ namespace AssetBundleGraph {
 
 		public static LoaderSaveData RecreateDataOnDisk() {
 			LoaderSaveData lSaveData = new LoaderSaveData();
-			lSaveData.Save(new Dictionary<string, object>());
+			lSaveData.Save();
 			return lSaveData;
 		}
 

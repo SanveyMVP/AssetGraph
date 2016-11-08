@@ -1720,7 +1720,7 @@ namespace AssetBundleGraph {
 		}
 
 		private NodeGUI FindNodeByPosition (Vector2 globalPos) {
-			return nodes.Find(n => n.Conitains(globalPos));
+			return nodes.Find(n => n.Contains(globalPos));
 		}
 
 		private bool IsConnectablePointFromTo (ConnectionPointData sourcePoint, ConnectionPointData destPoint) {

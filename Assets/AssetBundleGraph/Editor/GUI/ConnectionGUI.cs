@@ -167,13 +167,15 @@ namespace AssetBundleGraph {
 					
 					case AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL: {
 						var labelPointV3 = new Vector3(centerPointV3.x - ((AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL.Length * 6f) / 2), centerPointV3.y - 24f, 0f) ;
-						Handles.Label(labelPointV3, AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL, "WhiteMiniLabel");
+						Handles.Label(labelPointV3, AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL, EditorStyles.whiteMiniLabel);
 						break;
 					}
 
 					default: {
-						var labelPointV3 = new Vector3(centerPointV3.x - ((label.Length * 7f) / 2), centerPointV3.y - 24f, 0f) ;
-						Handles.Label(labelPointV3, label, "WhiteMiniLabel");
+						var labelPointV3 = new Vector3(centerPointV3.x - ((label.Length * 7f) / 2), centerPointV3.y - 24f, 0f);
+						GUIStyle miniLabelStyle = EditorStyles.whiteMiniLabel;
+						miniLabelStyle.normal.textColor = outputPoint.LabelColor*1.2f;
+						Handles.Label(labelPointV3, label, miniLabelStyle);
 						break;
 					}
 				}

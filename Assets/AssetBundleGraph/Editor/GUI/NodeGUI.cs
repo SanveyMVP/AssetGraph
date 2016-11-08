@@ -345,6 +345,7 @@ namespace AssetBundleGraph {
 		private void DrawNodeContents () {
 			var style = new GUIStyle(EditorStyles.label);
 			style.alignment = TextAnchor.MiddleCenter;
+			style.normal.textColor = m_data.NameColor;
 
 			var connectionNodeStyleOutput = new GUIStyle(EditorStyles.label);
 			connectionNodeStyleOutput.alignment = TextAnchor.MiddleRight;
@@ -377,10 +378,7 @@ namespace AssetBundleGraph {
 						// if point is output node, then label position offset is minus. otherwise plus.
 						var xOffset = (point.IsOutput) ? - m_baseRect.width : AssetBundleGraphSettings.GUI.INPUT_POINT_WIDTH;
 						var labelStyle = (point.IsOutput) ? connectionNodeStyleOutput : connectionNodeStyleInput;
-						if(point.LabelColor != default(Color))
-						{
-							labelStyle.normal.textColor = point.LabelColor;
-						}
+						labelStyle.normal.textColor = point.LabelColor;
 						var labelRect = new Rect(region.x + xOffset, region.y - (region.height/2), m_baseRect.width, region.height*2);
 
 						GUI.Label(labelRect, label, labelStyle);
@@ -499,7 +497,7 @@ namespace AssetBundleGraph {
 			m_running = false;
 		}
 
-		public bool Conitains (Vector2 globalPos) {
+		public bool Contains (Vector2 globalPos) {
 			if (m_baseRect.Contains(globalPos)) {
 				return true;
 			}

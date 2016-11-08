@@ -28,11 +28,11 @@ namespace AssetBundleGraph {
 		[SerializeField] private string label;
 		[SerializeField] private string parentId;
 		[SerializeField] private bool isInput;
-		[SerializeField] private Color labelColor = default(Color);
 		[SerializeField] private Rect buttonRect;
+		private Color labelColor;
 
-//		private int orderPriority;
-//		private bool showLabel;
+		//		private int orderPriority;
+		//		private bool showLabel;
 
 		public ConnectionPointData(string id, string label, NodeData parent, bool isInput/*, int orderPriority, bool showLabel */) {
 			this.id = id;
@@ -52,16 +52,10 @@ namespace AssetBundleGraph {
 //			this.showLabel = pointGui.showLabel;
 		}
 
-		public ConnectionPointData(string label, NodeData parent, bool isInput, Color labelColor) : this(label,parent,isInput){
-			this.labelColor = labelColor;
-		}
-
 		public ConnectionPointData(Dictionary<string, object> dic, NodeData parent, bool isInput) {
 
 			this.id = dic[ID] as string;
 			this.label = dic[LABEL] as string;
-			var rgb = (dic[COLOR] as string).Split(',');
-			this.labelColor = new Color(float.Parse(rgb[0]), float.Parse(rgb[1]), float.Parse(rgb[2]), 1); 
 			this.parentId = parent.Id;
 			this.isInput = isInput;
 
@@ -216,8 +210,7 @@ namespace AssetBundleGraph {
 		public Dictionary<string, object> ToJsonDictionary() {
 			return new Dictionary<string, object>() {
 				{ID, this.id},
-				{LABEL, this.label},
-				{COLOR, labelColor.r+","+labelColor.g+","+labelColor.b}
+				{LABEL, this.label}
 			};
 		}
 	}
