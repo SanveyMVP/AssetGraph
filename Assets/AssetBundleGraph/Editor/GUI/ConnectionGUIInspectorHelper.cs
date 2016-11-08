@@ -24,6 +24,6 @@ namespace AssetBundleGraph {
 
 		public void UpdateAssetGroups(Dictionary<string, List<Asset>> assetGroups) {
 			this.assetGroups = assetGroups;
-        }
-    }
+		}
+	}
 }

@@ -67,21 +67,21 @@ namespace AssetBundleGraph {
 			);
 		}
 
-        public static Asset CreateNewAssetFromImporter(AssetImporter importer) {
+		public static Asset CreateNewAssetFromImporter(AssetImporter importer) {
 
-            var absPath = Path.GetFullPath(importer.assetPath);
+			var absPath = Path.GetFullPath(importer.assetPath);
 
-            if(Path.DirectorySeparatorChar != AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR) {
-                absPath = absPath.Replace(Path.DirectorySeparatorChar.ToString(), AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR.ToString());
-            }
+			if(Path.DirectorySeparatorChar != AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR) {
+				absPath = absPath.Replace(Path.DirectorySeparatorChar.ToString(), AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR.ToString());
+			}
 
-            return new Asset(Guid.NewGuid(),
-                assetDatabaseId: "unknown",
-                absoluteAssetPath: absPath,
-                importFrom: importer.assetPath,
-                assetType: importer.GetType()
-                );
-        }
+			return new Asset(Guid.NewGuid(),
+				assetDatabaseId: "unknown",
+				absoluteAssetPath: absPath,
+				importFrom: importer.assetPath,
+				assetType: importer.GetType()
+				);
+		}
 
 		/**
 			new assets which is generated on ImportSetting and PrefabBuilder.

@@ -22,10 +22,10 @@ namespace AssetBundleGraph {
 		public const string GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS = "Window/AssetBundleGraph/Clear Saved ImportSettings";
 
 		public const string ASSETNBUNDLEGRAPH_DATA_PATH = "AssetBundleGraph/SettingFiles";
-        public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
-        public const string ASSETBUNDLEGRAPH_LOADER_DATA_NAME = "LoaderFolders.json";
+		public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
+		public const string ASSETBUNDLEGRAPH_LOADER_DATA_NAME = "LoaderFolders.json";
 
-        public const string ASSETS_PATH = "Assets/";
+		public const string ASSETS_PATH = "Assets/";
 		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
 		public const string SCRIPT_TEMPLATE_PATH = ASSETBUNDLEGRAPH_PATH + "Editor/ScriptTemplate/";
@@ -124,10 +124,10 @@ namespace AssetBundleGraph {
 		public const string BUNDLECONFIG_VARIANTNAME_DEFAULT = "";
 
 		public const string DEFAULT_FILTER_KEYWORD = "";
-        public const string DEFAULT_FILTER_KEYTYPE = "Any";
-        public const bool DEFAULT_FILTER_EXCLUSION = false;
+		public const string DEFAULT_FILTER_KEYTYPE = "Any";
+		public const bool DEFAULT_FILTER_EXCLUSION = false;
 
-        public const string FILTER_KEYWORD_WILDCARD = "*";
+		public const string FILTER_KEYWORD_WILDCARD = "*";
 
 		public const string NODE_INPUTPOINT_FIXED_LABEL = "FIXED_INPUTPOINT_ID";
 

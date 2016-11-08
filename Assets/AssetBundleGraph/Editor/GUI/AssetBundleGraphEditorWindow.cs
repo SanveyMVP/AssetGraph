@@ -236,7 +236,7 @@ namespace AssetBundleGraph {
 			}
 			if(selectObject != null) {
 				selectObject.SetActive();
-                Selection.activeObject = selectObject.NodeInspectorHelper;
+				Selection.activeObject = selectObject.NodeInspectorHelper;
 			}
 		}
 
@@ -286,10 +286,10 @@ namespace AssetBundleGraph {
 		}
 			
 		public static Texture2D LoadTextureFromFile(string path) {
-            Texture2D texture = new Texture2D(1, 1);
-            texture.LoadImage(File.ReadAllBytes(path));
-            return texture;
-        }
+			Texture2D texture = new Texture2D(1, 1);
+			texture.LoadImage(File.ReadAllBytes(path));
+			return texture;
+		}
 
 		private ActiveObject RenewActiveObject (List<string> ids) {
 			var idPosDict = new Dictionary<string, Vector2>();
@@ -395,11 +395,7 @@ namespace AssetBundleGraph {
 			}
 		}
 
-
-        //public static void SetupAndRunSingleAsset(BuildTarget target, string loaderMockupId) {
-
-        //}
-
+		
 		private void Setup (BuildTarget target) {
 
 			EditorUtility.ClearProgressBar();
@@ -485,12 +481,12 @@ namespace AssetBundleGraph {
 
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
-                    // run datas.
+					// run datas.
 
-                    Dictionary<string, List<string>> fakeLoaders = new Dictionary<string, List<string>>();
-                    foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
-                        fakeLoaders.Add(loader.Id, new List<string>());
-                    }
+					Dictionary<string, List<string>> fakeLoaders = new Dictionary<string, List<string>>();
+					foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
+						fakeLoaders.Add(loader.Id, new List<string>());
+					}
 
 					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, fakeLoaders);
 				}
@@ -571,15 +567,15 @@ namespace AssetBundleGraph {
 
 				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
 				tbLabelTarget.fontStyle = FontStyle.Bold;
-                
+				
 
-                using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
-                    if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
-                        SaveGraph();
-                        var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
-                        Run(ActiveBuildTarget, selectedLoaderIds.ToList());
-                    }
-                }
+				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
+					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+						SaveGraph();
+						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
+						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
+					}
+				}
 
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 //				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
@@ -1110,22 +1106,22 @@ namespace AssetBundleGraph {
 
 									var nameOverlapping = nodeNames.Where(name => name == pastingNodeName).ToList();
 
-  									switch (pasteType) {
-  										case CopyType.COPYTYPE_COPY: {
+									switch (pasteType) {
+										case CopyType.COPYTYPE_COPY: {
 											if (2 <= nameOverlapping.Count) {
 												continue;
 											}
-  											break;
-  										}
-  										case CopyType.COPYTYPE_CUT: {
+											break;
+										}
+										case CopyType.COPYTYPE_CUT: {
 											if (1 <= nameOverlapping.Count) {
 												continue;
 											}
-  											break;
-  										}
-  									}
+											break;
+										}
+									}
 
-  									duplicatingData.Add(pastingNode);
+									duplicatingData.Add(pastingNode);
 								}
 							}
 							// consume copyField
@@ -1161,9 +1157,9 @@ namespace AssetBundleGraph {
 								connection.SetActive();
 							}
 
-                            UpdateUnitySelection();
+							UpdateUnitySelection();
 
-                            Event.current.Use();
+							Event.current.Use();
 							break;
 						}
 
@@ -1384,7 +1380,7 @@ namespace AssetBundleGraph {
 								}
 								break;
 							}
-                            
+							
 							if (Event.current.shift) {
 								Undo.RecordObject(this, "Select Objects");
 
@@ -1639,7 +1635,7 @@ namespace AssetBundleGraph {
 							foreach (var con in connections) {
 								if (con.Id == tappedConnectionId) {
 									con.SetActive();
-                                    Selection.activeObject = con.ConnectionInspectorHelper;
+									Selection.activeObject = con.ConnectionInspectorHelper;
 									activeObject = RenewActiveObject(new List<string>{con.Id});
 								} else {
 									con.SetInactive();
@@ -1690,18 +1686,18 @@ namespace AssetBundleGraph {
 				
 				connection.SetInactive();
 			}
-            UpdateUnitySelection();
+			UpdateUnitySelection();
 
-        }
+		}
 
-        private void UpdateUnitySelection() {
-            List<UnityEngine.Object> activeObjs = new List<UnityEngine.Object>();
+		private void UpdateUnitySelection() {
+			List<UnityEngine.Object> activeObjs = new List<UnityEngine.Object>();
 
-            activeObjs.AddRange(nodes.FindAll(x => x.IsActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
-            activeObjs.AddRange(connections.FindAll(x => x.IsActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
+			activeObjs.AddRange(nodes.FindAll(x => x.IsActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
+			activeObjs.AddRange(connections.FindAll(x => x.IsActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
 
-            Selection.objects = activeObjs.ToArray();
-        }
+			Selection.objects = activeObjs.ToArray();
+		}
 
 		/**
 			create new connection if same relationship is not exist yet.

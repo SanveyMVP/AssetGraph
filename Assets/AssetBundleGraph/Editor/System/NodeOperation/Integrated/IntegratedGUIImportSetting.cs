@@ -129,21 +129,21 @@ namespace AssetBundleGraph {
 			return AssetImporter.GetAtPath(sampleFiles[0]);	
 		}
 
-        public static UnityEngine.Object GetReferenceAsset(NodeData node)
-        {
-            var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
+		public static UnityEngine.Object GetReferenceAsset(NodeData node)
+		{
+			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
 
-            UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
+			UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
 
-            var sampleFiles = FileUtility.GetFilePathsInFolder(sampleFileDir)
-                .Where(path => !path.EndsWith(AssetBundleGraphSettings.UNITY_METAFILE_EXTENSION))
-                .ToList();
+			var sampleFiles = FileUtility.GetFilePathsInFolder(sampleFileDir)
+				.Where(path => !path.EndsWith(AssetBundleGraphSettings.UNITY_METAFILE_EXTENSION))
+				.ToList();
 
-            UnityEngine.Assertions.Assert.IsTrue(sampleFiles.Count == 1);
+			UnityEngine.Assertions.Assert.IsTrue(sampleFiles.Count == 1);
 
-            return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(sampleFiles[0]);
-        }
-        private void ApplyImportSetting(NodeData node, List<Asset> assets) {
+			return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(sampleFiles[0]);
+		}
+		private void ApplyImportSetting(NodeData node, List<Asset> assets) {
 
 			if(!assets.Any()) {
 				return;
@@ -156,7 +156,7 @@ namespace AssetBundleGraph {
 				var importer = AssetImporter.GetAtPath(asset.importFrom);
 				if(!configurator.IsEqual(importer)) {
 					configurator.OverwriteImportSettings(importer);
-                    AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
+					AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
 				}
 			}
 		}
