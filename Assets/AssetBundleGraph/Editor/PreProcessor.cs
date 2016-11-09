@@ -29,8 +29,7 @@ public class PreProcessor : AssetPostprocessor {
         }
     }
 
-
-    void OnPreprocessTexture() {
+	void GenericPreProcessing() {
 		var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
 
 		if(asset == null) { // This means it is the first time importing this asset.
@@ -84,5 +83,17 @@ public class PreProcessor : AssetPostprocessor {
 				EditorUtility.ClearProgressBar();
 			}
 		}
-    }    
+	}
+
+	void OnPreprocessTexture() {
+		GenericPreProcessing();
+	}
+
+	void OnPreprocessModel() {
+		GenericPreProcessing();
+	}
+
+	void OnPreprocessAudio() {
+		GenericPreProcessing();
+	}
 }

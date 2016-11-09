@@ -185,7 +185,7 @@ namespace AssetBundleGraph {
 					break;
 				case IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound:
 					if (GUILayout.Button("Configure Import Setting")) {        
-						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id);
+						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAsset(node.Data.Id);
 					}
 					if (GUILayout.Button("Reset Import Setting")) {
 						IntegratedGUIImportSetting.ResetConfig(node.Data);

@@ -524,6 +524,7 @@ namespace AssetBundleGraph {
 			m_x = x;
 			m_y = y;
 			m_kind = kind;
+			m_name_color = DEFAULT_COLOR;
 
 			m_inputPoints  = new List<ConnectionPointData>();
 			m_outputPoints = new List<ConnectionPointData>();

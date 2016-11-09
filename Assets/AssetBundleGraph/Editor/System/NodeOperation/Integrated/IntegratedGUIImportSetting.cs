@@ -129,9 +129,9 @@ namespace AssetBundleGraph {
 			return AssetImporter.GetAtPath(sampleFiles[0]);	
 		}
 
-		public static UnityEngine.Object GetReferenceAsset(NodeData node)
+		public static UnityEngine.Object GetReferenceAsset(string nodeId)
 		{
-			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
+			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, nodeId);
 
 			UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
 
