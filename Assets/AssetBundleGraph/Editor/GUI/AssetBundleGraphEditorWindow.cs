@@ -1693,8 +1693,8 @@ namespace AssetBundleGraph {
 		private void UpdateUnitySelection() {
 			List<UnityEngine.Object> activeObjs = new List<UnityEngine.Object>();
 
-			activeObjs.AddRange(nodes.FindAll(x => x.IsActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
-			activeObjs.AddRange(connections.FindAll(x => x.IsActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
+			activeObjs.AddRange(nodes.FindAll(x => x.NodeInspectorHelper.isActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
+			activeObjs.AddRange(connections.FindAll(x => x.ConnectionInspectorHelper.isActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
 
 			Selection.objects = activeObjs.ToArray();
 		}

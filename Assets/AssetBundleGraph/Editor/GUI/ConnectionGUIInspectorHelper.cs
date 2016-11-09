@@ -9,6 +9,7 @@ namespace AssetBundleGraph {
 		public ConnectionGUI connectionGUI;
 		public Dictionary<string, List<Asset>> assetGroups;
 		public List<bool> foldouts;
+		public bool isActive = false;
 
 		public void UpdateInspector (ConnectionGUI con, Dictionary<string, List<Asset>> assetGroups) {
 			this.connectionGUI = con;

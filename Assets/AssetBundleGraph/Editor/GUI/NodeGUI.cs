@@ -23,10 +23,7 @@ namespace AssetBundleGraph {
 
 		[SerializeField] private string m_nodeSyle;
 		[SerializeField] private NodeGUIInspectorHelper m_nodeInsp;
-
-		[NonSerialized]
-		private bool isActive;
-
+		
 		/*
 			show error on node functions.
 		*/
@@ -72,16 +69,7 @@ namespace AssetBundleGraph {
 			get {
 				return m_baseRect;
 			}
-		}
-
-		public bool IsActive {
-			get {
-				return isActive;
-			}
-			set {
-				isActive = value;
-			}
-		}
+		}		
 
 		public NodeGUIInspectorHelper NodeInspectorHelper {
 			get {
@@ -134,13 +122,13 @@ namespace AssetBundleGraph {
 
 		public void SetActive () {
 			m_nodeInsp.UpdateNode(this);
-			isActive = true;
+			m_nodeInsp.isActive = true;
 			this.m_nodeSyle = NodeGUIUtility.SelectedStyle[m_data.Kind];
 		}
 
 		public void SetInactive () {
 			this.m_nodeSyle = NodeGUIUtility.UnselectedStyle[m_data.Kind];
-			isActive = false;
+			m_nodeInsp.isActive = false;
 		}
 			
 		private void RefreshConnectionPos () {

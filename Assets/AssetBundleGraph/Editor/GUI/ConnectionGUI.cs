@@ -16,10 +16,7 @@ namespace AssetBundleGraph {
 		[SerializeField] private ConnectionGUIInspectorHelper conInsp;
 
 		[SerializeField] private string connectionButtonStyle;
-
-        [NonSerialized]
-        private bool isActive;
-
+		
         public string Label {
 			get {
 				return label;
@@ -62,15 +59,6 @@ namespace AssetBundleGraph {
         public ConnectionGUIInspectorHelper ConnectionInspectorHelper {
             get {
                 return conInsp;
-            }
-        }
-
-        public bool IsActive {
-            get {
-                return isActive;
-            }
-            set {
-                isActive = value;
             }
         }
 
@@ -223,13 +211,13 @@ namespace AssetBundleGraph {
 		}
 		
 		public void SetActive () {
-            isActive = true;
 			connectionButtonStyle = "sv_label_1";
+			conInsp.isActive = true;
 		}
 
 		public void SetInactive () {
 			connectionButtonStyle = "sv_label_0";
-            isActive = false;
+			conInsp.isActive = false;
         }
 
 		public void Delete () {
