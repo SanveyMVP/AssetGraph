@@ -225,10 +225,6 @@ namespace AssetBundleGraph {
 						loader.FakeLoad(currentNodeData,connectionToOutput, fakeLoaders[currentNodeData.Id], Output, preImporter);
 					} else {
 						if(isActualRun) {
-							if(executor is IntegratedGUIImportSetting) {
-
-							}
-
 							executor.Run(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
 						} else {
 							executor.Setup(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);
