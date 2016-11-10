@@ -115,8 +115,8 @@ namespace AssetBundleGraph {
 			FileUtility.RemakeDirectory(sampleFileDir);
 		}
 
-		public static AssetImporter GetReferenceAssetImporter(NodeData node) {
-			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
+		public static AssetImporter GetReferenceAssetImporter(string nodeId) {
+			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, nodeId);
 
 			UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
 
@@ -129,19 +129,34 @@ namespace AssetBundleGraph {
 			return AssetImporter.GetAtPath(sampleFiles[0]);	
 		}
 
+		public static UnityEngine.Object GetReferenceAsset(string nodeId)
+		{
+			var sampleFileDir = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, nodeId);
+
+			UnityEngine.Assertions.Assert.IsTrue(Directory.Exists(sampleFileDir));
+
+			var sampleFiles = FileUtility.GetFilePathsInFolder(sampleFileDir)
+				.Where(path => !path.EndsWith(AssetBundleGraphSettings.UNITY_METAFILE_EXTENSION))
+				.ToList();
+
+			UnityEngine.Assertions.Assert.IsTrue(sampleFiles.Count == 1);
+
+			return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(sampleFiles[0]);
+		}
 		private void ApplyImportSetting(NodeData node, List<Asset> assets) {
 
 			if(!assets.Any()) {
 				return;
 			}
 
-			var referenceImporter = GetReferenceAssetImporter(node);	
+			var referenceImporter = GetReferenceAssetImporter(node.Id);	
 			var configurator = new ImportSettingsConfigurator(referenceImporter);
 
 			foreach(var asset in assets) {
 				var importer = AssetImporter.GetAtPath(asset.importFrom);
 				if(!configurator.IsEqual(importer)) {
 					configurator.OverwriteImportSettings(importer);
+					AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
 				}
 			}
 		}
@@ -198,7 +213,7 @@ namespace AssetBundleGraph {
 				// if there is no incoming assets, there is no way to check if 
 				// right type of asset is coming in - so we'll just skip the test
 				if(incomingAssets.Any() && status == ConfigStatus.GoodSampleFound) {
-					Type targetType = GetReferenceAssetImporter(node).GetType();
+					Type targetType = GetReferenceAssetImporter(node.Id).GetType();
 					if( targetType != expectedType ) {
 						incomingTypeMismatch(targetType, expectedType);
 					}

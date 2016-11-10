@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 using System;
@@ -31,6 +31,14 @@ namespace AssetBundleGraph {
 
 			EditorGUILayout.HelpBox("Loader: Load assets in given directory path.", MessageType.Info);
 			UpdateNodeName(node);
+
+			bool newPreProcess = EditorGUILayout.Toggle("Pre-Processing", node.Data.PreProcess);
+
+			if(newPreProcess != node.Data.PreProcess) {
+				using(new RecordUndoScope("PreProcess Changed", node, true)) {
+					node.Data.PreProcess = newPreProcess;
+				}
+			}
 
 			GUILayout.Space(10f);
 
@@ -80,6 +88,7 @@ namespace AssetBundleGraph {
 						}
 						else {
 							var newContainsKeyword = cond.FilterKeyword;
+							bool newIsExclusion;
 
 							GUIStyle s = new GUIStyle((GUIStyle)"TextFieldDropDownText");
 
@@ -96,11 +105,19 @@ namespace AssetBundleGraph {
 										} 
 									);
 								}
-							}
 
+								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Excludes", GUILayout.MaxWidth(80));
+							}
 							if (newContainsKeyword != cond.FilterKeyword) {
 								using(new RecordUndoScope("Modify Filter Keyword", node, true)){
 									cond.FilterKeyword = newContainsKeyword;
+									// event must raise to propagate change to connection associated with point
+									NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED, node, Vector2.zero, cond.ConnectionPoint));
+								}
+							}
+							if (newIsExclusion != cond.IsExclusion) {
+								using(new RecordUndoScope("Modify Filter Exclusion", node, true)){
+									cond.IsExclusion = newIsExclusion;
 									// event must raise to propagate change to connection associated with point
 									NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED, node, Vector2.zero, cond.ConnectionPoint));
 								}
@@ -119,8 +136,10 @@ namespace AssetBundleGraph {
 				if (GUILayout.Button("+")) {
 					using(new RecordUndoScope("Add Filter Condition", node)){
 						node.Data.AddFilterCondition(
-							AssetBundleGraphSettings.DEFAULT_FILTER_KEYWORD, 
-							AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE);
+							AssetBundleGraphSettings.DEFAULT_FILTER_KEYWORD,
+							AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,
+							AssetBundleGraphSettings.DEFAULT_FILTER_EXCLUSION
+							);
 					}
 				}
 
@@ -152,7 +171,7 @@ namespace AssetBundleGraph {
 				if(incomingType == null) {
 					// try to retrieve incoming type from configuration
 					if(status == IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound) {
-						incomingType = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data).GetType();
+						incomingType = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id).GetType();
 					} else {
 						EditorGUILayout.HelpBox("ImportSetting needs a single type of incoming assets.", MessageType.Info);
 						return;
@@ -165,8 +184,8 @@ namespace AssetBundleGraph {
 					EditorGUILayout.HelpBox("Press Refresh to configure.", MessageType.Info);
 					break;
 				case IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound:
-					if (GUILayout.Button("Configure Import Setting")) {
-						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data);
+					if (GUILayout.Button("Configure Import Setting")) {        
+						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAsset(node.Data.Id);
 					}
 					if (GUILayout.Button("Reset Import Setting")) {
 						IntegratedGUIImportSetting.ResetConfig(node.Data);
@@ -434,7 +453,7 @@ namespace AssetBundleGraph {
 					}
 				}
 
-				using (new EditorGUI.DisabledScope(newUseGroupAsVariantValue)) {
+				using (new EditorGUI.DisabledGroupScope(newUseGroupAsVariantValue)) {
 					GUILayout.Label("Variants:");
 					var variantNames = node.Data.Variants.Select(v => v.Name).ToList();
 					Variant removing = null;
@@ -548,7 +567,7 @@ namespace AssetBundleGraph {
 							(option.option == BuildAssetBundleOptions.DisableWriteTypeTree  && isIgnoreTypeTreeChangesEnabled) ||
 							(option.option == BuildAssetBundleOptions.IgnoreTypeTreeChanges && isDisableWriteTypeTreeEnabled);
 
-						using(new EditorGUI.DisabledScope(isToggleDisabled)) {
+						using(new EditorGUI.DisabledGroupScope(isToggleDisabled)) {
 							var result = EditorGUILayout.ToggleLeft(option.description, isEnabled);
 							if (result != isEnabled) {
 								using(new RecordUndoScope("Change Bundle Options", node, true)){
@@ -793,10 +812,10 @@ namespace AssetBundleGraph {
 			return editGroupChanged;
 		}
 
-		private EditorGUI.DisabledScope DrawOverrideTargetToggle(NodeGUI node, bool status, Action<bool> onStatusChange) {
+		private EditorGUI.DisabledGroupScope DrawOverrideTargetToggle(NodeGUI node, bool status, Action<bool> onStatusChange) {
 
 			if( currentEditingGroup == BuildTargetUtility.DefaultTarget ) {
-				return new EditorGUI.DisabledScope(false);
+				return new EditorGUI.DisabledGroupScope(false);
 			}
 
 			bool newStatus = GUILayout.Toggle(status, 
@@ -805,7 +824,7 @@ namespace AssetBundleGraph {
 			if(newStatus != status && onStatusChange != null) {
 				onStatusChange(newStatus);
 			}
-			return new EditorGUI.DisabledScope(!newStatus);
+			return new EditorGUI.DisabledGroupScope(!newStatus);
 		}
 	}
 }

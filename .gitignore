@@ -23,6 +23,7 @@ AssetBundles*
 
 Assets/AssetGraph/Cache/*
 
+*.csproj
 
 Assembly-CSharp-Editor.csproj
 
@@ -81,10 +82,11 @@ Assets/AssetGraph/SavedSettings/ModifierSettings/*
 
 Assets/AssetBundleGraph/Cache/*
 
-Assets/AssetBundleGraph/SettingFiles*
 Assets/AssetBundleGraph/Generated*
 
 obj/*
+
+.vs/*
 
 *.sln
 *.vcproj

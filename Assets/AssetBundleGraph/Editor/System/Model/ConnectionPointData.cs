@@ -15,6 +15,7 @@ namespace AssetBundleGraph {
 
 		private const string ID = "id";
 		private const string LABEL = "label";
+		private const string COLOR = "labelColor";
 		private const string PRIORITY = "orderPriority";
 		private const string SHOWLABEL = "showLabel";
 
@@ -28,9 +29,10 @@ namespace AssetBundleGraph {
 		[SerializeField] private string parentId;
 		[SerializeField] private bool isInput;
 		[SerializeField] private Rect buttonRect;
+		private Color labelColor;
 
-//		private int orderPriority;
-//		private bool showLabel;
+		//		private int orderPriority;
+		//		private bool showLabel;
 
 		public ConnectionPointData(string id, string label, NodeData parent, bool isInput/*, int orderPriority, bool showLabel */) {
 			this.id = id;
@@ -74,6 +76,15 @@ namespace AssetBundleGraph {
 			}
 			set {
 				label = value;
+			}
+		}
+		
+		public Color LabelColor {
+			get {
+				return labelColor;
+			}
+			set {
+				labelColor = value;
 			}
 		}
 
@@ -197,7 +208,7 @@ namespace AssetBundleGraph {
 		}
 
 		public Dictionary<string, object> ToJsonDictionary() {
-			return new Dictionary<string, object> () {
+			return new Dictionary<string, object>() {
 				{ID, this.id},
 				{LABEL, this.label}
 			};

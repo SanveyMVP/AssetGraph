@@ -23,7 +23,8 @@ namespace AssetBundleGraph {
 
 		public const string ASSETNBUNDLEGRAPH_DATA_PATH = "AssetBundleGraph/SettingFiles";
 		public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
-		
+		public const string ASSETBUNDLEGRAPH_LOADER_DATA_NAME = "LoaderFolders.json";
+
 		public const string ASSETS_PATH = "Assets/";
 		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
@@ -62,8 +63,8 @@ namespace AssetBundleGraph {
 			new BuildAssetBundleOption("Ignore TypeTree Changes", BuildAssetBundleOptions.IgnoreTypeTreeChanges),
 			new BuildAssetBundleOption("Append Hash To AssetBundle Name", BuildAssetBundleOptions.AppendHashToAssetBundleName),
 			new BuildAssetBundleOption("ChunkBased Compression", BuildAssetBundleOptions.ChunkBasedCompression),
-			new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
-			new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
+			//new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
+			//new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
 		};
 
 		//public const string PLATFORM_DEFAULT_NAME = "Default";
@@ -124,6 +125,7 @@ namespace AssetBundleGraph {
 
 		public const string DEFAULT_FILTER_KEYWORD = "";
 		public const string DEFAULT_FILTER_KEYTYPE = "Any";
+		public const bool DEFAULT_FILTER_EXCLUSION = false;
 
 		public const string FILTER_KEYWORD_WILDCARD = "*";
 

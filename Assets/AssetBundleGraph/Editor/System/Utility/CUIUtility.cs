@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
@@ -20,9 +20,9 @@ namespace AssetBundleGraph {
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_GENERATE_CUITOOL)]
 		private static void CreateCUITool() {
 
-            var appPath = EditorApplication.applicationPath.Replace(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR, Path.DirectorySeparatorChar);
+			var appPath = EditorApplication.applicationPath.Replace(AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR, Path.DirectorySeparatorChar);
 
-            var appCmd = string.Format("{0}{1}", appPath, (Application.platform == RuntimePlatform.WindowsEditor) ? "" : "/Contents/MacOS/Unity");
+			var appCmd = string.Format("{0}{1}", appPath, (Application.platform == RuntimePlatform.WindowsEditor) ? "" : "/Contents/MacOS/Unity");
 			var argPass = (Application.platform == RuntimePlatform.WindowsEditor)? "%1 %2 %3 %4 %5 %6 %7 %8 %9" : "$*";
 			var cmd = string.Format(kCommandStr, appCmd, FileUtility.ProjectPathWithSlash(), kCommandMethod, argPass);
 			var ext = (Application.platform == RuntimePlatform.WindowsEditor)? "bat" : "sh";
@@ -43,9 +43,9 @@ namespace AssetBundleGraph {
 			try {
 				var arguments = new List<string>(System.Environment.GetCommandLineArgs());
 
-				Application.SetStackTraceLogType(LogType.Log, 		StackTraceLogType.None);
-				Application.SetStackTraceLogType(LogType.Error, 	StackTraceLogType.None);
-				Application.SetStackTraceLogType(LogType.Warning, 	StackTraceLogType.None);
+				Application.stackTraceLogType = StackTraceLogType.None;
+				Application.stackTraceLogType = StackTraceLogType.None;
+				Application.stackTraceLogType = StackTraceLogType.None;
 
 				BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
 

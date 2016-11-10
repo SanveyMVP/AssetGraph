@@ -16,8 +16,8 @@ namespace AssetBundleGraph {
 		[SerializeField] private ConnectionGUIInspectorHelper conInsp;
 
 		[SerializeField] private string connectionButtonStyle;
-
-		public string Label {
+		
+        public string Label {
 			get {
 				return label;
 			}
@@ -56,7 +56,13 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		private Rect buttonRect;
+        public ConnectionGUIInspectorHelper ConnectionInspectorHelper {
+            get {
+                return conInsp;
+            }
+        }
+
+        private Rect buttonRect;
 
 		public static ConnectionGUI LoadConnection (string label, string id, ConnectionPointData output, ConnectionPointData input) {
 			return new ConnectionGUI(
@@ -149,13 +155,15 @@ namespace AssetBundleGraph {
 					
 					case AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL: {
 						var labelPointV3 = new Vector3(centerPointV3.x - ((AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL.Length * 6f) / 2), centerPointV3.y - 24f, 0f) ;
-						Handles.Label(labelPointV3, AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL, "WhiteMiniLabel");
+						Handles.Label(labelPointV3, AssetBundleGraphSettings.BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL, EditorStyles.whiteMiniLabel);
 						break;
 					}
 
 					default: {
-						var labelPointV3 = new Vector3(centerPointV3.x - ((label.Length * 7f) / 2), centerPointV3.y - 24f, 0f) ;
-						Handles.Label(labelPointV3, label, "WhiteMiniLabel");
+						var labelPointV3 = new Vector3(centerPointV3.x - ((label.Length * 7f) / 2), centerPointV3.y - 24f, 0f);
+						GUIStyle miniLabelStyle = EditorStyles.whiteMiniLabel;
+						miniLabelStyle.normal.textColor = outputPoint.LabelColor*1.2f;
+						Handles.Label(labelPointV3, label, miniLabelStyle);
 						break;
 					}
 				}
@@ -203,13 +211,14 @@ namespace AssetBundleGraph {
 		}
 		
 		public void SetActive () {
-			Selection.activeObject = conInsp;
 			connectionButtonStyle = "sv_label_1";
+			conInsp.isActive = true;
 		}
 
 		public void SetInactive () {
 			connectionButtonStyle = "sv_label_0";
-		}
+			conInsp.isActive = false;
+        }
 
 		public void Delete () {
 			ConnectionGUIUtility.ConnectionEventHandler(new ConnectionEvent(ConnectionEvent.EventType.EVENT_CONNECTION_DELETED, this));

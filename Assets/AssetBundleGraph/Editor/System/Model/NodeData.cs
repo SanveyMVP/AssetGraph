@@ -32,14 +32,20 @@ namespace AssetBundleGraph {
 
 	[Serializable]
 	public class FilterEntry {
+		private readonly Color FILTER_EXCLUDED_OUTPUT = Color.red * 0.9f;
+		private readonly Color DEFAULT_COLOR = new Color(0.705f, 0.705f, 0.705f, 1);
+
 		[SerializeField] private string m_filterKeyword;
 		[SerializeField] private string m_filterKeytype;
+		[SerializeField] private bool m_isExclusion;
 		[SerializeField] private ConnectionPointData m_point;
 
-		public FilterEntry(string keyword, string keytype, ConnectionPointData point) {
+		public FilterEntry(string keyword, string keytype, bool isExclusion, ConnectionPointData point) {
 			m_filterKeyword = keyword;
 			m_filterKeytype = keytype;
 			m_point = point;
+			m_isExclusion = isExclusion;
+			point.LabelColor = isExclusion ? FILTER_EXCLUDED_OUTPUT : DEFAULT_COLOR;
 		}
 
 		public string FilterKeyword {
@@ -49,6 +55,20 @@ namespace AssetBundleGraph {
 			set {
 				m_filterKeyword = value;
 				m_point.Label = value;
+			}
+		}
+		public bool IsExclusion{
+			get{
+				return m_isExclusion;
+			}
+			set{
+				m_isExclusion = value;
+				if(value){
+					m_point.LabelColor = FILTER_EXCLUDED_OUTPUT;
+				}
+				else{
+					m_point.LabelColor = DEFAULT_COLOR;
+				}
 			}
 		}
 		public string FilterKeytype {
@@ -66,7 +86,7 @@ namespace AssetBundleGraph {
 		}
 		public string Hash {
 			get {
-				return m_filterKeyword+m_filterKeytype;
+				return m_filterKeyword+m_filterKeytype+m_isExclusion;
 			}
 		}
 	}
@@ -115,6 +135,7 @@ namespace AssetBundleGraph {
 
 		//loader settings
 		private const string NODE_LOADER_LOAD_PATH = "loadPath";
+		private const string NODE_LOADER_PREPROCESS = "preProcess";
 
 		//exporter settings
 		private const string NODE_EXPORTER_EXPORT_PATH = "exportTo";
@@ -124,6 +145,7 @@ namespace AssetBundleGraph {
 		private const string NODE_FILTER = "filter";
 		private const string NODE_FILTER_KEYWORD = "keyword";
 		private const string NODE_FILTER_KEYTYPE = "keytype";
+		private const string NODE_FILTER_EXCLUSION = "excludes";
 		private const string NODE_FILTER_POINTID = "pointId";
 
 		//group settings
@@ -143,12 +165,16 @@ namespace AssetBundleGraph {
 		//bundlebuilder settings
 		private const string NODE_BUNDLEBUILDER_ENABLEDBUNDLEOPTIONS = "enabledBundleOptions";
 
-		[SerializeField] private string m_name;
+		private readonly Color LOADER_PREPROCESS_COLOR = Color.yellow * 0.9f;
+		private readonly Color DEFAULT_COLOR = new Color(0.705f, 0.705f, 0.705f,1);
+
+		[SerializeField] private string m_name;		
 		[SerializeField] private string m_id;
 		[SerializeField] private NodeKind m_kind;
 		[SerializeField] private float m_x;
 		[SerializeField] private float m_y;
 		[SerializeField] private string m_scriptClassName;
+		[SerializeField] private bool m_isPreProcess;
 		[SerializeField] private List<FilterEntry> m_filter;
 		[SerializeField] private List<ConnectionPointData> 	m_inputPoints; 
 		[SerializeField] private List<ConnectionPointData> 	m_outputPoints;
@@ -164,10 +190,10 @@ namespace AssetBundleGraph {
 
 		[SerializeField] private bool m_isNodeOperationPerformed;
 
-
+		private Color m_name_color;
 		/*
 		 * Properties
-		 */ 
+		 */
 
 		public string Name {
 			get {
@@ -177,6 +203,16 @@ namespace AssetBundleGraph {
 				m_name = value;
 			}
 		}
+
+		public Color NameColor {
+			get {
+				return m_name_color;
+			}
+			set {
+				m_name_color = value;
+			}
+		}
+
 		public string Id {
 			get {
 				return m_id;
@@ -219,6 +255,22 @@ namespace AssetBundleGraph {
 			}
 			set {
 				m_y = value;
+			}
+		}
+
+		public bool PreProcess {
+			get {
+				ValidateAccess(NodeKind.LOADER_GUI);
+				return m_isPreProcess;
+			}
+			set {
+				ValidateAccess(NodeKind.LOADER_GUI);
+				m_isPreProcess = value;
+				if(value) {
+					m_name_color = LOADER_PREPROCESS_COLOR;
+				} else {
+					m_name_color = DEFAULT_COLOR;
+				}
 			}
 		}
 
@@ -356,6 +408,7 @@ namespace AssetBundleGraph {
 			var outputs = jsonData[NODE_OUTPUTPOINTS] as List<object>;
 			m_inputPoints  = new List<ConnectionPointData>();
 			m_outputPoints = new List<ConnectionPointData>();
+			m_name_color = DEFAULT_COLOR;
 
 			foreach(var obj in inputs) {
 				var pDic = obj as Dictionary<string, object>;
@@ -366,6 +419,7 @@ namespace AssetBundleGraph {
 				var pDic = obj as Dictionary<string, object>;
 				m_outputPoints.Add(new ConnectionPointData(pDic, this, false));
 			}
+
 
 			switch (m_kind) {
 			case NodeKind.IMPORTSETTING_GUI:
@@ -385,6 +439,12 @@ namespace AssetBundleGraph {
 			case NodeKind.LOADER_GUI:
 				{
 					m_loaderLoadPath = new SerializableMultiTargetString(_SafeGet(jsonData, NODE_LOADER_LOAD_PATH));
+					if(jsonData.ContainsKey(NODE_LOADER_PREPROCESS)) {
+						m_isPreProcess = Convert.ToBoolean(jsonData[NODE_LOADER_PREPROCESS]);
+						if(m_isPreProcess) {
+							m_name_color = LOADER_PREPROCESS_COLOR;
+						}
+					}
 				}
 				break;
 			case NodeKind.FILTER_GUI:
@@ -398,11 +458,15 @@ namespace AssetBundleGraph {
 
 						var keyword = f[NODE_FILTER_KEYWORD] as string;
 						var keytype = f[NODE_FILTER_KEYTYPE] as string;
+						bool isExclusion = false;
+						if(f.ContainsKey(NODE_FILTER_EXCLUSION)) {
+							isExclusion = Convert.ToBoolean(f[NODE_FILTER_EXCLUSION]);
+						}
 						var pointId = f[NODE_FILTER_POINTID] as string;
 
 						var point = m_outputPoints.Find(p => p.Id == pointId);
 						UnityEngine.Assertions.Assert.IsNotNull(point, "Output point not found for " + keyword);
-						m_filter.Add(new FilterEntry(keyword, keytype, point));
+						m_filter.Add(new FilterEntry(keyword, keytype, isExclusion, point));
 					}
 				}
 				break;
@@ -460,6 +524,7 @@ namespace AssetBundleGraph {
 			m_x = x;
 			m_y = y;
 			m_kind = kind;
+			m_name_color = DEFAULT_COLOR;
 
 			m_inputPoints  = new List<ConnectionPointData>();
 			m_outputPoints = new List<ConnectionPointData>();
@@ -493,6 +558,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.LOADER_GUI:
 				m_loaderLoadPath = new SerializableMultiTargetString();
+				m_isPreProcess = false;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -537,12 +603,13 @@ namespace AssetBundleGraph {
 
 			case NodeKind.FILTER_GUI:
 				foreach(var f in m_filter) {
-					newData.AddFilterCondition(f.FilterKeyword, f.FilterKeytype);
+					newData.AddFilterCondition(f.FilterKeyword, f.FilterKeytype, f.IsExclusion);
 				}
 				break;
 
 			case NodeKind.LOADER_GUI:
 				newData.m_loaderLoadPath = new SerializableMultiTargetString(m_loaderLoadPath);
+				newData.m_isPreProcess = m_isPreProcess;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -618,14 +685,13 @@ namespace AssetBundleGraph {
 			return overlap != null;
 		}
 
-		public void AddFilterCondition(string keyword, string keytype) {
+		public void AddFilterCondition(string keyword, string keytype, bool isExclusion) {
 			ValidateAccess(
 				NodeKind.FILTER_GUI
 			);
-
 			var point = new ConnectionPointData(keyword, this, false);
 			m_outputPoints.Add(point);
-			var newEntry = new FilterEntry(keyword, keytype, point);
+			var newEntry = new FilterEntry(keyword, keytype, isExclusion, point);
 			m_filter.Add(newEntry);
 		}
 
@@ -736,6 +802,7 @@ namespace AssetBundleGraph {
 
 			case NodeKind.LOADER_GUI:
 				nodeDict[NODE_LOADER_LOAD_PATH] = m_loaderLoadPath.ToJsonDictionary();
+				nodeDict[NODE_LOADER_PREPROCESS] = m_isPreProcess;
 				break;
 
 			case NodeKind.FILTER_GUI:
@@ -744,6 +811,7 @@ namespace AssetBundleGraph {
 					var df = new Dictionary<string, object>();
 					df[NODE_FILTER_KEYWORD] = f.FilterKeyword;
 					df[NODE_FILTER_KEYTYPE] = f.FilterKeytype;
+					df[NODE_FILTER_EXCLUSION] = f.IsExclusion;
 					df[NODE_FILTER_POINTID] = f.ConnectionPoint.Id;
 					filterDict.Add(df);
 				}
