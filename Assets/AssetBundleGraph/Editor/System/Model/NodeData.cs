@@ -190,7 +190,7 @@ namespace AssetBundleGraph {
 
 		[SerializeField] private bool m_isNodeOperationPerformed;
 
-		private Color m_name_color;
+		[SerializeField] private Color m_name_color;
 		/*
 		 * Properties
 		 */

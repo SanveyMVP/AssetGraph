@@ -43,10 +43,15 @@ namespace AssetBundleGraph {
 			try {
 				var arguments = new List<string>(System.Environment.GetCommandLineArgs());
 
+#if UNITY_5_4_OR_NEWER
+				Application.SetStackTraceLogType(LogType.Log,		StackTraceLogType.None);
+				Application.SetStackTraceLogType(LogType.Error,		StackTraceLogType.None);
+				Application.SetStackTraceLogType(LogType.Warning,	StackTraceLogType.None);
+#else
 				Application.stackTraceLogType = StackTraceLogType.None;
 				Application.stackTraceLogType = StackTraceLogType.None;
 				Application.stackTraceLogType = StackTraceLogType.None;
-
+#endif
 				BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
 
 				int targetIndex = arguments.FindIndex(a => a == "-target");

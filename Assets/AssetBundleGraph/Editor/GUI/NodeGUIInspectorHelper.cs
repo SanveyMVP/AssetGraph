@@ -11,6 +11,7 @@ namespace AssetBundleGraph {
 		public bool isActive = false;
 
 		public void UpdateNode (NodeGUI node) {
+			name = node.Name;
 			this.node = node;
 		}
 

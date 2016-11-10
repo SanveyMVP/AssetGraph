@@ -29,7 +29,7 @@ namespace AssetBundleGraph {
 		[SerializeField] private string parentId;
 		[SerializeField] private bool isInput;
 		[SerializeField] private Rect buttonRect;
-		private Color labelColor;
+		[SerializeField] private Color labelColor;
 
 		//		private int orderPriority;
 		//		private bool showLabel;

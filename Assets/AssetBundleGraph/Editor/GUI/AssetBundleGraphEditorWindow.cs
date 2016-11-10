@@ -1021,6 +1021,13 @@ namespace AssetBundleGraph {
 							Event.current.Use();
 							break;
 						}
+
+					case "SoftDelete": {
+							if(activeObject.idPosDict.ReadonlyDict().Any()) {
+								Event.current.Use();
+							}
+							break;
+						}
 					}
 					break;
 				}
@@ -1163,7 +1170,17 @@ namespace AssetBundleGraph {
 							break;
 						}
 
+						case "SoftDelete": {
+							Undo.RecordObject(this, "Delete Selection");
+							foreach(var id in activeObject.idPosDict.ReadonlyDict().Keys) {
+								DeleteNode(id);
+							}
+							Event.current.Use();
+							break;
+						}
+
 						default: {
+									
 							break;
 						}
 					}
@@ -1469,13 +1486,18 @@ namespace AssetBundleGraph {
 									var activeObjectIds = activeObject.idPosDict.ReadonlyDict().Keys.ToList();
 									activeObject = RenewActiveObject(activeObjectIds);
 								} else {
-									// nothing moved, should cancel selecting this node.
-									var cancelledActivatedIds = new List<string>(activeObject.idPosDict.ReadonlyDict().Keys);
-									cancelledActivatedIds.Remove(movedNodeId);
+									List<string> activeIds = new List<string>(activeObject.idPosDict.ReadonlyDict().Keys);
+									if(activeObject.idPosDict.ReadonlyDict().Count > 1) {
+										// if there is a multiple selection, select only this node
+										activeIds.RemoveAll(x => x != movedNodeId);
+									}else {
+										// if this is the only node in the selection, deselect it
+										activeIds.Clear();
+									}
 
 									Undo.RecordObject(this, "Select Objects");
 
-									activeObject = RenewActiveObject(cancelledActivatedIds);
+									activeObject = RenewActiveObject(activeIds);
 								}
 								
 								UpdateActivationOfObjects(activeObject);

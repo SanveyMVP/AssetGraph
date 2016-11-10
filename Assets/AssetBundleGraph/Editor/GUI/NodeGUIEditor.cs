@@ -184,9 +184,13 @@ namespace AssetBundleGraph {
 					EditorGUILayout.HelpBox("Press Refresh to configure.", MessageType.Info);
 					break;
 				case IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound:
-					if (GUILayout.Button("Configure Import Setting")) {        
-						Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAsset(node.Data.Id);
-					}
+					if (GUILayout.Button("Configure Import Setting")) {
+#if UNITY_5_4_OR_NEWER
+							Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id);
+#else
+							Selection.activeObject = IntegratedGUIImportSetting.GetReferenceAsset(node.Data.Id);
+#endif
+						}
 					if (GUILayout.Button("Reset Import Setting")) {
 						IntegratedGUIImportSetting.ResetConfig(node.Data);
 					}
@@ -652,11 +656,11 @@ namespace AssetBundleGraph {
 					)) {
 						using (new EditorGUILayout.HorizontalScope()) {
 							GUILayout.FlexibleSpace();
-							#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX
 							string buttonName = "Reveal in Finder";
-							#else
+#else
 							string buttonName = "Show in Explorer";
-							#endif 
+#endif
 							if(GUILayout.Button(buttonName)) {
 								EditorUtility.RevealInFinder(exporterNodePath);
 							}
