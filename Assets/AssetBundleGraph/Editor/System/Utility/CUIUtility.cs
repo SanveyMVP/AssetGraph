@@ -49,8 +49,6 @@ namespace AssetBundleGraph {
 				Application.SetStackTraceLogType(LogType.Warning,	StackTraceLogType.None);
 #else
 				Application.stackTraceLogType = StackTraceLogType.None;
-				Application.stackTraceLogType = StackTraceLogType.None;
-				Application.stackTraceLogType = StackTraceLogType.None;
 #endif
 				BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
 
