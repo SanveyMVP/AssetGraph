@@ -10,12 +10,20 @@
 		{
 			"id":"ca69fc98-2d14-4077-993b-49831b413f45",
 			"path":{
-				"Unknown":"Folder1/Folder2"
+				"Unknown":"Folder1/Folder2",
+				"Standalone":"Folder1/Folder2"
 			},
 			"preprocess":true
 		},
 		{
-			"id":"e94b1684-bc66-4c80-b9b0-8e6cf9c36ef6",
+			"id":"f10c1d48-b5de-409f-8255-b8dfa430d6d2",
+			"path":{
+				"Unknown":"New Folder"
+			},
+			"preprocess":true
+		},
+		{
+			"id":"bf71b260-6282-4714-839d-0890d3c42676",
 			"path":{
 				"Unknown":"Folder1/Folder2/Folder3"
 			},

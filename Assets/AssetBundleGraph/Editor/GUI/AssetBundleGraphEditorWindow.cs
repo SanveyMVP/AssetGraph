@@ -483,9 +483,11 @@ namespace AssetBundleGraph {
 				if(s_nodeExceptionPool.Count == 0) {
 					// run datas.
 
-					Dictionary<string, List<string>> fakeLoaders = new Dictionary<string, List<string>>();
-					foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
-						fakeLoaders.Add(loader.Id, new List<string>());
+					Dictionary<string, List<string>> fakeLoaders = null;
+					if(selectedLoaders != null) {
+						foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
+							fakeLoaders.Add(loader.Id, new List<string>());
+						}
 					}
 
 					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, fakeLoaders);
@@ -511,7 +513,7 @@ namespace AssetBundleGraph {
 					var con = ((ConnectionGUIInspectorHelper)Selection.activeObject).connectionGUI;
 					
 					// null when multiple connection deleted.
-					if (string.IsNullOrEmpty(con.Id)) {
+					if (con == null || string.IsNullOrEmpty(con.Id)) {
 						return; 
 					}
 

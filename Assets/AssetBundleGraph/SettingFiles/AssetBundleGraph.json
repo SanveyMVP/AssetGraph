@@ -1,5 +1,5 @@
 {
-	"lastModified":"11/8/2016 4:40:45 PM",
+	"lastModified":"11/11/2016 1:32:56 PM",
 	"nodes":[
 		{
 			"name":"Loader0",
@@ -15,8 +15,8 @@
 				}
 			],
 			"pos":{
-				"x":680.5668,
-				"y":227.5679
+				"x":586.5668,
+				"y":193.5679
 			},
 			"loadPath":{
 				"Unknown":"Folder1"
@@ -37,35 +37,14 @@
 				}
 			],
 			"pos":{
-				"x":682,
-				"y":306
+				"x":597,
+				"y":282
 			},
 			"loadPath":{
-				"Unknown":"Folder1/Folder2"
+				"Unknown":"Folder1/Folder2",
+				"Standalone":"Folder1/Folder2"
 			},
 			"preProcess":true
-		},
-		{
-			"name":"Loader2",
-			"id":"e94b1684-bc66-4c80-b9b0-8e6cf9c36ef6",
-			"kind":"LOADER_GUI",
-			"inputPoints":[
-				
-			],
-			"outputPoints":[
-				{
-					"id":"861d95b3-3bb3-4499-9278-c9076ce061d9",
-					"label":"+"
-				}
-			],
-			"pos":{
-				"x":675,
-				"y":398
-			},
-			"loadPath":{
-				"Unknown":"Folder1/Folder2/Folder3"
-			},
-			"preProcess":false
 		},
 		{
 			"name":"ImportSetting0",
@@ -84,8 +63,8 @@
 				}
 			],
 			"pos":{
-				"x":880,
-				"y":226
+				"x":755,
+				"y":191
 			}
 		},
 		{
@@ -105,8 +84,8 @@
 				}
 			],
 			"pos":{
-				"x":1191,
-				"y":292
+				"x":1001,
+				"y":265
 			}
 		},
 		{
@@ -126,8 +105,8 @@
 				}
 			],
 			"pos":{
-				"x":885,
-				"y":410
+				"x":772,
+				"y":406
 			}
 		},
 		{
@@ -151,8 +130,8 @@
 				}
 			],
 			"pos":{
-				"x":935,
-				"y":307
+				"x":771,
+				"y":282
 			},
 			"filter":[
 				{
@@ -186,20 +165,106 @@
 				}
 			],
 			"pos":{
-				"x":1186,
-				"y":372
+				"x":1003,
+				"y":330
 			}
+		},
+		{
+			"name":"Loader3",
+			"id":"f10c1d48-b5de-409f-8255-b8dfa430d6d2",
+			"kind":"LOADER_GUI",
+			"inputPoints":[
+				
+			],
+			"outputPoints":[
+				{
+					"id":"f957be7d-57fa-441b-8f04-da0daab3f01b",
+					"label":"+"
+				}
+			],
+			"pos":{
+				"x":604,
+				"y":490
+			},
+			"loadPath":{
+				"Unknown":"New Folder"
+			},
+			"preProcess":true
+		},
+		{
+			"name":"ImportSetting4",
+			"id":"0b531634-1968-48a6-b18f-e047d6f4e660",
+			"kind":"IMPORTSETTING_GUI",
+			"inputPoints":[
+				{
+					"id":"33cee5b4-57dd-404d-8c4e-fd1f5e75ea47",
+					"label":"-"
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"5a59c099-1644-41a4-ad22-a8415b0bdbf9",
+					"label":"+"
+				}
+			],
+			"pos":{
+				"x":1013,
+				"y":486
+			}
+		},
+		{
+			"name":"Loader2",
+			"id":"bf71b260-6282-4714-839d-0890d3c42676",
+			"kind":"LOADER_GUI",
+			"inputPoints":[
+				
+			],
+			"outputPoints":[
+				{
+					"id":"359ade9c-48bb-46f4-b267-0be9afedf252",
+					"label":"+"
+				}
+			],
+			"pos":{
+				"x":605,
+				"y":408
+			},
+			"loadPath":{
+				"Unknown":"Folder1/Folder2/Folder3"
+			},
+			"preProcess":false
+		},
+		{
+			"name":"Model",
+			"id":"ee96fcc1-edd1-4962-9eac-22c1790696b9",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"0267a518-5fb3-42c8-9f7f-7573d39c706b",
+					"label":"-"
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"7cf66a9d-4145-4839-b3cf-d73b97e0360f",
+					"label":""
+				}
+			],
+			"pos":{
+				"x":808,
+				"y":488
+			},
+			"filter":[
+				{
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"7cf66a9d-4145-4839-b3cf-d73b97e0360f"
+				}
+			]
 		}
 	],
 	"connections":[
-		{
-			"id":"e6fa1071-2086-4d7b-92de-22f380f2c053",
-			"label":"+",
-			"fromNode":"e94b1684-bc66-4c80-b9b0-8e6cf9c36ef6",
-			"fromNodeConPointId":"861d95b3-3bb3-4499-9278-c9076ce061d9",
-			"toNode":"f02dc846-bf5d-4f3e-b168-679828b948c1",
-			"toNodeConPointId":"3ec60e0e-0232-46e7-838f-ec5990a11635"
-		},
 		{
 			"id":"f8fa4fd3-0155-44d1-8024-534dc4d8674c",
 			"label":"+",
@@ -231,6 +296,30 @@
 			"fromNodeConPointId":"93f9ecdf-4565-46b2-83e3-90e01884a9fe",
 			"toNode":"843decb4-0eb5-4765-b714-6d62bd64f201",
 			"toNodeConPointId":"64407b6b-e970-45db-9fd5-731e2baaf37a"
+		},
+		{
+			"id":"3e43857a-03b3-4947-b190-f847437b3608",
+			"label":"+",
+			"fromNode":"bf71b260-6282-4714-839d-0890d3c42676",
+			"fromNodeConPointId":"359ade9c-48bb-46f4-b267-0be9afedf252",
+			"toNode":"f02dc846-bf5d-4f3e-b168-679828b948c1",
+			"toNodeConPointId":"3ec60e0e-0232-46e7-838f-ec5990a11635"
+		},
+		{
+			"id":"ec477f31-4f64-401f-88a1-5dab6d9bd610",
+			"label":"+",
+			"fromNode":"f10c1d48-b5de-409f-8255-b8dfa430d6d2",
+			"fromNodeConPointId":"f957be7d-57fa-441b-8f04-da0daab3f01b",
+			"toNode":"ee96fcc1-edd1-4962-9eac-22c1790696b9",
+			"toNodeConPointId":"0267a518-5fb3-42c8-9f7f-7573d39c706b"
+		},
+		{
+			"id":"0c7c146b-5b7f-4af3-a545-5fe1ff2881dd",
+			"label":"",
+			"fromNode":"ee96fcc1-edd1-4962-9eac-22c1790696b9",
+			"fromNodeConPointId":"7cf66a9d-4145-4839-b3cf-d73b97e0360f",
+			"toNode":"0b531634-1968-48a6-b18f-e047d6f4e660",
+			"toNodeConPointId":"33cee5b4-57dd-404d-8c4e-fd1f5e75ea47"
 		}
 	]
 }
