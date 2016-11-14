@@ -1,13 +1,6 @@
 {
 	"loaders":[
 		{
-			"id":"e44b12e2-0283-4645-a060-957c9f138fe1",
-			"path":{
-				"Unknown":"Folder1"
-			},
-			"preprocess":false
-		},
-		{
 			"id":"ca69fc98-2d14-4077-993b-49831b413f45",
 			"path":{
 				"Unknown":"Folder1/Folder2",
@@ -16,16 +9,23 @@
 			"preprocess":true
 		},
 		{
-			"id":"f10c1d48-b5de-409f-8255-b8dfa430d6d2",
+			"id":"bf71b260-6282-4714-839d-0890d3c42676",
 			"path":{
-				"Unknown":"New Folder"
+				"Unknown":"Folder1/Folder2/Folder3"
+			},
+			"preprocess":false
+		},
+		{
+			"id":"d2089ee0-bb7b-44ae-b602-e8ed4e33e03b",
+			"path":{
+				"Unknown":""
 			},
 			"preprocess":true
 		},
 		{
-			"id":"bf71b260-6282-4714-839d-0890d3c42676",
+			"id":"d92b50a2-dc6a-4684-9e9f-f8195a5801aa",
 			"path":{
-				"Unknown":"Folder1/Folder2/Folder3"
+				"Unknown":"Folder1"
 			},
 			"preprocess":false
 		}

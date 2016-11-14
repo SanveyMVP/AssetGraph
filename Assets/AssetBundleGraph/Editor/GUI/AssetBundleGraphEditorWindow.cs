@@ -485,6 +485,7 @@ namespace AssetBundleGraph {
 
 					Dictionary<string, List<string>> fakeLoaders = null;
 					if(selectedLoaders != null) {
+						fakeLoaders = new Dictionary<string, List<string>>();
 						foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
 							fakeLoaders.Add(loader.Id, new List<string>());
 						}
