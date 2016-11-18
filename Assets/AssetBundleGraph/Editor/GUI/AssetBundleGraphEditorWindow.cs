@@ -1689,7 +1689,6 @@ namespace AssetBundleGraph {
 
 			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
 			var subGraph = window.graphGUI.GetSubGraph(node);
-			//SaveData.Graph subGraph = saveData.GetSubGraph(node);
 
 			Vector2 upperLeft = new Vector2(node.Data.X, node.Data.Y);
 
@@ -1702,8 +1701,8 @@ namespace AssetBundleGraph {
 			}
 			ids.AddRange(subGraph.Connections.ConvertAll(x => x.Id));
 
-			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));
-			window.scrollPos = upperLeft *0.7f;
+			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));			
+			window.scrollPos = new Vector2(upperLeft.x - window.position.width * 0.4f, upperLeft.y - window.position.height * 0.4f);
 		}
 
 		public static void SelectNodeById(string nodeId) {
@@ -1712,7 +1711,7 @@ namespace AssetBundleGraph {
 			ids.Add(nodeId);
 			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));
 			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
-			window.scrollPos = new Vector2(node.Data.X, node.Data.Y) * 0.7f;
+			window.scrollPos = new Vector2(node.Data.X - window.position.width * 0.4f, node.Data.Y - window.position.height * 0.4f);
 		}
 
 		public static void ChangeNodeName(string nodeId, string newName) {
