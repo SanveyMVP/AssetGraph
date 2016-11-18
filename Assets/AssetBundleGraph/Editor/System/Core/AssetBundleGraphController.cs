@@ -69,9 +69,9 @@ namespace AssetBundleGraph {
 			}
 
 			var resultDict = new Dictionary<ConnectionData, Dictionary<string, List<Asset>>>();
-			var performedIds = new List<string>();
+			var performedIds = new List<string>();  
 			var cacheDict  = new Dictionary<NodeData, List<string>>();
-			
+			 
 			// if validation failed, node may contain looped connections, so we are not going to 
 			// go into each operations.
 

@@ -96,7 +96,7 @@ namespace AssetBundleGraph {
 		private ModifyMode modifyMode;
 		private DateTime lastLoaded = DateTime.MinValue;
 		private Vector2 spacerRectRightBottom;
-		private Vector2 scrollPos = new Vector2(1500,0);
+		private Vector2 scrollPos = new Vector2(0,0);
 		private Vector2 errorScrollPos = new Vector2(0,0);
 		private Rect graphRegion = new Rect();
 		private CopyField copyField = new CopyField();		
@@ -186,7 +186,7 @@ namespace AssetBundleGraph {
 		public static void Open () {
 			NodeGUI.scaleFactor = 1f;
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
-			window.Init();
+			window.InitializeGraph();
 		}
 
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, true, 1 + 11)]
@@ -1600,8 +1600,12 @@ namespace AssetBundleGraph {
 		public void DeleteNode (string deletingNodeId) {
 			var deletedNodeIndex = graphGUI.Nodes.FindIndex(node => node.Id == deletingNodeId);
 			if (0 <= deletedNodeIndex) {
-				graphGUI.Nodes[deletedNodeIndex].SetInactive();
+				var node = graphGUI.Nodes[deletedNodeIndex];
+				node.SetInactive();
 				graphGUI.Nodes.RemoveAt(deletedNodeIndex);
+				if(node.Kind == NodeKind.WARP_IN || node.Kind == NodeKind.WARP_OUT) {
+					DeleteNode(node.Data.RelatedNodeId);
+				}
 			}
 		}
 
@@ -1681,7 +1685,7 @@ namespace AssetBundleGraph {
 
 		public static void SelectAllRelatedTree(string nodeId) {
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
-			window.Init();
+			window.InitializeGraph();
 
 			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
 			var subGraph = window.graphGUI.GetSubGraph(node);
