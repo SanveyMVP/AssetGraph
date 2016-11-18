@@ -84,8 +84,7 @@ namespace AssetBundleGraph {
 		}
 
 
-		[SerializeField] private List<NodeGUI> nodes = new List<NodeGUI>();
-		[SerializeField] private List<ConnectionGUI> connections = new List<ConnectionGUI>();
+		[SerializeField] private GraphGUI graphGUI;
 		[SerializeField] private ActiveObject activeObject = new ActiveObject(new Dictionary<string, Vector2>());
 
 		[SerializeField] private BuildTarget selectedTarget;
@@ -104,6 +103,9 @@ namespace AssetBundleGraph {
 		private AssetBundleGraphSelection selection;
 		private ScalePoint scalePoint;
 		private GraphBackground background = new GraphBackground();
+
+		private double lastClickedTime = 0;
+		private double doubleClickTime = 0.3f;
 
 		private static Dictionary<ConnectionData,Dictionary<string, List<Asset>>> s_assetStreamMap = 
 			new Dictionary<ConnectionData, Dictionary<string, List<Asset>>>();
@@ -182,7 +184,9 @@ namespace AssetBundleGraph {
 			
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_OPEN, false, 1)]
 		public static void Open () {
-			GetWindow<AssetBundleGraphEditorWindow>();
+			NodeGUI.scaleFactor = 1f;
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			window.Init();
 		}
 
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, true, 1 + 11)]
@@ -229,9 +233,9 @@ namespace AssetBundleGraph {
 		}
 
 		public void SelectNode(string nodeId) {
-			var selectObject = nodes.Find(node => node.Id == nodeId);
+			var selectObject = graphGUI.Nodes.Find(node => node.Id == nodeId);
 			// set deactive for all nodes.
-			foreach (var node in nodes) {
+			foreach (var node in graphGUI.Nodes) {
 				node.SetInactive();
 			}
 			if(selectObject != null) {
@@ -256,7 +260,7 @@ namespace AssetBundleGraph {
 			InitializeGraph();
 			Setup(ActiveBuildTarget);
 
-			if (nodes.Any()) {
+			if (graphGUI.Nodes.Any()) {
 				UpdateSpacerRect();
 			}
 		}
@@ -276,7 +280,7 @@ namespace AssetBundleGraph {
 		}
 
 		private void ShowErrorOnNodes () {
-			foreach (var node in nodes) {
+			foreach (var node in graphGUI.Nodes) {
 				node.ResetErrorStatus();
 				var errorsForeachNode = s_nodeExceptionPool.Where(e => e.Id == node.Id).Select(e => e.reason).ToList();
 				if (errorsForeachNode.Any()) {
@@ -293,10 +297,10 @@ namespace AssetBundleGraph {
 
 		private ActiveObject RenewActiveObject (List<string> ids) {
 			var idPosDict = new Dictionary<string, Vector2>();
-			foreach (var node in nodes) {
+			foreach (var node in graphGUI.Nodes) {
 				if (ids.Contains(node.Id)) idPosDict[node.Id] = node.GetPos();
 			}
-			foreach (var connection in connections) {
+			foreach (var connection in graphGUI.Connections) {
 				if (ids.Contains(connection.Id)) idPosDict[connection.Id] = Vector2.zero;
 			}
 			return new ActiveObject(idPosDict);
@@ -306,29 +310,28 @@ namespace AssetBundleGraph {
 			node graph initializer.
 			setup nodes, points and connections from saved data.
 		*/
-		public void InitializeGraph () {
-
+		public void InitializeGraph() {
 			SaveData saveData = SaveData.LoadFromDisk();
-
+			var graph = saveData.Graph;
 			/*
 				do nothing if json does not modified after first load.
 			*/
-			if (saveData.LastModified == lastLoaded) {
+			if(saveData.LastModified == lastLoaded) {
 				return;
 			}
-				
-			lastLoaded = saveData.LastModified;
 
+			lastLoaded = saveData.LastModified;
 			minSize = new Vector2(600f, 300f);
-			
+
 			wantsMouseMove = true;
 			modifyMode = ModifyMode.NONE;
-						
-			
+
+
 			/*
 				load graph data from deserialized data.
 			*/
-			ConstructGraphFromSaveData(saveData, out this.nodes, out this.connections);
+
+			graphGUI = new GraphGUI(graph);
 		}
 
 		/**
@@ -345,42 +348,8 @@ namespace AssetBundleGraph {
 			return id + 1;
 		}
 
-		/**
-		 * Creates Graph structure with NodeGUI and ConnectionGUI from SaveData
-		 */ 
-		private static void ConstructGraphFromSaveData (SaveData saveData, out List<NodeGUI> nodes, out List<ConnectionGUI> connections) {
-			var currentNodes = new List<NodeGUI>();
-			var currentConnections = new List<ConnectionGUI>();
-
-			foreach (var node in saveData.Nodes) {
-				var newNodeGUI = new NodeGUI(node);
-				newNodeGUI.WindowId = GetSafeWindowId(currentNodes);
-				currentNodes.Add(newNodeGUI);
-			}
-
-			// load connections
-			foreach (var c in saveData.Connections) {
-				var startNode = currentNodes.Find(node => node.Id == c.FromNodeId);
-				if (startNode == null) {
-					continue;
-				}
-
-				var endNode = currentNodes.Find(node => node.Id == c.ToNodeId);
-				if (endNode == null) {
-					continue;
-				}
-				var startPoint = startNode.Data.FindConnectionPoint (c.FromNodeConnectionPointId);
-				var endPoint = endNode.Data.FindConnectionPoint (c.ToNodeConnectionPointId);
-
-				currentConnections.Add(ConnectionGUI.LoadConnection(c.Label, c.Id, startPoint, endPoint));
-			}
-
-			nodes = currentNodes;
-			connections = currentConnections;
-		}
-
 		private void SaveGraph () {
-			SaveData newSaveData = new SaveData(nodes, connections);
+			SaveData newSaveData = new SaveData(graphGUI.Nodes, graphGUI.Connections);
 			newSaveData.Save();
 		}
 
@@ -409,26 +378,27 @@ namespace AssetBundleGraph {
 					return;
 				}
 
-				foreach (var node in nodes) {
+				foreach (var node in graphGUI.Nodes) {
 					node.HideProgress();
 				}
 
 				// reload data from file.
-				SaveData saveData = SaveData.LoadFromDisk();
+				var saveData = SaveData.LoadFromDisk();
+				Graph graph = saveData.Graph;
 
 				// update static all node names.
-				NodeGUIUtility.allNodeNames = new List<string>(nodes.Select(node => node.Name).ToList());
+				NodeGUIUtility.allNodeNames = new List<string>(graphGUI.Nodes.Select(node => node.Name).ToList());
 
 				Action<NodeException> errorHandler = (NodeException e) => {
 					AssetBundleGraphEditorWindow.AddNodeException(e);
 				};
 
-				s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, false, errorHandler, null);
+				s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
 
 				RefreshInspector(s_assetStreamMap);
 				ShowErrorOnNodes();
 
-				AssetBundleGraphController.Postprocess(saveData, s_assetStreamMap, false);
+				AssetBundleGraphController.Postprocess(graph, s_assetStreamMap, false);
 			} catch(Exception e) {
 				Debug.LogError(e);
 			} finally {
@@ -451,15 +421,13 @@ namespace AssetBundleGraph {
 				}
 
 				// load data from file.
-				SaveData saveData = SaveData.LoadFromDisk();
+				var saveData = SaveData.LoadFromDisk();
+				Graph graph = saveData.Graph;				
 
-				List<NodeGUI> currentNodes = null;
-				List<ConnectionGUI> currentConnections = null;
-
-				ConstructGraphFromSaveData(saveData, out currentNodes, out currentConnections);
+				graphGUI = new GraphGUI(graph);
 
 				var currentCount = 0.00f;
-				var totalCount = currentNodes.Count * 1f;
+				var totalCount = graphGUI.Nodes.Count * 1f;
 
 				Action<NodeData, float> updateHandler = (node, progress) => {
 					var progressPercentage = ((currentCount/totalCount) * 100).ToString();				
@@ -477,7 +445,7 @@ namespace AssetBundleGraph {
 				};
 
 				// perform setup. Fails if any exception raises.
-				s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, false, errorHandler, null);
+				s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
 
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
@@ -486,17 +454,17 @@ namespace AssetBundleGraph {
 					Dictionary<string, List<string>> fakeLoaders = null;
 					if(selectedLoaders != null) {
 						fakeLoaders = new Dictionary<string, List<string>>();
-						foreach(NodeData loader in saveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
+						foreach(NodeData loader in graph.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
 							fakeLoaders.Add(loader.Id, new List<string>());
 						}
 					}
 
-					s_assetStreamMap = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler, fakeLoaders);
+					s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler, fakeLoaders);
 				}
 				RefreshInspector(s_assetStreamMap);
 				AssetDatabase.Refresh();
 				ShowErrorOnNodes();
-				AssetBundleGraphController.Postprocess(saveData, s_assetStreamMap, true);
+				AssetBundleGraphController.Postprocess(graph, s_assetStreamMap, true);
 			} catch(Exception e) {
 				Debug.LogError(e);
 			} finally {
@@ -621,41 +589,44 @@ namespace AssetBundleGraph {
 			EditorGUILayout.EndScrollView();
 		}
 
-		private void DrawGUINodeGraph() {
+		public void DrawGUINodeGraph() {
 
 			background.Draw(graphRegion, scrollPos);
 
 			using(var scrollScope = new EditorGUILayout.ScrollViewScope(scrollPos) ) {
 				scrollPos = scrollScope.scrollPosition;
-
 				// draw node window x N.
 				{
 					BeginWindows();
 
-					nodes.ForEach(node => node.DrawNode());
+					graphGUI.Nodes.ForEach(node => node.DrawNode());
 
 					EndWindows();
 				}
-
+				
 				// draw connection input point marks.
-				foreach (var node in nodes) {
-					node.DrawConnectionInputPointMark(currentEventSource, modifyMode == ModifyMode.CONNECTING);
+				foreach (var node in graphGUI.Nodes) {
+					if(node.Kind != NodeKind.WARP_OUT) {
+						node.DrawConnectionInputPointMark(currentEventSource, modifyMode == ModifyMode.CONNECTING);
+					}
 				}
 
 				// draw connections.
-				foreach (var con in connections) {
+				foreach (var con in graphGUI.Connections) {
 					var keyEnum = s_assetStreamMap.Keys.Where(c => c.Id == con.Id);
 					if (keyEnum.Any()) { 
 						var assets = s_assetStreamMap[keyEnum.First()];
-						con.DrawConnection(nodes, assets);
+						con.DrawConnection(graphGUI.Nodes, assets);
 					} else {
-						con.DrawConnection(nodes, new Dictionary<string, List<Asset>>());
+						con.DrawConnection(graphGUI.Nodes, new Dictionary<string, List<Asset>>());
 					}
 				}
 					
 				// draw connection output point marks.
-				foreach (var node in nodes) {
-					node.DrawConnectionOutputPointMark(currentEventSource, modifyMode == ModifyMode.CONNECTING, Event.current);
+				foreach (var node in graphGUI.Nodes) {
+					if(node.Kind != NodeKind.WARP_IN) {
+						node.DrawConnectionOutputPointMark(currentEventSource, modifyMode == ModifyMode.CONNECTING, Event.current);
+					}
 				}
 
 				// draw connecting line if modifing connection.
@@ -670,12 +641,13 @@ namespace AssetBundleGraph {
 						break;
 					}
 				}
-
+	
 				// handle Graph GUI events
 				HandleGraphGUIEvents();
+			
 
 				// set rect for scroll.
-				if (nodes.Any()) {
+				if (graphGUI.Nodes.Any()) {
 					GUILayoutUtility.GetRect(new GUIContent(string.Empty), GUIStyle.none, GUILayout.Width(spacerRectRightBottom.x), GUILayout.Height(spacerRectRightBottom.y));
 				}
 			}
@@ -780,7 +752,7 @@ namespace AssetBundleGraph {
 							var selectedRect = new Rect(x, y, width, height);
 
 
-							foreach (var node in nodes) {
+							foreach (var node in graphGUI.Nodes) {
 								var nodeRect = new Rect(node.GetRect());
 								nodeRect.x = nodeRect.x * NodeGUI.scaleFactor;
 								nodeRect.y = nodeRect.y * NodeGUI.scaleFactor;
@@ -792,7 +764,7 @@ namespace AssetBundleGraph {
 								}
 							}
 
-							foreach (var connection in connections) {
+							foreach (var connection in graphGUI.Connections) {
 								// get contained connection badge.
 								if (connection.GetRect().Overlaps(selectedRect)) {
 									activeObjectIds.Add(connection.Id);
@@ -936,12 +908,12 @@ namespace AssetBundleGraph {
 
 						foreach (var activeObjectId in activeObject.idPosDict.ReadonlyDict().Keys) {
 							// unselect all.
-							foreach (var node in nodes) {
+							foreach (var node in graphGUI.Nodes) {
 								if (activeObjectId == node.Id) {
 									node.SetInactive();
 								}
 							}
-							foreach (var connection in connections) {
+							foreach (var connection in graphGUI.Connections) {
 								if (activeObjectId == connection.Id) {
 									connection.SetInactive();
 								}
@@ -952,10 +924,7 @@ namespace AssetBundleGraph {
 
 					}
 
-					// clear inspector
-					if( Selection.activeObject is NodeGUIInspectorHelper || Selection.activeObject is ConnectionGUIInspectorHelper) {
-						Selection.activeObject = null;
-					}
+					UpdateActivationOfObjects(activeObject);
 
 					break;
 				}
@@ -1104,7 +1073,7 @@ namespace AssetBundleGraph {
 								break;
 							}
 
-							var nodeNames = nodes.Select(node => node.Name).ToList();
+							var nodeNames = graphGUI.Nodes.Select(node => node.Name).ToList();
 							var duplicatingData = new List<NodeGUI>();
 
 							if (copyField.datas.Any()) {
@@ -1156,14 +1125,14 @@ namespace AssetBundleGraph {
 						case "SelectAll": {
 							Undo.RecordObject(this, "Select All Objects");
 
-							var nodeIds = nodes.Select(node => node.Id).ToList();
+							var nodeIds = graphGUI.Nodes.Select(node => node.Id).ToList();
 							activeObject = RenewActiveObject(nodeIds);
 
 							// select all.
-							foreach (var node in nodes) {
+							foreach (var node in graphGUI.Nodes) {
 								node.SetActive();
 							}
-							foreach (var connection in connections) {
+							foreach (var connection in graphGUI.Connections) {
 								connection.SetActive();
 							}
 
@@ -1193,7 +1162,7 @@ namespace AssetBundleGraph {
 		}
 
 		private List<string> JsonRepresentations (List<string> nodeIds) {
-			return nodes.Where(nodeGui => nodeIds.Contains(nodeGui.Id)).Select(nodeGui => nodeGui.Data.ToJsonString()).ToList();
+			return graphGUI.Nodes.Where(nodeGui => nodeIds.Contains(nodeGui.Id)).Select(nodeGui => nodeGui.Data.ToJsonString()).ToList();
 		}
 
 		private Type GetDragAndDropAcceptableScriptType (Type type) {
@@ -1238,12 +1207,23 @@ namespace AssetBundleGraph {
 
 		private void AddNodeFromGUI (NodeKind kind, float x, float y) {
 
-			string nodeName = AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + nodes.Where(node => node.Kind == kind).ToList().Count;
-			NodeGUI newNode = new NodeGUI(new NodeData(nodeName, kind, x, y));
-
 			Undo.RecordObject(this, "Add " + AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + " Node");
 
+			var number = graphGUI.Nodes.Where(node => node.Kind == kind).ToList().Count;
+			string nodeName = AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + number;
+
+			NodeGUI newNode = new NodeGUI(new NodeData(nodeName, kind, x, y));
+			
 			AddNodeGUI(newNode);
+
+			if(kind == NodeKind.WARP_IN) {
+				string outNodeName = AssetBundleGraphSettings.DEFAULT_NODE_NAME[NodeKind.WARP_OUT] + number;
+				NodeGUI outNode = new NodeGUI(new NodeData(outNodeName, NodeKind.WARP_OUT, x+100, y));
+				newNode.Data.RelatedNodeId = outNode.Id;
+				outNode.Data.RelatedNodeId = newNode.Id;
+				AddNodeGUI(outNode);
+				AddConnection("warpConnection", newNode, newNode.Data.OutputPoints[0], outNode, outNode.Data.InputPoints[0]);
+			}
 		}
 
 		private void DrawStraightLineFromCurrentEventSourcePointTo (Vector2 to, NodeEvent eventSource) {
@@ -1392,7 +1372,7 @@ namespace AssetBundleGraph {
 								// already active, do nothing for this node.
 								var distancePos = tappedNode.GetPos() - activeObject.idPosDict.ReadonlyDict()[tappedNodeId];
 
-								foreach (var node in nodes) {
+								foreach (var node in graphGUI.Nodes) {
 									if (node.Id == tappedNodeId) continue;
 									if (!activeObject.idPosDict.ContainsKey(node.Id)) continue;
 									var relativePos = activeObject.idPosDict.ReadonlyDict()[node.Id] + distancePos;
@@ -1450,7 +1430,13 @@ namespace AssetBundleGraph {
 						case NodeEvent.EventType.EVENT_NODE_TOUCHED: {
 							var movedNode = e.eventSourceNode;
 							var movedNodeId = movedNode.Id;
-
+									
+							if(EditorApplication.timeSinceStartup - lastClickedTime < doubleClickTime) {
+								movedNode.DoubleClickAction();
+								break;
+							}
+							lastClickedTime = EditorApplication.timeSinceStartup;
+							
 							// already active, node(s) are just tapped or moved.
 							if (activeObject.idPosDict.ContainsKey(movedNodeId)) {
 
@@ -1458,7 +1444,7 @@ namespace AssetBundleGraph {
 									active nodes(contains tap released node) are possibly moved.
 								*/
 								var movedIdPosDict = new Dictionary<string, Vector2>();
-								foreach (var node in nodes) {
+								foreach (var node in graphGUI.Nodes) {
 									if (!activeObject.idPosDict.ContainsKey(node.Id)) continue;
 
 									var startPos = activeObject.idPosDict.ReadonlyDict()[node.Id];
@@ -1470,7 +1456,7 @@ namespace AssetBundleGraph {
 
 								if (movedIdPosDict.Any()) {
 									
-									foreach (var node in nodes) {
+									foreach (var node in graphGUI.Nodes) {
 										if (activeObject.idPosDict.ReadonlyDict().Keys.Contains(node.Id)) {
 											var startPos = activeObject.idPosDict.ReadonlyDict()[node.Id];
 											node.SetPos(startPos);
@@ -1479,7 +1465,7 @@ namespace AssetBundleGraph {
 
 									Undo.RecordObject(this, "Move " + movedNode.Name);
 
-									foreach (var node in nodes) {
+									foreach (var node in graphGUI.Nodes) {
 										if (movedIdPosDict.Keys.Contains(node.Id)) {
 											var endPos = movedIdPosDict[node.Id];
 											node.SetPos(endPos);
@@ -1493,7 +1479,7 @@ namespace AssetBundleGraph {
 									if(activeObject.idPosDict.ReadonlyDict().Count > 1) {
 										// if there is a multiple selection, select only this node
 										activeIds.RemoveAll(x => x != movedNodeId);
-									}else {
+									} else {
 										// if this is the only node in the selection, deselect it
 										activeIds.Clear();
 									}
@@ -1551,13 +1537,13 @@ namespace AssetBundleGraph {
 			switch (e.eventType) {
 				case NodeEvent.EventType.EVENT_CONNECTIONPOINT_DELETED: {
 					// deleting point is handled by caller, so we are deleting connections associated with it.
-					connections.RemoveAll( c => (c.InputPoint == e.point || c.OutputPoint == e.point) );
+					graphGUI.Connections.RemoveAll( c => (c.InputPoint == e.point || c.OutputPoint == e.point) );
 					Repaint();
 					break;
 				}
 				case NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED: {
 					// point label change is handled by caller, so we are changing label of connection associated with it.
-					var affectingConnections = connections.FindAll( c=> c.OutputPoint == e.point );
+					var affectingConnections = graphGUI.Connections.FindAll( c=> c.OutputPoint == e.point );
 					affectingConnections.ForEach(c => c.Label = e.point.Label);
 					Repaint();
 					break;
@@ -1579,10 +1565,10 @@ namespace AssetBundleGraph {
 			it's convenience.
 		*/
 		private void UpdateSpacerRect () {
-			var rightPoint = nodes.OrderByDescending(node => node.GetRightPos()).Select(node => node.GetRightPos()).ToList()[0] + AssetBundleGraphSettings.WINDOW_SPAN;
+			var rightPoint = graphGUI.Nodes.OrderByDescending(node => node.GetRightPos()).Select(node => node.GetRightPos()).ToList()[0] + AssetBundleGraphSettings.WINDOW_SPAN;
 			if (rightPoint < spacerRectRightBottom.x) rightPoint = spacerRectRightBottom.x;
 
-			var bottomPoint = nodes.OrderByDescending(node => node.GetBottomPos()).Select(node => node.GetBottomPos()).ToList()[0] + AssetBundleGraphSettings.WINDOW_SPAN;
+			var bottomPoint = graphGUI.Nodes.OrderByDescending(node => node.GetBottomPos()).Select(node => node.GetBottomPos()).ToList()[0] + AssetBundleGraphSettings.WINDOW_SPAN;
 			if (bottomPoint < spacerRectRightBottom.y) bottomPoint = spacerRectRightBottom.y;
 
 			spacerRectRightBottom = new Vector2(rightPoint, bottomPoint);
@@ -1600,22 +1586,22 @@ namespace AssetBundleGraph {
 
 			int id = -1;
 
-			foreach(var node in nodes) {
+			foreach(var node in graphGUI.Nodes) {
 				if(node.WindowId > id) {
 					id = node.WindowId;
 				}
 			}
 
 			newNode.WindowId = id + 1;
-				
-			nodes.Add(newNode);
+
+			graphGUI.Nodes.Add(newNode);
 		}
 
 		public void DeleteNode (string deletingNodeId) {
-			var deletedNodeIndex = nodes.FindIndex(node => node.Id == deletingNodeId);
+			var deletedNodeIndex = graphGUI.Nodes.FindIndex(node => node.Id == deletingNodeId);
 			if (0 <= deletedNodeIndex) {
-				nodes[deletedNodeIndex].SetInactive();
-				nodes.RemoveAt(deletedNodeIndex);
+				graphGUI.Nodes[deletedNodeIndex].SetInactive();
+				graphGUI.Nodes.RemoveAt(deletedNodeIndex);
 			}
 		}
 
@@ -1657,7 +1643,7 @@ namespace AssetBundleGraph {
 							Undo.RecordObject(this, "Select Connection");
 
 							var tappedConnectionId = e.eventSourceCon.Id;
-							foreach (var con in connections) {
+							foreach (var con in graphGUI.Connections) {
 								if (con.Id == tappedConnectionId) {
 									con.SetActive();
 									Selection.activeObject = con.ConnectionInspectorHelper;
@@ -1668,7 +1654,7 @@ namespace AssetBundleGraph {
 							}
 
 							// set deactive for all nodes.
-							foreach (var node in nodes) {
+							foreach (var node in graphGUI.Nodes) {
 								node.SetInactive();
 							}
 							break;
@@ -1693,8 +1679,45 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		public static void SelectAllRelatedTree(string nodeId) {
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			window.Init();
+
+			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
+			var subGraph = window.graphGUI.GetSubGraph(node);
+			//SaveData.Graph subGraph = saveData.GetSubGraph(node);
+
+			Vector2 upperLeft = new Vector2(node.Data.X, node.Data.Y);
+
+			List<string> ids = new List<string>();
+			foreach(NodeGUI nodeGUI in subGraph.Nodes) {
+				upperLeft.x = Mathf.Min(upperLeft.x, nodeGUI.Data.X);
+				upperLeft.y = Mathf.Min(upperLeft.y, nodeGUI.Data.Y);
+
+				ids.Add(nodeGUI.Id);
+			}
+			ids.AddRange(subGraph.Connections.ConvertAll(x => x.Id));
+
+			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));
+			window.scrollPos = upperLeft *0.7f;
+		}
+
+		public static void SelectNodeById(string nodeId) {
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			var ids = new List<string>();
+			ids.Add(nodeId);
+			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));
+			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
+			window.scrollPos = new Vector2(node.Data.X, node.Data.Y) * 0.7f;
+		}
+
+		public static void ChangeNodeName(string nodeId, string newName) {
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			window.graphGUI.Nodes.Find(x => x.Id == nodeId).Name = newName;
+		}
+
 		private void UpdateActivationOfObjects (ActiveObject currentActiveObject) {
-			foreach (var node in nodes) {
+			foreach (var node in graphGUI.Nodes) {
 				if (currentActiveObject.idPosDict.ContainsKey(node.Id)) {
 					node.SetActive();
 					continue;
@@ -1703,7 +1726,7 @@ namespace AssetBundleGraph {
 				node.SetInactive();
 			}
 
-			foreach (var connection in connections) {
+			foreach (var connection in graphGUI.Connections) {
 				if (currentActiveObject.idPosDict.ContainsKey(connection.Id)) {
 					connection.SetActive();
 					continue;
@@ -1718,8 +1741,8 @@ namespace AssetBundleGraph {
 		private void UpdateUnitySelection() {
 			List<UnityEngine.Object> activeObjs = new List<UnityEngine.Object>();
 
-			activeObjs.AddRange(nodes.FindAll(x => x.NodeInspectorHelper.isActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
-			activeObjs.AddRange(connections.FindAll(x => x.ConnectionInspectorHelper.isActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
+			activeObjs.AddRange(graphGUI.Nodes.FindAll(x => x.NodeInspectorHelper.isActive).ConvertAll(x => x.NodeInspectorHelper).ToArray());
+			activeObjs.AddRange(graphGUI.Connections.FindAll(x => x.ConnectionInspectorHelper.isActive).ConvertAll(x => x.ConnectionInspectorHelper).ToArray());
 
 			Selection.objects = activeObjs.ToArray();
 		}
@@ -1730,7 +1753,7 @@ namespace AssetBundleGraph {
 		private void AddConnection (string label, NodeGUI startNode, ConnectionPointData startPoint, NodeGUI endNode, ConnectionPointData endPoint) {
 			Undo.RecordObject(this, "Add Connection");
 
-			var connectionsFromThisNode = connections
+			var connectionsFromThisNode = graphGUI.Connections
 				.Where(con => con.OutputNodeId == startNode.Id)
 				.Where(con => con.OutputPoint == startPoint)
 				.ToList();
@@ -1739,13 +1762,13 @@ namespace AssetBundleGraph {
 				DeleteConnectionById(alreadyExistConnection.Id);
 			}
 
-			if (!connections.ContainsConnection(startPoint, endPoint)) {
-				connections.Add(ConnectionGUI.CreateConnection(label, startPoint, endPoint));
+			if (!graphGUI.Connections.ContainsConnection(startPoint, endPoint)) {
+				graphGUI.Connections.Add(ConnectionGUI.CreateConnection(label, startPoint, endPoint));
 			}
 		}
 
 		private NodeGUI FindNodeByPosition (Vector2 globalPos) {
-			return nodes.Find(n => n.Contains(globalPos));
+			return graphGUI.Nodes.Find(n => n.Contains(globalPos));
 		}
 
 		private bool IsConnectablePointFromTo (ConnectionPointData sourcePoint, ConnectionPointData destPoint) {
@@ -1757,16 +1780,16 @@ namespace AssetBundleGraph {
 		}
 
 		private void DeleteConnectionById (string id) {
-			var deletedConnectionIndex = connections.FindIndex(con => con.Id == id);
+			var deletedConnectionIndex = graphGUI.Connections.FindIndex(con => con.Id == id);
 			if (0 <= deletedConnectionIndex) {
-				connections[deletedConnectionIndex].SetInactive();
-				connections.RemoveAt(deletedConnectionIndex);
+				graphGUI.Connections[deletedConnectionIndex].SetInactive();
+				graphGUI.Connections.RemoveAt(deletedConnectionIndex);
 			}
 		}
 
 		public int GetUnusedWindowId() {
 			int highest = 0;
-			nodes.ForEach((NodeGUI n) => { if(n.WindowId > highest) highest = n.WindowId; });
+			graphGUI.Nodes.ForEach((NodeGUI n) => { if(n.WindowId > highest) highest = n.WindowId; });
 			return highest + 1;
 		}
 	}

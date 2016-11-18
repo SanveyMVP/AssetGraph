@@ -138,6 +138,14 @@ namespace AssetBundleGraph {
 					return false;
 				}
 
+			case NodeKind.WARP_IN: {
+					switch(to.Kind) {
+					case NodeKind.WARP_OUT:
+						return true;
+					}
+					return false;
+				}					
+
 			case NodeKind.BUNDLEBUILDER_GUI: 
 				{
 					switch (to.Kind) {

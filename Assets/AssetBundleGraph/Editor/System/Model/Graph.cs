@@ -1,0 +1,110 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+
+namespace AssetBundleGraph {
+	[System.Serializable]
+	public class Graph {
+		[SerializeField] private List<NodeData> nodes;
+		[SerializeField] private List<ConnectionData> connections;
+
+		public List<NodeData> Nodes {
+			get {
+				return nodes;
+			}
+		}
+
+		public List<ConnectionData> Connections {
+			get {
+				return connections;
+			}
+		}
+
+		public Graph() {
+			nodes = new List<NodeData>();
+			connections = new List<ConnectionData>();
+		}
+
+		public Graph(List<NodeGUI> nodes, List<ConnectionGUI> connections) {
+			this.nodes = nodes.Select(n => n.Data).ToList();
+			this.connections = new List<ConnectionData>();
+
+			foreach(var cgui in connections) {
+				this.connections.Add(new ConnectionData(cgui));
+			}
+		}
+
+		public List<NodeData> CollectAllLeafNodes() {
+
+			var nodesWithChild = new List<NodeData>();
+			foreach(var c in Connections) {
+				NodeData n = Nodes.Find(v => v.Id == c.FromNodeId);
+				if(n != null) {
+					nodesWithChild.Add(n);
+				}
+			}
+			return Nodes.Except(nodesWithChild).ToList();
+		}
+
+		public List<NodeData> CollectAllNodes(Predicate<NodeData> condition) {
+			return Nodes.FindAll(condition);
+		}
+
+		/// <summary>
+		/// Finds the best suitable loader for the provided asset path
+		/// </summary>
+		/// <param name="path">Path of the asset</param>
+		/// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
+		public NodeData GetBestLoaderData(string assetPath) {
+			NodeData res = null;
+			var nodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
+
+			foreach(NodeData node in nodes) {
+				if(assetPath.Contains(node.LoaderLoadPath.CurrentPlatformValue)) {
+					if(res == null || res.LoaderLoadPath.CurrentPlatformValue.Length < node.LoaderLoadPath.CurrentPlatformValue.Length) {
+						res = node;
+					}
+				}
+			}
+
+			return res;
+		}
+
+		public Graph GetSubGraph(NodeData node) {
+			var newgraph = new Graph();
+			newgraph.Nodes.Add(node);
+			List<NodeData> nodesToAdd = new List<NodeData>();
+			List<ConnectionData> connectionsToAdd = new List<ConnectionData>();
+
+			GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd);
+			GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd);
+
+			newgraph.Nodes.AddRange(nodesToAdd);
+			newgraph.Connections.AddRange(connectionsToAdd);
+
+			return newgraph;
+		}
+
+		private void GetParentRelatives(NodeData node, ref List<NodeData> graphRelatedNodes, ref List<ConnectionData> graphRelatedCon) {
+			var backConnections = connections.FindAll(x => x.ToNodeId == node.Id);
+			foreach(ConnectionData c in backConnections) {
+				graphRelatedCon.Add(c);
+				var fromNode = nodes.Find(x => x.Id == c.FromNodeId);
+				graphRelatedNodes.Add(fromNode);
+				GetParentRelatives(fromNode, ref graphRelatedNodes, ref graphRelatedCon);
+			}
+		}
+
+		private void GetChildRelatives(NodeData node, ref List<NodeData> graphRelatedNodes, ref List<ConnectionData> graphRelatedCon) {
+			var forwardConnections = connections.FindAll(x => x.FromNodeId == node.Id);
+			foreach(ConnectionData c in forwardConnections) {
+				graphRelatedCon.Add(c);
+				var toNode = nodes.Find(x => x.Id == c.ToNodeId);
+				graphRelatedNodes.Add(toNode);
+				GetChildRelatives(toNode, ref graphRelatedNodes, ref graphRelatedCon);
+			}
+		}
+	}
+}

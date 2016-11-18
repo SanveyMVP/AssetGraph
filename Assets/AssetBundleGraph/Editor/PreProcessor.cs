@@ -7,37 +7,37 @@ using System;
 using System.IO;
 
 public class PreProcessor : AssetPostprocessor {
-    private LoaderSaveData loaderSaveData = null;
+	private LoaderSaveData loaderSaveData = null;
 
-    public LoaderSaveData LoaderSaveData {
-        get {
-            if(loaderSaveData == null) {
-                loaderSaveData = AssetBundleGraph.LoaderSaveData.LoadFromDisk();
-            }
-            return loaderSaveData;
-        }
-    }
+	public LoaderSaveData LoaderData {
+		get {
+			if(loaderSaveData == null) {
+				loaderSaveData = AssetBundleGraph.LoaderSaveData.LoadFromDisk();
+			}
+			return loaderSaveData;
+		}
+	}
 
-    private SaveData fullSaveData = null;
+	private SaveData fullSaveData = null;
 
-    public SaveData FullSaveData {
-        get {
-            if(fullSaveData == null) {
-                fullSaveData = SaveData.LoadFromDisk();
-            }
-            return fullSaveData;
-        }
-    }
+	public SaveData FullSaveData {
+		get {
+			if(fullSaveData == null) {
+				fullSaveData = SaveData.LoadFromDisk();
+			}
+			return fullSaveData;
+		}
+	}
 
 	void GenericPreProcessing() {
 		var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
 
 		if(asset == null) { // This means it is the first time importing this asset.
-			var loader = LoaderSaveData.GetBestLoaderData(assetPath);
+			var loader = LoaderData.GetBestLoaderData(assetPath);
 			if(loader != null && loader.isPreProcess) {
 				try {
 					var currentCount = 0.00f;
-					var totalCount = FullSaveData.Nodes.Count * 1f;
+					var totalCount = FullSaveData.Graph.Nodes.Count * 1f;
 					Action<NodeData, float> updateHandler = (node, progress) => {
 						var progressPercentage = ((currentCount / totalCount) * 100).ToString();
 						if(progressPercentage.Contains(".")) progressPercentage = progressPercentage.Split('.')[0];
@@ -55,16 +55,15 @@ public class PreProcessor : AssetPostprocessor {
 
 					var target = EditorUserBuildSettings.activeBuildTarget;
 
+					var loaderNodeData = FullSaveData.Graph.Nodes.Find(x => x.Id == loader.id);
+					var graph = FullSaveData.Graph.GetSubGraph(loaderNodeData);
 
 					// perform setup. Fails if any exception raises.
-					AssetBundleGraphController.Perform(FullSaveData, target, false, errorHandler, null);
+					AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
 
 					// if there is not error reported, then run
 					if(errors.Count == 0) {
 						var fakeLoaders = new Dictionary<string, List<string>>();
-						foreach(var node in FullSaveData.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && x.Id != loader.id)) {
-							fakeLoaders.Add(node.Id, new List<string>());
-						}
 						var assetPathList = new List<string>();
 						var absPath = Path.GetFullPath(assetPath);
 
@@ -73,9 +72,9 @@ public class PreProcessor : AssetPostprocessor {
 						}
 						assetPathList.Add(absPath);
 
-						fakeLoaders.Add(loader.id, assetPathList);
+						fakeLoaders.Add(loaderNodeData.Id, assetPathList);
 						// run datas.                
-						AssetBundleGraphController.Perform(FullSaveData, target, true, errorHandler, updateHandler, fakeLoaders, assetImporter);
+						AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler, fakeLoaders, assetImporter);
 					}
 
 					if(errors.Count > 0) {

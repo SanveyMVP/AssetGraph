@@ -110,6 +110,10 @@ namespace AssetBundleGraph {
 				return;
 			}
 
+			if(startNode.Kind == NodeKind.WARP_IN) {
+				return;
+			}
+
 			var endNode = nodes.Find(node => node.Id == InputNodeId);
 			if (endNode == null) {
 				return;
@@ -137,13 +141,11 @@ namespace AssetBundleGraph {
 				totalGroups = assetGroups.Keys.Count;
 			}
 
-			if(conInsp != null && Selection.activeObject == conInsp && conInsp.connectionGUI == this) {
-				Handles.DrawBezier(startV3, endV3, startTan, endTan, new Color(0.43f, 0.65f, 0.90f, 1.0f), null, 2f);
+			if(conInsp != null && conInsp.isActive && (conInsp.connectionGUI == this || conInsp.connectionGUI == null)) {
+				Handles.DrawBezier(startV3, endV3, startTan, endTan, new Color(0.43f, 0.65f, 0.90f, 1.0f), null, 5f);
 			} else {
 				Handles.DrawBezier(startV3, endV3, startTan, endTan, ((totalAssets > 0) ? Color.white : Color.gray), null, 2f);
 			}
-
-
 
 			// draw connection label if connection's label is not normal.
 			if (NodeGUI.scaleFactor == NodeGUI.SCALE_MAX) {

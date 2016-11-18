@@ -87,14 +87,19 @@ namespace AssetBundleGraph {
 							removing = cond;
 						}
 						else {
+							var newName = cond.Name;
 							var newContainsKeyword = cond.FilterKeyword;
-							bool newIsExclusion;
+							bool newIsExclusion = cond.IsExclusion;
 
 							GUIStyle s = new GUIStyle((GUIStyle)"TextFieldDropDownText");
 
 							using (new EditorGUILayout.HorizontalScope()) {
-								newContainsKeyword = EditorGUILayout.TextField(cond.FilterKeyword, s, GUILayout.Width(120));
-								if (GUILayout.Button(cond.FilterKeytype , "Popup")) {
+								EditorGUILayout.LabelField("Name:", GUILayout.MaxWidth(40));
+								newName = EditorGUILayout.TextField(cond.Name, s, GUILayout.MaxWidth(200));
+
+								EditorGUILayout.LabelField("Filter:", GUILayout.MaxWidth(40));
+								newContainsKeyword = EditorGUILayout.TextField(cond.FilterKeyword, s, GUILayout.MaxWidth(200));
+								if (GUILayout.Button(cond.FilterKeytype , "Popup", GUILayout.MinWidth(220))) {
 									var ind = i;// need this because of closure locality bug in unity C#
 									NodeGUI.ShowFilterKeyTypeMenu(
 										cond.FilterKeytype,
@@ -107,6 +112,13 @@ namespace AssetBundleGraph {
 								}
 
 								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Excludes", GUILayout.MaxWidth(80));
+							}
+							if(newName != cond.Name) {
+								using(new RecordUndoScope("Modify Filter Name", node, true)) {
+									cond.Name = newName;
+									// event must raise to propagate change to connection associated with point
+									NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_LABELCHANGED, node, Vector2.zero, cond.ConnectionPoint));
+								}
 							}
 							if (newContainsKeyword != cond.FilterKeyword) {
 								using(new RecordUndoScope("Modify Filter Keyword", node, true)){
@@ -136,6 +148,7 @@ namespace AssetBundleGraph {
 				if (GUILayout.Button("+")) {
 					using(new RecordUndoScope("Add Filter Condition", node)){
 						node.Data.AddFilterCondition(
+							AssetBundleGraphSettings.DEFAULT_FILTER_NAME,
 							AssetBundleGraphSettings.DEFAULT_FILTER_KEYWORD,
 							AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,
 							AssetBundleGraphSettings.DEFAULT_FILTER_EXCLUSION
@@ -677,6 +690,26 @@ namespace AssetBundleGraph {
 		}
 
 
+
+		private void DoInspectorWarpInNode(NodeGUI node) {
+			EditorGUILayout.HelpBox("Warp-In: Sends the assets to its Warp-Out match.", MessageType.Info);
+			UpdateNodeName(node);
+
+			if(GUILayout.Button("Select Out")) {
+				AssetBundleGraphEditorWindow.SelectNodeById(node.Data.RelatedNodeId);
+			}
+		}
+
+		private void DoInspectorWarpOutNode(NodeGUI node) {
+			EditorGUILayout.HelpBox("Warp-Out: Receives the input from its Warp-In match.", MessageType.Info);
+			UpdateNodeName(node);
+
+			if(GUILayout.Button("Select In")) {
+				AssetBundleGraphEditorWindow.SelectNodeById(node.Data.RelatedNodeId);
+			}
+		}
+
+
 		public override void OnInspectorGUI () {
 			var currentTarget = (NodeGUIInspectorHelper)target;
 			var node = currentTarget.node;
@@ -710,7 +743,13 @@ namespace AssetBundleGraph {
 			case NodeKind.EXPORTER_GUI: 
 				DoInspectorExporterGUI(node);
 				break;
-			default: 
+			case NodeKind.WARP_IN:
+				DoInspectorWarpInNode(node);
+				break;
+			case NodeKind.WARP_OUT:
+				DoInspectorWarpOutNode(node);
+				break;
+				default: 
 				Debug.LogError(node.Name + " is defined as unknown kind of node. value:" + node.Kind);
 				break;
 			}

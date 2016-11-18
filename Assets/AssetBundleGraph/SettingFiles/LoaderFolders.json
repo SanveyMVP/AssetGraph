@@ -6,13 +6,6 @@
 				"Unknown":"Folder1/Folder2",
 				"Standalone":"Folder1/Folder2"
 			},
-			"preprocess":true
-		},
-		{
-			"id":"bf71b260-6282-4714-839d-0890d3c42676",
-			"path":{
-				"Unknown":"Folder1/Folder2/Folder3"
-			},
 			"preprocess":false
 		},
 		{
@@ -28,6 +21,13 @@
 				"Unknown":"Folder1"
 			},
 			"preprocess":false
+		},
+		{
+			"id":"e166e317-a30e-4143-9688-ef1105dd1a26",
+			"path":{
+				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
+			},
+			"preprocess":true
 		}
 	]
 }

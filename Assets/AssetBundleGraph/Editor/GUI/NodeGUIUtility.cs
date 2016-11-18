@@ -138,38 +138,75 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public static Dictionary<NodeKind, string> SelectedStyle {
+		public static Dictionary<NodeKind, GUIStyle> SelectedStyle {
 			get {
 				if(NodeSingleton.s.selectedStyle == null) {
-					NodeSingleton.s.selectedStyle = new Dictionary<NodeKind, string>() {
-						{NodeKind.LOADER_GUI, 			"flow node 0 on"},
-						{NodeKind.EXPORTER_GUI, 		"flow node 0 on"},
-						{NodeKind.FILTER_GUI, 			"flow node 1 on"},
-						{NodeKind.IMPORTSETTING_GUI,	"flow node 2 on"},
-						{NodeKind.GROUPING_GUI, 		"flow node 3 on"},
-						{NodeKind.PREFABBUILDER_GUI, 	"flow node 4 on"},
-						{NodeKind.BUNDLECONFIG_GUI, 		"flow node 5 on"},
-						{NodeKind.BUNDLEBUILDER_GUI, 	"flow node 6 on"},
-						{NodeKind.MODIFIER_GUI, 		"flow node 2 on"}
+					GUIStyle blackNode = new GUIStyle("flow node 0 on");
+					GUIStyle exporter = new GUIStyle("flow node 0 on");
+					GUIStyle blueNode = new GUIStyle("flow node 1 on");
+					GUIStyle aquaNode = new GUIStyle("flow node 2 on");
+					GUIStyle group = new GUIStyle("flow node 3 on");
+					GUIStyle prefab = new GUIStyle("flow node 4 on");
+					GUIStyle bundleConfig = new GUIStyle("flow node 5 on");
+					GUIStyle bundleBuilder = new GUIStyle("flow node 6 on");
+					RectOffset borders = new RectOffset(13, 13, 13, 13);
+					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_0_ON);
+					blackNode.border = borders;
+					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_1_ON);
+					blueNode.border = borders;
+					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_2_ON);
+					aquaNode.border = borders;
+
+
+					NodeSingleton.s.selectedStyle = new Dictionary<NodeKind, GUIStyle>() {
+						{NodeKind.LOADER_GUI,           blackNode},
+						{NodeKind.EXPORTER_GUI,         exporter},
+						{NodeKind.FILTER_GUI,           blueNode},
+						{NodeKind.IMPORTSETTING_GUI,    aquaNode},
+						{NodeKind.WARP_IN,              blackNode},
+						{NodeKind.WARP_OUT,             blackNode},
+						{NodeKind.GROUPING_GUI,         group},
+						{NodeKind.PREFABBUILDER_GUI,    prefab},
+						{NodeKind.BUNDLECONFIG_GUI,     bundleConfig},
+						{NodeKind.BUNDLEBUILDER_GUI,    bundleBuilder},
+						{NodeKind.MODIFIER_GUI,         aquaNode}
 					};
 				}
 				return NodeSingleton.s.selectedStyle;
 			}
 		}
 
-		public static Dictionary<NodeKind, string> UnselectedStyle {
+		public static Dictionary<NodeKind, GUIStyle> UnselectedStyle {
 			get {
 				if(NodeSingleton.s.unselectedStyle == null) {
-					NodeSingleton.s.unselectedStyle = new Dictionary<NodeKind, string>() {
-						{NodeKind.LOADER_GUI, 			"flow node 0"},
-						{NodeKind.EXPORTER_GUI, 		"flow node 0"},
-						{NodeKind.FILTER_GUI, 			"flow node 1"},
-						{NodeKind.IMPORTSETTING_GUI,	"flow node 2"},
-						{NodeKind.GROUPING_GUI, 		"flow node 3"},
-						{NodeKind.PREFABBUILDER_GUI, 	"flow node 4"},
-						{NodeKind.BUNDLECONFIG_GUI, 	"flow node 5"},
-						{NodeKind.BUNDLEBUILDER_GUI, 	"flow node 6"},
-						{NodeKind.MODIFIER_GUI, 		"flow node 2"}
+
+					GUIStyle blackNode = new GUIStyle("flow node 0");
+					GUIStyle blueNode = new GUIStyle("flow node 1");
+					GUIStyle aquaNode = new GUIStyle("flow node 2");
+					GUIStyle group = new GUIStyle("flow node 3");
+					GUIStyle prefab = new GUIStyle("flow node 4");
+					GUIStyle bundleConfig = new GUIStyle("flow node 5");
+					GUIStyle bundleBuilder = new GUIStyle("flow node 6");
+					RectOffset borders = new RectOffset(13, 13, 13, 13);
+					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_0);
+					blackNode.border = borders;
+					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_1);
+					blueNode.border = borders;
+					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_2);
+					aquaNode.border = borders;
+
+					NodeSingleton.s.unselectedStyle = new Dictionary<NodeKind, GUIStyle>() {
+						{NodeKind.LOADER_GUI,           blackNode},
+						{NodeKind.EXPORTER_GUI,         blackNode},
+						{NodeKind.FILTER_GUI,           blueNode},
+						{NodeKind.IMPORTSETTING_GUI,    aquaNode},
+						{NodeKind.WARP_IN,              blackNode},
+						{NodeKind.WARP_OUT,             blackNode},
+						{NodeKind.GROUPING_GUI,         group},
+						{NodeKind.PREFABBUILDER_GUI,    prefab},
+						{NodeKind.BUNDLECONFIG_GUI,     bundleConfig},
+						{NodeKind.BUNDLEBUILDER_GUI,    bundleBuilder},
+						{NodeKind.MODIFIER_GUI,         aquaNode}
 					};
 				}
 				return NodeSingleton.s.unselectedStyle;
@@ -195,8 +232,8 @@ namespace AssetBundleGraph {
 
 			public List<string> allNodeNames;
 
-			public Dictionary<NodeKind, string> selectedStyle;
-			public Dictionary<NodeKind, string> unselectedStyle;
+			public Dictionary<NodeKind, GUIStyle> selectedStyle;
+			public Dictionary<NodeKind, GUIStyle> unselectedStyle;
 
 			private static NodeSingleton s_singleton;
 

@@ -86,6 +86,7 @@ namespace AssetBundleGraph {
 		public const string MENU_BUNDLECONFIG_NAME = "BundleConfig";
 		public const string MENU_BUNDLEBUILDER_NAME = "BundleBuilder";
 		public const string MENU_EXPORTER_NAME = "Exporter";
+		public const string MENU_WARP_NAME = "Warp";
 
 		public static Dictionary<string, NodeKind> GUI_Menu_Item_TargetGUINodeDict = new Dictionary<string, NodeKind>{
 			{"Create " + MENU_LOADER_NAME + " Node", NodeKind.LOADER_GUI},
@@ -96,7 +97,8 @@ namespace AssetBundleGraph {
 			{"Create " + MENU_PREFABBUILDER_NAME + " Node", NodeKind.PREFABBUILDER_GUI},
 			{"Create " + MENU_BUNDLECONFIG_NAME + " Node", NodeKind.BUNDLECONFIG_GUI},
 			{"Create " + MENU_BUNDLEBUILDER_NAME + " Node", NodeKind.BUNDLEBUILDER_GUI},
-			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI}
+			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI},
+			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN }
 		};
 
 		public static Dictionary<NodeKind, string> DEFAULT_NODE_NAME = new Dictionary<NodeKind, string>{
@@ -108,7 +110,9 @@ namespace AssetBundleGraph {
 			{NodeKind.PREFABBUILDER_GUI, "PrefabBuilder"},
 			{NodeKind.BUNDLECONFIG_GUI, "BundleConfig"},
 			{NodeKind.BUNDLEBUILDER_GUI, "BundleBuilder"},
-			{NodeKind.EXPORTER_GUI, "Exporter"}
+			{NodeKind.EXPORTER_GUI, "Exporter"},
+			{NodeKind.WARP_IN, "In"},
+			{NodeKind.WARP_OUT, "Out"}
 		};
 
 		/*
@@ -125,6 +129,7 @@ namespace AssetBundleGraph {
 		public const string BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL = "bundles";
 		public const string BUNDLECONFIG_VARIANTNAME_DEFAULT = "";
 
+		public const string DEFAULT_FILTER_NAME = "";
 		public const string DEFAULT_FILTER_KEYWORD = "";
 		public const string DEFAULT_FILTER_KEYTYPE = "Any";
 		public const bool DEFAULT_FILTER_EXCLUSION = false;
@@ -139,9 +144,12 @@ namespace AssetBundleGraph {
 
 		public class GUI {
 			public const string RESOURCE_BASEPATH = "Assets/AssetBundleGraph/Editor/GUI/GraphicResources/";
+			public const string RESOURCE_NODEPATH = RESOURCE_BASEPATH+"Nodes/";
 
 			public const float NODE_BASE_WIDTH = 120f;
 			public const float NODE_BASE_HEIGHT = 40f;
+
+			public const float NODE_WARP_WIDTH = 40f;
 
 			public const float CONNECTION_ARROW_WIDTH = 12f;
 			public const float CONNECTION_ARROW_HEIGHT = 15f;
@@ -169,8 +177,16 @@ namespace AssetBundleGraph {
 
 			public const string RESOURCE_INPUT_BG				= RESOURCE_BASEPATH + "AssetGraph_InputBG.png";
 			public const string RESOURCE_OUTPUT_BG				= RESOURCE_BASEPATH + "AssetGraph_OutputBG.png";
-
+			
 			public const string RESOURCE_SELECTION				= RESOURCE_BASEPATH + "AssetGraph_Selection.png";
+
+
+			public const string RESOURCE_NODE_0 = RESOURCE_NODEPATH + "Loader.png";
+			public const string RESOURCE_NODE_0_ON = RESOURCE_NODEPATH + "Loader_on.png";
+			public const string RESOURCE_NODE_1 = RESOURCE_NODEPATH + "Filter.png";
+			public const string RESOURCE_NODE_1_ON = RESOURCE_NODEPATH + "Filter_on.png";
+			public const string RESOURCE_NODE_2 = RESOURCE_NODEPATH + "Importer.png";
+			public const string RESOURCE_NODE_2_ON = RESOURCE_NODEPATH + "Importer_on.png";
 		}
 	}
 }

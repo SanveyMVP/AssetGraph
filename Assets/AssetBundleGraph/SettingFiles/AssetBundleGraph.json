@@ -1,5 +1,5 @@
 {
-	"lastModified":"11/14/2016 13:54:15",
+	"lastModified":"11/18/2016 11:57:39 AM",
 	"nodes":[
 		{
 			"name":"Folder1/Folder2/",
@@ -11,18 +11,19 @@
 			"outputPoints":[
 				{
 					"id":"56cacacf-1320-4d89-866c-f73747842bc4",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":116,
-				"y":155
+				"x":100,
+				"y":65
 			},
 			"loadPath":{
 				"Unknown":"Folder1/Folder2",
 				"Standalone":"Folder1/Folder2"
 			},
-			"preProcess":true
+			"preProcess":false
 		},
 		{
 			"name":"Cookie",
@@ -31,60 +32,20 @@
 			"inputPoints":[
 				{
 					"id":"bb5f3903-b53a-45e7-ac11-af5957708b39",
-					"label":"-"
+					"label":"-",
+					"hidden":false
 				}
 			],
 			"outputPoints":[
 				{
 					"id":"d723aaed-2ace-402b-bf25-daca02078a6e",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":382,
-				"y":57
-			}
-		},
-		{
-			"name":"TEX_256",
-			"id":"0445ff51-3b5e-4cfd-b81b-1b4aa05abb3b",
-			"kind":"IMPORTSETTING_GUI",
-			"inputPoints":[
-				{
-					"id":"e7a0e32e-2cd5-4c3b-b593-91c35696cf85",
-					"label":"-"
-				}
-			],
-			"outputPoints":[
-				{
-					"id":"a66f91ff-ab0e-4ab6-91cd-215ba99c2de4",
-					"label":"+"
-				}
-			],
-			"pos":{
-				"x":586,
-				"y":206
-			}
-		},
-		{
-			"name":"Cubemap",
-			"id":"f02dc846-bf5d-4f3e-b168-679828b948c1",
-			"kind":"IMPORTSETTING_GUI",
-			"inputPoints":[
-				{
-					"id":"3ec60e0e-0232-46e7-838f-ec5990a11635",
-					"label":"-"
-				}
-			],
-			"outputPoints":[
-				{
-					"id":"400568ae-f081-4773-b315-b0ebe56e3619",
-					"label":"+"
-				}
-			],
-			"pos":{
-				"x":532,
-				"y":279
+				"x":932,
+				"y":150
 			}
 		},
 		{
@@ -94,34 +55,39 @@
 			"inputPoints":[
 				{
 					"id":"ede8aafc-ed86-4196-84bd-394b0b738a18",
-					"label":"-"
+					"label":"-",
+					"hidden":false
 				}
 			],
 			"outputPoints":[
 				{
 					"id":"c9ceaa38-a329-4fbd-8cce-30aaacf5e5c4",
-					"label":"NM"
+					"label":"Normals",
+					"hidden":false
 				},
 				{
 					"id":"93f9ecdf-4565-46b2-83e3-90e01884a9fe",
-					"label":"NM"
+					"label":"Non-Normals",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":344,
-				"y":156
+				"x":646,
+				"y":58
 			},
 			"filter":[
 				{
-					"keyword":"NM",
-					"keytype":"UnityEditor.TextureImporter",
-					"excludes":false,
-					"pointId":"c9ceaa38-a329-4fbd-8cce-30aaacf5e5c4"
-				},
-				{
+					"name":"Normals",
 					"keyword":"NM",
 					"keytype":"UnityEditor.TextureImporter",
 					"excludes":true,
+					"pointId":"c9ceaa38-a329-4fbd-8cce-30aaacf5e5c4"
+				},
+				{
+					"name":"Non-Normals",
+					"keyword":"NM",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
 					"pointId":"93f9ecdf-4565-46b2-83e3-90e01884a9fe"
 				}
 			]
@@ -133,41 +99,21 @@
 			"inputPoints":[
 				{
 					"id":"64407b6b-e970-45db-9fd5-731e2baaf37a",
-					"label":"-"
+					"label":"-",
+					"hidden":false
 				}
 			],
 			"outputPoints":[
 				{
 					"id":"2e5417de-42aa-4b06-a350-dc4b35aee05c",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":579,
-				"y":132
+				"x":1026,
+				"y":16
 			}
-		},
-		{
-			"name":"Folder1/Folder2/Folder3/",
-			"id":"bf71b260-6282-4714-839d-0890d3c42676",
-			"kind":"LOADER_GUI",
-			"inputPoints":[
-				
-			],
-			"outputPoints":[
-				{
-					"id":"359ade9c-48bb-46f4-b267-0be9afedf252",
-					"label":"+"
-				}
-			],
-			"pos":{
-				"x":155,
-				"y":279
-			},
-			"loadPath":{
-				"Unknown":"Folder1/Folder2/Folder3"
-			},
-			"preProcess":false
 		},
 		{
 			"name":"/",
@@ -179,46 +125,18 @@
 			"outputPoints":[
 				{
 					"id":"888f7012-7e3f-4f23-9080-5f229291d52e",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":152,
-				"y":375
+				"x":1893,
+				"y":1082
 			},
 			"loadPath":{
 				"Unknown":""
 			},
 			"preProcess":true
-		},
-		{
-			"name":"Models",
-			"id":"7cb46f9d-a5c7-45b2-9241-2bbda0195273",
-			"kind":"FILTER_GUI",
-			"inputPoints":[
-				{
-					"id":"ee5f9836-1cce-4bec-b4bd-d182087071cb",
-					"label":"-"
-				}
-			],
-			"outputPoints":[
-				{
-					"id":"67c9ff0f-d8b9-4324-831f-018ea740c0f4",
-					"label":""
-				}
-			],
-			"pos":{
-				"x":374,
-				"y":375
-			},
-			"filter":[
-				{
-					"keyword":"",
-					"keytype":"UnityEditor.ModelImporter",
-					"excludes":false,
-					"pointId":"67c9ff0f-d8b9-4324-831f-018ea740c0f4"
-				}
-			]
 		},
 		{
 			"name":"NO_MATS_NO_NORMALS",
@@ -227,18 +145,20 @@
 			"inputPoints":[
 				{
 					"id":"f63eac83-108a-4415-b95b-a1b2f2c76cec",
-					"label":"-"
+					"label":"-",
+					"hidden":false
 				}
 			],
 			"outputPoints":[
 				{
 					"id":"57c7905f-f7ba-48ca-a0aa-ea066df571b7",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":539,
-				"y":375
+				"x":2377,
+				"y":1106
 			}
 		},
 		{
@@ -251,75 +171,535 @@
 			"outputPoints":[
 				{
 					"id":"833da531-719c-49e1-8d67-65540f9702e6",
-					"label":"+"
+					"label":"+",
+					"hidden":false
 				}
 			],
 			"pos":{
-				"x":167,
-				"y":55
+				"x":166,
+				"y":209
 			},
 			"loadPath":{
 				"Unknown":"Folder1"
 			},
 			"preProcess":false
+		},
+		{
+			"name":"Mesh Renderer Shadow Off",
+			"id":"5b7c361b-37bc-4f38-b142-a8f4d0a1b01d",
+			"kind":"MODIFIER_GUI",
+			"inputPoints":[
+				{
+					"id":"09eae237-e27d-41a6-be1c-13d2327b298d",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"6318e0df-3caa-44f5-8b8b-2df59e2a77eb",
+					"label":"+",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":2652,
+				"y":1106
+			},
+			"scriptClassName":"MyModifier",
+			"scriptInstanceData":{
+				"Unknown":"{
+					\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\"disableShadows\":true\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t
+				}"
+			}
+		},
+		{
+			"name":"Assets/",
+			"id":"1c5c4f32-2dff-4693-83d4-cbb008647d4d",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"e03df465-fe09-45d5-9a0d-e21e13f76ecb",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"25bc59b2-0fd8-4edd-8460-fdbb3330e2fc",
+					"label":"Textures",
+					"hidden":false
+				},
+				{
+					"id":"aa85d946-9cf3-418e-808e-5e086fb17ae1",
+					"label":"Models",
+					"hidden":false
+				},
+				{
+					"id":"e3d0efeb-eb5f-4397-8349-61d9a6b9716f",
+					"label":"Audio",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":2081,
+				"y":1081
+			},
+			"filter":[
+				{
+					"name":"Textures",
+					"keyword":"",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
+					"pointId":"25bc59b2-0fd8-4edd-8460-fdbb3330e2fc"
+				},
+				{
+					"name":"Models",
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"aa85d946-9cf3-418e-808e-5e086fb17ae1"
+				},
+				{
+					"name":"Audio",
+					"keyword":"",
+					"keytype":"UnityEditor.AudioImporter",
+					"excludes":false,
+					"pointId":"e3d0efeb-eb5f-4397-8349-61d9a6b9716f"
+				}
+			]
+		},
+		{
+			"name":"Folder2",
+			"id":"586a4ba6-4ee7-495d-a701-f8e8883eac9a",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"d967d88e-6f4c-43b5-bf6f-8ca742a0f5db",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"53f9cd02-6049-43df-ac02-53694d95c3bd",
+					"label":"Textures",
+					"hidden":false
+				},
+				{
+					"id":"3b5cf7ed-c7ec-4129-9b35-0d5a3302f677",
+					"label":"Models",
+					"hidden":false
+				},
+				{
+					"id":"c0d7dad9-8b74-43c3-a4f2-f2b13436e0ae",
+					"label":"Audio",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":374,
+				"y":64
+			},
+			"filter":[
+				{
+					"name":"Textures",
+					"keyword":"",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
+					"pointId":"53f9cd02-6049-43df-ac02-53694d95c3bd"
+				},
+				{
+					"name":"Models",
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"3b5cf7ed-c7ec-4129-9b35-0d5a3302f677"
+				},
+				{
+					"name":"Audio",
+					"keyword":"",
+					"keytype":"UnityEditor.AudioImporter",
+					"excludes":false,
+					"pointId":"c0d7dad9-8b74-43c3-a4f2-f2b13436e0ae"
+				}
+			]
+		},
+		{
+			"name":"Filter3",
+			"id":"761bf97f-994a-4b17-9623-5567d481455c",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"87d31769-b035-422d-8a10-678bbf195e16",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"64104305-49ad-423c-99f3-f13d0aaaea90",
+					"label":"Textures",
+					"hidden":false
+				},
+				{
+					"id":"1f371fe5-40e1-49f6-b5d2-17654b106490",
+					"label":"Models",
+					"hidden":false
+				},
+				{
+					"id":"a101ec2b-1c17-4b1e-a5c5-025e27dcfa22",
+					"label":"Audio",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":412,
+				"y":206
+			},
+			"filter":[
+				{
+					"name":"Textures",
+					"keyword":"",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
+					"pointId":"64104305-49ad-423c-99f3-f13d0aaaea90"
+				},
+				{
+					"name":"Models",
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"1f371fe5-40e1-49f6-b5d2-17654b106490"
+				},
+				{
+					"name":"Audio",
+					"keyword":"",
+					"keytype":"UnityEditor.AudioImporter",
+					"excludes":false,
+					"pointId":"a101ec2b-1c17-4b1e-a5c5-025e27dcfa22"
+				}
+			]
+		},
+		{
+			"name":"Loader3",
+			"id":"e166e317-a30e-4143-9688-ef1105dd1a26",
+			"kind":"LOADER_GUI",
+			"inputPoints":[
+				
+			],
+			"outputPoints":[
+				{
+					"id":"cc50e389-90c4-4a90-b615-cf60a25d3a5c",
+					"label":"+",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":153,
+				"y":529
+			},
+			"loadPath":{
+				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
+			},
+			"preProcess":true
+		},
+		{
+			"name":"Filter4",
+			"id":"70cc5161-0fca-4769-8cdf-86202e720dd1",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"0ff2566a-9528-4cfa-aef3-085ad9e07504",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"4f292cd9-d56a-4e78-832e-072ad3b232df",
+					"label":"Textures",
+					"hidden":false
+				},
+				{
+					"id":"595dbffd-9fcb-4d68-b121-1d01e97ea277",
+					"label":"Models",
+					"hidden":false
+				},
+				{
+					"id":"848ed008-12e6-4287-b5c8-3397ba72e666",
+					"label":"Audio",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":411,
+				"y":534
+			},
+			"filter":[
+				{
+					"name":"Textures",
+					"keyword":"",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
+					"pointId":"4f292cd9-d56a-4e78-832e-072ad3b232df"
+				},
+				{
+					"name":"Models",
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"595dbffd-9fcb-4d68-b121-1d01e97ea277"
+				},
+				{
+					"name":"Audio",
+					"keyword":"",
+					"keytype":"UnityEditor.AudioImporter",
+					"excludes":false,
+					"pointId":"848ed008-12e6-4287-b5c8-3397ba72e666"
+				}
+			]
+		},
+		{
+			"name":"ImportSetting3",
+			"id":"ca037a94-8166-45ab-8fc3-9eea29ddb293",
+			"kind":"IMPORTSETTING_GUI",
+			"inputPoints":[
+				{
+					"id":"4b0a7c21-2022-4171-9537-a224c47ed396",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"dd5d7aaf-90e4-4b7e-9f1b-b64d8db23d67",
+					"label":"+",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":771,
+				"y":538
+			}
+		},
+		{
+			"name":"In0",
+			"id":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59",
+			"kind":"WARP_IN",
+			"inputPoints":[
+				{
+					"id":"fc3ffbda-3a91-4d33-8356-2a37c8061fe3",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"dfd8de89-1c82-40a9-8f74-a06e93a19b94",
+					"label":"+",
+					"hidden":true
+				}
+			],
+			"pos":{
+				"x":652,
+				"y":258
+			},
+			"relatedNode":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97"
+		},
+		{
+			"name":"Out0",
+			"id":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97",
+			"kind":"WARP_OUT",
+			"inputPoints":[
+				{
+					"id":"39359671-b24a-4ca6-a9ce-9f0750c63d9b",
+					"label":"-",
+					"hidden":true
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"50fede1c-d151-45d9-a6ba-4ea1402bc8ac",
+					"label":"+",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":2160,
+				"y":1025
+			},
+			"relatedNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59"
+		},
+		{
+			"name":"Filter5",
+			"id":"9f9225f6-bef6-4617-95c4-2bd908c75f29",
+			"kind":"FILTER_GUI",
+			"inputPoints":[
+				{
+					"id":"924f5587-625b-4da4-be7c-c930dcf9ad38",
+					"label":"-",
+					"hidden":false
+				}
+			],
+			"outputPoints":[
+				{
+					"id":"a20eae99-37c5-4fd4-a68d-90eb191473a6",
+					"label":"Textures",
+					"hidden":false
+				},
+				{
+					"id":"43016437-368d-43d8-be5f-f555618b4f22",
+					"label":"Models",
+					"hidden":false
+				},
+				{
+					"id":"d035b86c-c09e-4a95-9358-f342f0c7b7f8",
+					"label":"Audio",
+					"hidden":false
+				}
+			],
+			"pos":{
+				"x":388,
+				"y":352
+			},
+			"filter":[
+				{
+					"name":"Textures",
+					"keyword":"",
+					"keytype":"UnityEditor.TextureImporter",
+					"excludes":false,
+					"pointId":"a20eae99-37c5-4fd4-a68d-90eb191473a6"
+				},
+				{
+					"name":"Models",
+					"keyword":"",
+					"keytype":"UnityEditor.ModelImporter",
+					"excludes":false,
+					"pointId":"43016437-368d-43d8-be5f-f555618b4f22"
+				},
+				{
+					"name":"Audio",
+					"keyword":"",
+					"keytype":"UnityEditor.AudioImporter",
+					"excludes":false,
+					"pointId":"d035b86c-c09e-4a95-9358-f342f0c7b7f8"
+				}
+			]
 		}
 	],
 	"connections":[
 		{
-			"id":"3eef3b35-730f-4dd2-ab74-5ace841d5385",
-			"label":"+",
-			"fromNode":"ca69fc98-2d14-4077-993b-49831b413f45",
-			"fromNodeConPointId":"56cacacf-1320-4d89-866c-f73747842bc4",
-			"toNode":"55a01ea2-3418-4019-b721-eae825753e32",
-			"toNodeConPointId":"ede8aafc-ed86-4196-84bd-394b0b738a18"
-		},
-		{
-			"id":"3e43857a-03b3-4947-b190-f847437b3608",
-			"label":"+",
-			"fromNode":"bf71b260-6282-4714-839d-0890d3c42676",
-			"fromNodeConPointId":"359ade9c-48bb-46f4-b267-0be9afedf252",
-			"toNode":"f02dc846-bf5d-4f3e-b168-679828b948c1",
-			"toNodeConPointId":"3ec60e0e-0232-46e7-838f-ec5990a11635"
-		},
-		{
-			"id":"4b708bac-db5b-4282-b1c8-b149e868f85f",
-			"label":"+",
-			"fromNode":"d2089ee0-bb7b-44ae-b602-e8ed4e33e03b",
-			"fromNodeConPointId":"888f7012-7e3f-4f23-9080-5f229291d52e",
-			"toNode":"7cb46f9d-a5c7-45b2-9241-2bbda0195273",
-			"toNodeConPointId":"ee5f9836-1cce-4bec-b4bd-d182087071cb"
-		},
-		{
-			"id":"8872cd82-dd41-4414-822f-1b5ef636fa5b",
-			"label":"",
-			"fromNode":"7cb46f9d-a5c7-45b2-9241-2bbda0195273",
-			"fromNodeConPointId":"67c9ff0f-d8b9-4324-831f-018ea740c0f4",
-			"toNode":"77edcfd6-20bf-4af2-8ed3-31b493a3f7a8",
-			"toNodeConPointId":"f63eac83-108a-4415-b95b-a1b2f2c76cec"
-		},
-		{
 			"id":"fe0d6732-26f4-428f-a51b-ab3d37652e9e",
-			"label":"NM",
+			"label":"Normals",
 			"fromNode":"55a01ea2-3418-4019-b721-eae825753e32",
 			"fromNodeConPointId":"c9ceaa38-a329-4fbd-8cce-30aaacf5e5c4",
 			"toNode":"843decb4-0eb5-4765-b714-6d62bd64f201",
 			"toNodeConPointId":"64407b6b-e970-45db-9fd5-731e2baaf37a"
 		},
 		{
-			"id":"a3de8552-4829-4192-8368-3222df3bc285",
-			"label":"NM",
-			"fromNode":"55a01ea2-3418-4019-b721-eae825753e32",
-			"fromNodeConPointId":"93f9ecdf-4565-46b2-83e3-90e01884a9fe",
-			"toNode":"0445ff51-3b5e-4cfd-b81b-1b4aa05abb3b",
-			"toNodeConPointId":"e7a0e32e-2cd5-4c3b-b593-91c35696cf85"
+			"id":"bc684f69-6684-4206-b1fa-1a83932c9f71",
+			"label":"+",
+			"fromNode":"77edcfd6-20bf-4af2-8ed3-31b493a3f7a8",
+			"fromNodeConPointId":"57c7905f-f7ba-48ca-a0aa-ea066df571b7",
+			"toNode":"5b7c361b-37bc-4f38-b142-a8f4d0a1b01d",
+			"toNodeConPointId":"09eae237-e27d-41a6-be1c-13d2327b298d"
 		},
 		{
-			"id":"7c48138c-d216-4423-a136-44d6d722d442",
+			"id":"4e4f9013-bec7-4f09-a62e-5b5f5fe4cda5",
+			"label":"Models",
+			"fromNode":"1c5c4f32-2dff-4693-83d4-cbb008647d4d",
+			"fromNodeConPointId":"aa85d946-9cf3-418e-808e-5e086fb17ae1",
+			"toNode":"77edcfd6-20bf-4af2-8ed3-31b493a3f7a8",
+			"toNodeConPointId":"f63eac83-108a-4415-b95b-a1b2f2c76cec"
+		},
+		{
+			"id":"6fb30cd4-d4ef-4274-b23b-2bfe900dfef0",
+			"label":"+",
+			"fromNode":"ca69fc98-2d14-4077-993b-49831b413f45",
+			"fromNodeConPointId":"56cacacf-1320-4d89-866c-f73747842bc4",
+			"toNode":"586a4ba6-4ee7-495d-a701-f8e8883eac9a",
+			"toNodeConPointId":"d967d88e-6f4c-43b5-bf6f-8ca742a0f5db"
+		},
+		{
+			"id":"f477e4f3-9444-47dc-8368-7f241a40438b",
 			"label":"+",
 			"fromNode":"d92b50a2-dc6a-4684-9e9f-f8195a5801aa",
 			"fromNodeConPointId":"833da531-719c-49e1-8d67-65540f9702e6",
+			"toNode":"761bf97f-994a-4b17-9623-5567d481455c",
+			"toNodeConPointId":"87d31769-b035-422d-8a10-678bbf195e16"
+		},
+		{
+			"id":"017dd90f-5240-48ad-8d91-7bf096cf481e",
+			"label":"Textures",
+			"fromNode":"761bf97f-994a-4b17-9623-5567d481455c",
+			"fromNodeConPointId":"64104305-49ad-423c-99f3-f13d0aaaea90",
 			"toNode":"e3ac4d1d-60bc-4ce9-9cce-7c4213cd40c5",
 			"toNodeConPointId":"bb5f3903-b53a-45e7-ac11-af5957708b39"
+		},
+		{
+			"id":"a29f9f83-35a5-437e-a5db-d183e9c36e4d",
+			"label":"Non-Normals",
+			"fromNode":"55a01ea2-3418-4019-b721-eae825753e32",
+			"fromNodeConPointId":"93f9ecdf-4565-46b2-83e3-90e01884a9fe",
+			"toNode":"e3ac4d1d-60bc-4ce9-9cce-7c4213cd40c5",
+			"toNodeConPointId":"bb5f3903-b53a-45e7-ac11-af5957708b39"
+		},
+		{
+			"id":"c06c2609-1533-4f4a-95cb-2ed3392686bd",
+			"label":"+",
+			"fromNode":"e166e317-a30e-4143-9688-ef1105dd1a26",
+			"fromNodeConPointId":"cc50e389-90c4-4a90-b615-cf60a25d3a5c",
+			"toNode":"70cc5161-0fca-4769-8cdf-86202e720dd1",
+			"toNodeConPointId":"0ff2566a-9528-4cfa-aef3-085ad9e07504"
+		},
+		{
+			"id":"a0812a4e-9844-4aac-b08f-ed75e50dcdb2",
+			"label":"Textures",
+			"fromNode":"70cc5161-0fca-4769-8cdf-86202e720dd1",
+			"fromNodeConPointId":"4f292cd9-d56a-4e78-832e-072ad3b232df",
+			"toNode":"ca037a94-8166-45ab-8fc3-9eea29ddb293",
+			"toNodeConPointId":"4b0a7c21-2022-4171-9537-a224c47ed396"
+		},
+		{
+			"id":"3d44968c-b978-43bb-ba7f-8b07a06761f4",
+			"label":"+",
+			"fromNode":"d2089ee0-bb7b-44ae-b602-e8ed4e33e03b",
+			"fromNodeConPointId":"888f7012-7e3f-4f23-9080-5f229291d52e",
+			"toNode":"1c5c4f32-2dff-4693-83d4-cbb008647d4d",
+			"toNodeConPointId":"e03df465-fe09-45d5-9a0d-e21e13f76ecb"
+		},
+		{
+			"id":"a3ea48bc-2e43-4adb-92f0-e8766e7d2f1f",
+			"label":"Textures",
+			"fromNode":"586a4ba6-4ee7-495d-a701-f8e8883eac9a",
+			"fromNodeConPointId":"53f9cd02-6049-43df-ac02-53694d95c3bd",
+			"toNode":"55a01ea2-3418-4019-b721-eae825753e32",
+			"toNodeConPointId":"ede8aafc-ed86-4196-84bd-394b0b738a18"
+		},
+		{
+			"id":"34590d8e-d168-476c-82f3-8c241c4b5fcf",
+			"label":"+",
+			"fromNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59",
+			"fromNodeConPointId":"dfd8de89-1c82-40a9-8f74-a06e93a19b94",
+			"toNode":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97",
+			"toNodeConPointId":"39359671-b24a-4ca6-a9ce-9f0750c63d9b"
+		},
+		{
+			"id":"c2c062b4-723b-40ad-a870-89dc4f4b98e2",
+			"label":"+",
+			"fromNode":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97",
+			"fromNodeConPointId":"50fede1c-d151-45d9-a6ba-4ea1402bc8ac",
+			"toNode":"77edcfd6-20bf-4af2-8ed3-31b493a3f7a8",
+			"toNodeConPointId":"f63eac83-108a-4415-b95b-a1b2f2c76cec"
+		},
+		{
+			"id":"af2eabc1-c8b0-45f5-bded-6a801f023a95",
+			"label":"Models",
+			"fromNode":"761bf97f-994a-4b17-9623-5567d481455c",
+			"fromNodeConPointId":"1f371fe5-40e1-49f6-b5d2-17654b106490",
+			"toNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59",
+			"toNodeConPointId":"fc3ffbda-3a91-4d33-8356-2a37c8061fe3"
 		}
 	]
 }

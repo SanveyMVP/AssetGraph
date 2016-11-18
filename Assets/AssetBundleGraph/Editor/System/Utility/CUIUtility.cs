@@ -78,6 +78,7 @@ namespace AssetBundleGraph {
 
 				// load data from file.
 				SaveData saveData = SaveData.LoadFromDisk();
+				Graph graph = saveData.Graph;
 				List<NodeException> errors = new List<NodeException>();
 				Dictionary<ConnectionData,Dictionary<string, List<Asset>>> result = null;
 
@@ -86,7 +87,7 @@ namespace AssetBundleGraph {
 				};
 
 				// perform setup. Fails if any exception raises.
-				AssetBundleGraphController.Perform(saveData, target, false, errorHandler, null);
+				AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
 
 				// if there is error reported, then run
 				if(errors.Count > 0) {
@@ -116,10 +117,10 @@ namespace AssetBundleGraph {
 				};
 
 				// run datas.
-				result = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler);
+				result = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler);
 
 				AssetDatabase.Refresh();
-				AssetBundleGraphController.Postprocess(saveData, result, true);
+				AssetBundleGraphController.Postprocess(graph, result, true);
 
 			} catch(Exception e) {
 				Debug.LogError(e);
