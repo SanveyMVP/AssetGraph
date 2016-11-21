@@ -179,14 +179,16 @@ namespace AssetBundleGraph {
 			public const string RESOURCE_OUTPUT_BG				= RESOURCE_BASEPATH + "AssetGraph_OutputBG.png";
 			
 			public const string RESOURCE_SELECTION				= RESOURCE_BASEPATH + "AssetGraph_Selection.png";
+			
 
-
-			public const string RESOURCE_NODE_0 = RESOURCE_NODEPATH + "Loader.png";
-			public const string RESOURCE_NODE_0_ON = RESOURCE_NODEPATH + "Loader_on.png";
-			public const string RESOURCE_NODE_1 = RESOURCE_NODEPATH + "Filter.png";
-			public const string RESOURCE_NODE_1_ON = RESOURCE_NODEPATH + "Filter_on.png";
-			public const string RESOURCE_NODE_2 = RESOURCE_NODEPATH + "Importer.png";
-			public const string RESOURCE_NODE_2_ON = RESOURCE_NODEPATH + "Importer_on.png";
+			public const string RESOURCE_NODE_GREY = RESOURCE_NODEPATH + "grey.png";
+			public const string RESOURCE_NODE_GREY_ON = RESOURCE_NODEPATH + "grey_on.png";
+			public const string RESOURCE_NODE_BLUE = RESOURCE_NODEPATH + "blue.png";
+			public const string RESOURCE_NODE_BLUE_ON = RESOURCE_NODEPATH + "blue_on.png";
+			public const string RESOURCE_NODE_AQUA = RESOURCE_NODEPATH + "aqua.png";
+			public const string RESOURCE_NODE_AQUA_ON = RESOURCE_NODEPATH + "aqua_on.png";
+			public const string RESOURCE_NODE_ORANGE = RESOURCE_NODEPATH + "orange.png";
+			public const string RESOURCE_NODE_ORANGE_ON = RESOURCE_NODEPATH + "orange_on.png";
 		}
 	}
 }

@@ -142,33 +142,32 @@ namespace AssetBundleGraph {
 			get {
 				if(NodeSingleton.s.selectedStyle == null) {
 					GUIStyle blackNode = new GUIStyle("flow node 0 on");
-					GUIStyle exporter = new GUIStyle("flow node 0 on");
-					GUIStyle blueNode = new GUIStyle("flow node 1 on");
-					GUIStyle aquaNode = new GUIStyle("flow node 2 on");
-					GUIStyle group = new GUIStyle("flow node 3 on");
-					GUIStyle prefab = new GUIStyle("flow node 4 on");
-					GUIStyle bundleConfig = new GUIStyle("flow node 5 on");
-					GUIStyle bundleBuilder = new GUIStyle("flow node 6 on");
+					GUIStyle blueNode = new GUIStyle("flow node 0 on");
+					GUIStyle aquaNode = new GUIStyle("flow node 0 on");
+					GUIStyle orangeNode = new GUIStyle("flow node 0 on");
+					GUIStyle redNode = new GUIStyle("flow node 0 on");
+					GUIStyle yellowNode = new GUIStyle("flow node 0 on");
 					RectOffset borders = new RectOffset(13, 13, 13, 13);
-					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_0_ON);
+					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREY_ON);
 					blackNode.border = borders;
-					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_1_ON);
+					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_BLUE_ON);
 					blueNode.border = borders;
-					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_2_ON);
+					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_AQUA_ON);
 					aquaNode.border = borders;
-
+					orangeNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_ORANGE_ON);
+					orangeNode.border = borders;
 
 					NodeSingleton.s.selectedStyle = new Dictionary<NodeKind, GUIStyle>() {
 						{NodeKind.LOADER_GUI,           blackNode},
-						{NodeKind.EXPORTER_GUI,         exporter},
+						{NodeKind.EXPORTER_GUI,         blackNode},
 						{NodeKind.FILTER_GUI,           blueNode},
 						{NodeKind.IMPORTSETTING_GUI,    aquaNode},
-						{NodeKind.WARP_IN,              blackNode},
-						{NodeKind.WARP_OUT,             blackNode},
-						{NodeKind.GROUPING_GUI,         group},
-						{NodeKind.PREFABBUILDER_GUI,    prefab},
-						{NodeKind.BUNDLECONFIG_GUI,     bundleConfig},
-						{NodeKind.BUNDLEBUILDER_GUI,    bundleBuilder},
+						{NodeKind.WARP_IN,              orangeNode},
+						{NodeKind.WARP_OUT,             orangeNode},
+						{NodeKind.GROUPING_GUI,         aquaNode},
+						{NodeKind.PREFABBUILDER_GUI,    redNode},
+						{NodeKind.BUNDLECONFIG_GUI,     yellowNode},
+						{NodeKind.BUNDLEBUILDER_GUI,    redNode},
 						{NodeKind.MODIFIER_GUI,         aquaNode}
 					};
 				}
@@ -181,31 +180,32 @@ namespace AssetBundleGraph {
 				if(NodeSingleton.s.unselectedStyle == null) {
 
 					GUIStyle blackNode = new GUIStyle("flow node 0");
-					GUIStyle blueNode = new GUIStyle("flow node 1");
-					GUIStyle aquaNode = new GUIStyle("flow node 2");
-					GUIStyle group = new GUIStyle("flow node 3");
-					GUIStyle prefab = new GUIStyle("flow node 4");
-					GUIStyle bundleConfig = new GUIStyle("flow node 5");
-					GUIStyle bundleBuilder = new GUIStyle("flow node 6");
+					GUIStyle blueNode = new GUIStyle("flow node 0");
+					GUIStyle aquaNode = new GUIStyle("flow node 0");
+					GUIStyle orangeNode = new GUIStyle("flow node 0");
+					GUIStyle redNode = new GUIStyle("flow node 0");
+					GUIStyle yellowNode = new GUIStyle("flow node 0");
 					RectOffset borders = new RectOffset(13, 13, 13, 13);
-					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_0);
+					blackNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREY);
 					blackNode.border = borders;
-					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_1);
+					blueNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_BLUE);
 					blueNode.border = borders;
-					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_2);
+					aquaNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_AQUA);
 					aquaNode.border = borders;
+					orangeNode.normal.background = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_NODE_ORANGE);
+					orangeNode.border = borders;
 
 					NodeSingleton.s.unselectedStyle = new Dictionary<NodeKind, GUIStyle>() {
 						{NodeKind.LOADER_GUI,           blackNode},
 						{NodeKind.EXPORTER_GUI,         blackNode},
 						{NodeKind.FILTER_GUI,           blueNode},
 						{NodeKind.IMPORTSETTING_GUI,    aquaNode},
-						{NodeKind.WARP_IN,              blackNode},
-						{NodeKind.WARP_OUT,             blackNode},
-						{NodeKind.GROUPING_GUI,         group},
-						{NodeKind.PREFABBUILDER_GUI,    prefab},
-						{NodeKind.BUNDLECONFIG_GUI,     bundleConfig},
-						{NodeKind.BUNDLEBUILDER_GUI,    bundleBuilder},
+						{NodeKind.WARP_IN,              orangeNode},
+						{NodeKind.WARP_OUT,             orangeNode},
+						{NodeKind.GROUPING_GUI,         aquaNode},
+						{NodeKind.PREFABBUILDER_GUI,    redNode},
+						{NodeKind.BUNDLECONFIG_GUI,     yellowNode},
+						{NodeKind.BUNDLEBUILDER_GUI,    redNode},
 						{NodeKind.MODIFIER_GUI,         aquaNode}
 					};
 				}

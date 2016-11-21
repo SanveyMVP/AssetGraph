@@ -70,6 +70,7 @@ namespace AssetBundleGraph {
 			CONNECTING,
 			SELECTING,
 			SCALING,
+			SCROLLING
 		}
 
 		public enum CopyType : int {
@@ -103,7 +104,7 @@ namespace AssetBundleGraph {
 		private AssetBundleGraphSelection selection;
 		private ScalePoint scalePoint;
 		private GraphBackground background = new GraphBackground();
-
+		//private Vector2 lastMousePosition;
 		private double lastClickedTime = 0;
 		private double doubleClickTime = 0.3f;
 
@@ -664,6 +665,27 @@ namespace AssetBundleGraph {
 			
 			//mouse drag event handling.
 			switch (Event.current.type) {
+
+				//case EventType.ScrollWheel: {
+				//		if(modifyMode == ModifyMode.NONE && Event.current.control) {
+				//			var distance = Mathf.Clamp01(Event.current.delta.y);
+				//			//var direction = (0 < Event.current.mousePosition.y - scalePoint.y);
+
+				//			//if(!direction) distance = -distance;
+
+				//			// var before = NodeGUI.scaleFactor;
+				//			NodeGUI.scaleFactor = scalePoint.startScale + (distance * NodeGUI.SCALE_RATIO);
+
+				//			if(NodeGUI.scaleFactor < NodeGUI.SCALE_MIN) NodeGUI.scaleFactor = NodeGUI.SCALE_MIN;
+				//			if(NodeGUI.SCALE_MAX < NodeGUI.scaleFactor) NodeGUI.scaleFactor = NodeGUI.SCALE_MAX;
+
+				//			HandleUtility.Repaint();
+				//			Event.current.Use();
+				//		}
+
+				//		break;
+				//	}					
+
 			// draw line while dragging.
 			case EventType.MouseDrag: {
 					switch (modifyMode) {
@@ -681,8 +703,7 @@ namespace AssetBundleGraph {
 									break;
 								}
 							case 2:{// middle click.
-									scalePoint = new ScalePoint(Event.current.mousePosition, NodeGUI.scaleFactor, 0);
-									modifyMode = ModifyMode.SCALING;
+									modifyMode = ModifyMode.SCROLLING;
 									break;
 								}
 							}
@@ -704,6 +725,10 @@ namespace AssetBundleGraph {
 
 							if (NodeGUI.scaleFactor < NodeGUI.SCALE_MIN) NodeGUI.scaleFactor = NodeGUI.SCALE_MIN;
 							if (NodeGUI.SCALE_MAX < NodeGUI.scaleFactor) NodeGUI.scaleFactor = NodeGUI.SCALE_MAX;
+							break;
+						}
+					case ModifyMode.SCROLLING: {
+							scrollPos += -Event.current.delta;			
 							break;
 						}
 					}
@@ -793,8 +818,13 @@ namespace AssetBundleGraph {
 							Event.current.Use();
 							break;
 						}
-
+								
 					case ModifyMode.SCALING: {
+							modifyMode = ModifyMode.NONE;
+							break;
+						}
+								
+					case ModifyMode.SCROLLING: {
 							modifyMode = ModifyMode.NONE;
 							break;
 						}

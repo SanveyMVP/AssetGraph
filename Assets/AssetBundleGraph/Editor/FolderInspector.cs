@@ -22,10 +22,13 @@ public class FolderInspector : Editor {
 		path = AssetDatabase.GetAssetPath(target);
 
 		if(IsValid) {
-			LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
-			var loader = loaderSaveData.GetBestLoaderData(path);
-			if(loader != null) {
-				loaderId = loader.id;
+
+			if(!(path+"/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH)) {
+				LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
+				var loader = loaderSaveData.GetBestLoaderData(path);
+				if(loader != null) {
+					loaderId = loader.id;
+				}
 			}
 		}
 	}
@@ -34,8 +37,9 @@ public class FolderInspector : Editor {
 		base.OnInspectorGUI();
 		if(loaderId != null) {
 			GUI.enabled = true;
+			EditorGUILayout.HelpBox("This folder is configured to use the Graph Importer", MessageType.Info);
+			EditorGUILayout.Space();
 			if(GUILayout.Button("Open Graph")) {
-
 				AssetBundleGraphEditorWindow.SelectAllRelatedTree(loaderId);
 			}
 		}

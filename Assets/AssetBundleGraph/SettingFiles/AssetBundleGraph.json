@@ -1,5 +1,5 @@
 {
-	"lastModified":"11/18/2016 11:57:39 AM",
+	"lastModified":"11/21/2016 3:47:56 PM",
 	"nodes":[
 		{
 			"name":"Folder1/Folder2/",
@@ -44,8 +44,8 @@
 				}
 			],
 			"pos":{
-				"x":932,
-				"y":150
+				"x":972,
+				"y":188
 			}
 		},
 		{
@@ -72,8 +72,8 @@
 				}
 			],
 			"pos":{
-				"x":646,
-				"y":58
+				"x":668,
+				"y":41
 			},
 			"filter":[
 				{
@@ -130,8 +130,8 @@
 				}
 			],
 			"pos":{
-				"x":1893,
-				"y":1082
+				"x":151,
+				"y":349
 			},
 			"loadPath":{
 				"Unknown":""
@@ -157,8 +157,8 @@
 				}
 			],
 			"pos":{
-				"x":2377,
-				"y":1106
+				"x":691,
+				"y":358
 			}
 		},
 		{
@@ -203,13 +203,13 @@
 				}
 			],
 			"pos":{
-				"x":2652,
-				"y":1106
+				"x":1001,
+				"y":356
 			},
 			"scriptClassName":"MyModifier",
 			"scriptInstanceData":{
 				"Unknown":"{
-					\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\"disableShadows\":true\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t
+					\n\t\t\t\t\t\n\t\t\t\t\t\"disableShadows\":true\n\t\t\t\t\n\t\t\t\t
 				}"
 			}
 		},
@@ -242,8 +242,8 @@
 				}
 			],
 			"pos":{
-				"x":2081,
-				"y":1081
+				"x":339,
+				"y":349
 			},
 			"filter":[
 				{
@@ -396,8 +396,8 @@
 				}
 			],
 			"pos":{
-				"x":153,
-				"y":529
+				"x":1413,
+				"y":923
 			},
 			"loadPath":{
 				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
@@ -433,8 +433,8 @@
 				}
 			],
 			"pos":{
-				"x":411,
-				"y":534
+				"x":1671,
+				"y":928
 			},
 			"filter":[
 				{
@@ -479,12 +479,12 @@
 				}
 			],
 			"pos":{
-				"x":771,
-				"y":538
+				"x":2032,
+				"y":933
 			}
 		},
 		{
-			"name":"In0",
+			"name":"In-0",
 			"id":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59",
 			"kind":"WARP_IN",
 			"inputPoints":[
@@ -502,13 +502,13 @@
 				}
 			],
 			"pos":{
-				"x":652,
-				"y":258
+				"x":615,
+				"y":128
 			},
 			"relatedNode":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97"
 		},
 		{
-			"name":"Out0",
+			"name":"Out-0",
 			"id":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97",
 			"kind":"WARP_OUT",
 			"inputPoints":[
@@ -526,66 +526,10 @@
 				}
 			],
 			"pos":{
-				"x":2160,
-				"y":1025
+				"x":563,
+				"y":431
 			},
 			"relatedNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59"
-		},
-		{
-			"name":"Filter5",
-			"id":"9f9225f6-bef6-4617-95c4-2bd908c75f29",
-			"kind":"FILTER_GUI",
-			"inputPoints":[
-				{
-					"id":"924f5587-625b-4da4-be7c-c930dcf9ad38",
-					"label":"-",
-					"hidden":false
-				}
-			],
-			"outputPoints":[
-				{
-					"id":"a20eae99-37c5-4fd4-a68d-90eb191473a6",
-					"label":"Textures",
-					"hidden":false
-				},
-				{
-					"id":"43016437-368d-43d8-be5f-f555618b4f22",
-					"label":"Models",
-					"hidden":false
-				},
-				{
-					"id":"d035b86c-c09e-4a95-9358-f342f0c7b7f8",
-					"label":"Audio",
-					"hidden":false
-				}
-			],
-			"pos":{
-				"x":388,
-				"y":352
-			},
-			"filter":[
-				{
-					"name":"Textures",
-					"keyword":"",
-					"keytype":"UnityEditor.TextureImporter",
-					"excludes":false,
-					"pointId":"a20eae99-37c5-4fd4-a68d-90eb191473a6"
-				},
-				{
-					"name":"Models",
-					"keyword":"",
-					"keytype":"UnityEditor.ModelImporter",
-					"excludes":false,
-					"pointId":"43016437-368d-43d8-be5f-f555618b4f22"
-				},
-				{
-					"name":"Audio",
-					"keyword":"",
-					"keytype":"UnityEditor.AudioImporter",
-					"excludes":false,
-					"pointId":"d035b86c-c09e-4a95-9358-f342f0c7b7f8"
-				}
-			]
 		}
 	],
 	"connections":[
@@ -694,10 +638,18 @@
 			"toNodeConPointId":"f63eac83-108a-4415-b95b-a1b2f2c76cec"
 		},
 		{
-			"id":"af2eabc1-c8b0-45f5-bded-6a801f023a95",
+			"id":"3d4fbf24-5321-4a00-9197-bf81e794a672",
 			"label":"Models",
 			"fromNode":"761bf97f-994a-4b17-9623-5567d481455c",
 			"fromNodeConPointId":"1f371fe5-40e1-49f6-b5d2-17654b106490",
+			"toNode":"77edcfd6-20bf-4af2-8ed3-31b493a3f7a8",
+			"toNodeConPointId":"f63eac83-108a-4415-b95b-a1b2f2c76cec"
+		},
+		{
+			"id":"66b0338d-58f2-44f1-9639-4b509fe06f79",
+			"label":"Models",
+			"fromNode":"586a4ba6-4ee7-495d-a701-f8e8883eac9a",
+			"fromNodeConPointId":"3b5cf7ed-c7ec-4129-9b35-0d5a3302f677",
 			"toNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59",
 			"toNodeConPointId":"fc3ffbda-3a91-4d33-8356-2a37c8061fe3"
 		}
