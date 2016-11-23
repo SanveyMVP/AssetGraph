@@ -79,6 +79,7 @@ namespace AssetBundleGraph {
 		}
 
 		public enum ScriptType : int {
+			SCRIPT_VALIDATOR,
 			SCRIPT_MODIFIER,		
 			SCRIPT_PREFABBUILDER,
 			SCRIPT_POSTPROCESS
@@ -137,6 +138,11 @@ namespace AssetBundleGraph {
 			var sourceFileName = string.Empty;
 
 			switch (scriptType) {
+			case ScriptType.SCRIPT_VALIDATOR: {
+				sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.SCRIPT_TEMPLATE_PATH, "MyValidator.cs.template");
+				destinationPath = FileUtility.PathCombine(destinationBasePath, "MyValidator.cs");
+				break;
+			}
 			case ScriptType.SCRIPT_MODIFIER: {
 				sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.SCRIPT_TEMPLATE_PATH, "MyModifier.cs.template");
 				destinationPath = FileUtility.PathCombine(destinationBasePath, "MyModifier.cs");
@@ -165,6 +171,8 @@ namespace AssetBundleGraph {
 			FileUtility.CopyFileFromGlobalToLocal(sourceFileName, destinationPath);
 
 			AssetDatabase.Refresh();
+			Selection.activeObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(destinationPath);
+
 		}
 
 		/*
@@ -173,6 +181,10 @@ namespace AssetBundleGraph {
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_GENERATE_MODIFIER)]
 		public static void GenerateModifier () {
 			GenerateScript(ScriptType.SCRIPT_MODIFIER);
+		}
+		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_GENERATE_VALIDATOR)]
+		public static void GenerateValidator() {
+			GenerateScript(ScriptType.SCRIPT_VALIDATOR);
 		}
 		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_GENERATE_PREFABBUILDER)]
 		public static void GeneratePrefabBuilder () {
@@ -1198,7 +1210,9 @@ namespace AssetBundleGraph {
 			if (typeof(IModifier).IsAssignableFrom(type) && !type.IsInterface && ModifierUtility.HasValidCustomModifierAttribute(type)) {
 				return typeof(IModifier);
 			}
-
+			if(typeof(IValidator).IsAssignableFrom(type) && !type.IsInterface && ValidatorUtility.HasValidCustomValidatorAttribute(type)) {
+				return typeof(IValidator);
+			}
 			return null;
 		}
 
@@ -1221,6 +1235,15 @@ namespace AssetBundleGraph {
 				newNode.Data.ScriptClassName = scriptClassName;
 				newNode.Data.InstanceData.DefaultValue = builder.Serialize();
 			}
+			if(scriptBaseType == typeof(IValidator)) {
+				var validator = ValidatorUtility.CreateValidator(scriptClassName);
+				UnityEngine.Assertions.Assert.IsNotNull(validator);
+
+				newNode = new NodeGUI(new NodeData(name, NodeKind.VALIDATOR_GUI, x, y));
+				newNode.Data.ScriptClassName = scriptClassName;
+				newNode.Data.InstanceData.DefaultValue = validator.Serialize();
+			}
+
 
 			if (newNode == null) {
 				Debug.LogError("Could not add node from code. " + scriptClassName + "(base:" + scriptBaseType + 

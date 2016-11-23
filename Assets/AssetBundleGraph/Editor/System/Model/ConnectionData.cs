@@ -124,6 +124,7 @@ namespace AssetBundleGraph {
 			case NodeKind.IMPORTSETTING_GUI:			
 			case NodeKind.MODIFIER_GUI:
 			case NodeKind.PREFABBUILDER_GUI:
+			case NodeKind.VALIDATOR_GUI:
 				{
 					switch (to.Kind) {
 					case NodeKind.BUNDLEBUILDER_GUI:

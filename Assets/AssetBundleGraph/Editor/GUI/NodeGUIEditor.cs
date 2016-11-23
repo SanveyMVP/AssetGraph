@@ -18,6 +18,7 @@ namespace AssetBundleGraph {
 			BuildTargetUtility.DefaultTarget;
 
 		[NonSerialized] private IModifier m_modifier;
+		[NonSerialized] private IValidator m_validator;
 		[NonSerialized] private IPrefabBuilder m_prefabBuilder;
 
 		public override bool RequiresConstantRepaint() {
@@ -715,6 +716,108 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		private void DoInspectorValidatorGUI(NodeGUI node) {
+			EditorGUILayout.HelpBox("Validator: Validates assets.", MessageType.Info);
+			UpdateNodeName(node);
+
+			GUILayout.Space(10f);
+
+			using(new EditorGUILayout.VerticalScope(GUI.skin.box)) {
+
+				Type incomingType = FindIncomingAssetType(node.Data.InputPoints[0]);
+
+				if(incomingType == null) {
+					// if there is no asset input to determine incomingType,
+					// retrieve from assigned Validator.
+					incomingType = ValidatorUtility.GetValidatorTargetType(node.Data.ScriptClassName);
+
+					if(incomingType == null) {
+						EditorGUILayout.HelpBox("Validator needs a single type of incoming assets.", MessageType.Info);
+						return;
+					}
+				}
+
+				var map = ValidatorUtility.GetAttributeClassNameMap(incomingType);
+				if(map.Count > 0) {
+					using(new GUILayout.HorizontalScope()) {
+						GUILayout.Label("Validator");
+						var guiName = ValidatorUtility.GetValidatorGUIName(node.Data.ScriptClassName);
+						if(GUILayout.Button(guiName, "Popup", GUILayout.MinWidth(150f))) {
+							var builders = map.Keys.ToList();
+
+							if(builders.Count > 0) {
+								NodeGUI.ShowTypeNamesMenu(guiName, builders, (string selectedGUIName) =>
+								{
+									using(new RecordUndoScope("Change Validator class", node, true)) {
+										m_validator = ValidatorUtility.CreateValidator(selectedGUIName, incomingType);
+										if(m_validator != null) {
+											node.Data.ScriptClassName = ValidatorUtility.GUINameToClassName(selectedGUIName, incomingType);
+											node.Data.InstanceData[currentEditingGroup] = m_validator.Serialize();
+										}
+									}
+								}
+								);
+							}
+						}
+					}
+				} else {
+					string[] menuNames = AssetBundleGraphSettings.GUI_TEXT_MENU_GENERATE_VALIDATOR.Split('/');
+					EditorGUILayout.HelpBox(
+						string.Format(
+							"No CustomValidator found for {3} type. \n" +
+							"You need to create at least one Validator script to select script for Validator. " +
+							"To start, select {0}>{1}>{2} menu and create a new script.",
+							menuNames[1], menuNames[2], menuNames[3], incomingType.FullName
+						), MessageType.Info);
+				}
+
+				GUILayout.Space(10f);
+
+				if(DrawPlatformSelector(node)) {
+					// if platform tab is changed, renew Validator Instance for that tab.
+					m_validator = null;
+				}
+				using(new EditorGUILayout.VerticalScope()) {
+					var disabledScope = DrawOverrideTargetToggle(node, node.Data.InstanceData.ContainsValueOf(currentEditingGroup), (bool enabled) => {
+						if(enabled) {
+							node.Data.InstanceData[currentEditingGroup] = node.Data.InstanceData.DefaultValue;
+						} else {
+							node.Data.InstanceData.Remove(currentEditingGroup);
+						}
+						m_validator = null;
+					});
+
+					using(disabledScope) {
+						//reload Validator instance from saved Validator data.
+						if(m_validator == null) {
+							m_validator = ValidatorUtility.CreateValidator(node.Data, currentEditingGroup);
+							if(m_validator != null) {
+								node.Data.ScriptClassName = m_validator.GetType().FullName;
+								if(node.Data.InstanceData.ContainsValueOf(currentEditingGroup)) {
+									node.Data.InstanceData[currentEditingGroup] = m_validator.Serialize();
+								}
+							}
+						}
+
+						if(m_validator != null) {
+							Action onChangedAction = () => {
+								using(new RecordUndoScope("Change Validator Setting", node)) {
+									node.Data.ScriptClassName = m_validator.GetType().FullName;
+									if(node.Data.InstanceData.ContainsValueOf(currentEditingGroup)) {
+										node.Data.InstanceData[currentEditingGroup] = m_validator.Serialize();
+									}
+								}
+							};
+
+							m_validator.OnInspectorGUI(onChangedAction);
+						}
+					}
+				}
+			}
+		}
+
+
+
 
 		public override void OnInspectorGUI () {
 			var currentTarget = (NodeGUIInspectorHelper)target;
@@ -755,7 +858,11 @@ namespace AssetBundleGraph {
 			case NodeKind.WARP_OUT:
 				DoInspectorWarpOutNode(node);
 				break;
-				default: 
+			case NodeKind.VALIDATOR_GUI:
+				DoInspectorValidatorGUI(node);
+				break;
+					
+			default: 
 				Debug.LogError(node.Name + " is defined as unknown kind of node. value:" + node.Kind);
 				break;
 			}

@@ -1,0 +1,32 @@
+using UnityEngine;
+using UnityEditor;
+
+using System;
+using System.Collections.Generic;
+
+[AssetBundleGraph.CustomValidator("MyValidator", typeof(RenderTexture))]
+public class MyValidator : AssetBundleGraph.IValidator {
+
+	[SerializeField] private bool checkSomething;
+
+	// Validate things. 
+	public bool Validate (object asset) {
+		return true;
+	}
+
+	// Draw inspector gui 
+	public void OnInspectorGUI (Action onValueChanged) {
+		GUILayout.Label("MyValidator!");
+
+		var newValue = GUILayout.Toggle(checkSomething, "Check Something");
+		if(newValue != checkSomething) {
+			checkSomething = newValue;
+			onValueChanged();
+		}
+	}
+
+	// serialize this class to JSON 
+	public string Serialize() {
+		return JsonUtility.ToJson(this);
+	}
+}

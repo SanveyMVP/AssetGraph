@@ -24,7 +24,9 @@ namespace AssetBundleGraph {
 		EXPORTER_GUI,
 
 		WARP_IN,
-		WARP_OUT
+		WARP_OUT,
+
+		VALIDATOR_GUI
 	}
 
 	public enum ExporterExportOption : int {
@@ -246,14 +248,16 @@ namespace AssetBundleGraph {
 			get {
 				ValidateAccess(
 					NodeKind.PREFABBUILDER_GUI,
-					NodeKind.MODIFIER_GUI
+					NodeKind.MODIFIER_GUI,
+					NodeKind.VALIDATOR_GUI
 				);
 				return m_scriptClassName;
 			}
 			set {
 				ValidateAccess(
 					NodeKind.PREFABBUILDER_GUI,
-					NodeKind.MODIFIER_GUI
+					NodeKind.MODIFIER_GUI,
+					NodeKind.VALIDATOR_GUI
 				);
 				m_scriptClassName = value;
 			}
@@ -371,7 +375,8 @@ namespace AssetBundleGraph {
 			get {
 				ValidateAccess(
 					NodeKind.PREFABBUILDER_GUI,
-					NodeKind.MODIFIER_GUI
+					NodeKind.MODIFIER_GUI,
+					NodeKind.VALIDATOR_GUI
 				);
 				return m_scriptInstanceData;
 			}
@@ -457,6 +462,7 @@ namespace AssetBundleGraph {
 				break;
 			case NodeKind.PREFABBUILDER_GUI:
 			case NodeKind.MODIFIER_GUI:
+			case NodeKind.VALIDATOR_GUI:
 				{
 					if(jsonData.ContainsKey(NODE_SCRIPT_CLASSNAME)) {
 						m_scriptClassName = jsonData[NODE_SCRIPT_CLASSNAME] as string;
@@ -591,6 +597,7 @@ namespace AssetBundleGraph {
 			switch(m_kind) {
 			case NodeKind.PREFABBUILDER_GUI:
 			case NodeKind.MODIFIER_GUI:
+			case NodeKind.VALIDATOR_GUI:
 				m_scriptClassName 	= String.Empty;
 				m_scriptInstanceData = new SerializableMultiTargetString();
 				break;
@@ -650,6 +657,7 @@ namespace AssetBundleGraph {
 				break;
 			case NodeKind.PREFABBUILDER_GUI:
 			case NodeKind.MODIFIER_GUI:
+			case NodeKind.VALIDATOR_GUI:
 				newData.m_scriptClassName = m_scriptClassName;
 				newData.m_scriptInstanceData = new SerializableMultiTargetString(m_scriptInstanceData);
 				break;
@@ -849,6 +857,7 @@ namespace AssetBundleGraph {
 			switch (m_kind) {
 			case NodeKind.PREFABBUILDER_GUI:
 			case NodeKind.MODIFIER_GUI:
+			case NodeKind.VALIDATOR_GUI:
 				nodeDict[NODE_SCRIPT_CLASSNAME] = m_scriptClassName;
 				nodeDict[NODE_SCRIPT_INSTANCE_DATA] = m_scriptInstanceData.ToJsonDictionary();
 				break;

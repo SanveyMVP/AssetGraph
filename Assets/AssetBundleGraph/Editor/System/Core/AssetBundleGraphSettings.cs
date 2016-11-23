@@ -14,6 +14,7 @@ namespace AssetBundleGraph {
 		public const string GUI_TEXT_MENU_GENERATE = "Window/AssetBundleGraph/Create Node Script";
 		public const string GUI_TEXT_MENU_GENERATE_MODIFIER = GUI_TEXT_MENU_GENERATE + "/Modifier Script";
 		public const string GUI_TEXT_MENU_GENERATE_PREFABBUILDER = GUI_TEXT_MENU_GENERATE + "/PrefabBuilder Script";
+		public const string GUI_TEXT_MENU_GENERATE_VALIDATOR = GUI_TEXT_MENU_GENERATE + "/Validator Script";
 		public const string GUI_TEXT_MENU_GENERATE_CUITOOL = "Window/AssetBundleGraph/Create CUI Tool";
 
 		public const string GUI_TEXT_MENU_GENERATE_POSTPROCESS = GUI_TEXT_MENU_GENERATE + "/Postprocess Script";
@@ -88,6 +89,7 @@ namespace AssetBundleGraph {
 		public const string MENU_BUNDLEBUILDER_NAME = "BundleBuilder";
 		public const string MENU_EXPORTER_NAME = "Exporter";
 		public const string MENU_WARP_NAME = "Warp";
+		public const string MENU_VALIDATOR_NAME = "Validator";
 
 		public static Dictionary<string, NodeKind> GUI_Menu_Item_TargetGUINodeDict = new Dictionary<string, NodeKind>{
 			{"Create " + MENU_LOADER_NAME + " Node", NodeKind.LOADER_GUI},
@@ -99,7 +101,8 @@ namespace AssetBundleGraph {
 			{"Create " + MENU_BUNDLECONFIG_NAME + " Node", NodeKind.BUNDLECONFIG_GUI},
 			{"Create " + MENU_BUNDLEBUILDER_NAME + " Node", NodeKind.BUNDLEBUILDER_GUI},
 			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI},
-			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN }
+			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN },
+			{"Create " + MENU_VALIDATOR_NAME + " Node", NodeKind.VALIDATOR_GUI }
 		};
 
 		public static Dictionary<NodeKind, string> DEFAULT_NODE_NAME = new Dictionary<NodeKind, string>{
@@ -113,7 +116,8 @@ namespace AssetBundleGraph {
 			{NodeKind.BUNDLEBUILDER_GUI, "BundleBuilder"},
 			{NodeKind.EXPORTER_GUI, "Exporter"},
 			{NodeKind.WARP_IN, "In"},
-			{NodeKind.WARP_OUT, "Out"}
+			{NodeKind.WARP_OUT, "Out"},
+			{NodeKind.VALIDATOR_GUI, "Validator"}
 		};
 
 		public static Dictionary<Type, string> PLACEHOLDER_FILE = new Dictionary<Type, string>{
