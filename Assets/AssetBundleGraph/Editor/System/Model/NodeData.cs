@@ -181,9 +181,9 @@ namespace AssetBundleGraph {
 		//bundlebuilder settings
 		private const string NODE_BUNDLEBUILDER_ENABLEDBUNDLEOPTIONS = "enabledBundleOptions";
 
-		public static readonly Color FILTER_EXCLUDED_OUTPUT = Color.red * 0.9f;
-		public static readonly Color LOADER_PREPROCESS_COLOR = Color.yellow * 0.9f;
 		public static readonly Color DEFAULT_COLOR = new Color(0.705f, 0.705f, 0.705f,1);
+		public static readonly Color LOADER_PREPROCESS_COLOR = Color.yellow * 0.9f;
+		public static readonly Color FILTER_EXCLUDED_OUTPUT = DEFAULT_COLOR;
 
 		[SerializeField] private string m_name;		
 		[SerializeField] private string m_id;

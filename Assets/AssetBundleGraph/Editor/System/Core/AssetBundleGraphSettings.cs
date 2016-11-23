@@ -28,6 +28,7 @@ namespace AssetBundleGraph {
 		public const string ASSETS_PATH = "Assets/";
 		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
+		public const string ASSET_PLACEHOLDER_FOLDER = ASSETBUNDLEGRAPH_PATH + "Editor/AssetPlaceholders/";
 		public const string SCRIPT_TEMPLATE_PATH = ASSETBUNDLEGRAPH_PATH + "Editor/ScriptTemplate/";
 		public const string USERSPACE_PATH = ASSETBUNDLEGRAPH_PATH + "Generated/Editor/";
 		public const string CUISPACE_PATH = ASSETBUNDLEGRAPH_PATH + "Generated/CUI/";
@@ -115,6 +116,12 @@ namespace AssetBundleGraph {
 			{NodeKind.WARP_OUT, "Out"}
 		};
 
+		public static Dictionary<Type, string> PLACEHOLDER_FILE = new Dictionary<Type, string>{
+			{typeof(TextureImporter),  "config.png"},
+			{typeof(ModelImporter),  "config.fbx"},
+			{typeof(AudioImporter),  "config.mp3"}
+		};
+
 		/*
 			data key for AssetBundleGraph.json
 		*/
@@ -183,12 +190,22 @@ namespace AssetBundleGraph {
 
 			public const string RESOURCE_NODE_GREY = RESOURCE_NODEPATH + "grey.png";
 			public const string RESOURCE_NODE_GREY_ON = RESOURCE_NODEPATH + "grey_on.png";
+			public const string RESOURCE_NODE_GREY_HIGHLIGHT = RESOURCE_NODEPATH + "grey_highlight.png";
 			public const string RESOURCE_NODE_BLUE = RESOURCE_NODEPATH + "blue.png";
 			public const string RESOURCE_NODE_BLUE_ON = RESOURCE_NODEPATH + "blue_on.png";
+			public const string RESOURCE_NODE_BLUE_HIGHLIGHT = RESOURCE_NODEPATH + "blue_highlight.png";
 			public const string RESOURCE_NODE_AQUA = RESOURCE_NODEPATH + "aqua.png";
 			public const string RESOURCE_NODE_AQUA_ON = RESOURCE_NODEPATH + "aqua_on.png";
+			public const string RESOURCE_NODE_AQUA_HIGHLIGHT = RESOURCE_NODEPATH + "aqua_highlight.png";
 			public const string RESOURCE_NODE_ORANGE = RESOURCE_NODEPATH + "orange.png";
 			public const string RESOURCE_NODE_ORANGE_ON = RESOURCE_NODEPATH + "orange_on.png";
+			public const string RESOURCE_NODE_ORANGE_HIGHLIGHT = RESOURCE_NODEPATH + "orange_highlight.png";
+			public const string RESOURCE_NODE_RED = RESOURCE_NODEPATH + "red.png";
+			public const string RESOURCE_NODE_RED_ON = RESOURCE_NODEPATH + "red_on.png";
+			public const string RESOURCE_NODE_RED_HIGHLIGHT = RESOURCE_NODEPATH + "red_highlight.png";
+			public const string RESOURCE_NODE_YELLOW = RESOURCE_NODEPATH + "yellow.png";
+			public const string RESOURCE_NODE_YELLOW_ON = RESOURCE_NODEPATH + "yellow_on.png";
+			public const string RESOURCE_NODE_YELLOW_HIGHLIGHT = RESOURCE_NODEPATH + "yellow_highlight.png";
 		}
 	}
 }

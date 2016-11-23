@@ -62,7 +62,6 @@ namespace AssetBundleGraph {
 
 			foreach(var n in nodeList) {
 				m_graph.Nodes.Add(new NodeData(n as Dictionary<string, object>));
-
 			}
 
 			foreach(var c in connList) {

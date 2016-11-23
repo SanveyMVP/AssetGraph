@@ -41,7 +41,8 @@ namespace AssetBundleGraph {
 			Action<ConfigStatus> errorInConfig = (ConfigStatus _) => {
 				// give a try first in sampling file
 				if(incomingAssets.Any()) {
-					SaveSampleFile(node, incomingAssets[0]);
+
+					SaveSampleFile(node, TypeUtility.FindTypeOfAsset(incomingAssets[0].importFrom));
 
 					ValidateInputSetting(node, target, incomingAssets, multipleAssetTypeFound, unsupportedType, incomingTypeMismatch, (ConfigStatus eType) => {
 						if(eType == ConfigStatus.NoSampleFound) {
@@ -75,16 +76,23 @@ namespace AssetBundleGraph {
 			Output(connectionToOutput, inputGroupAssets, null);
 		}
 
-		private void SaveSampleFile(NodeData node, Asset asset) {
+		public static void RemoveConfigFile(string nodeId) {
+			var path = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, nodeId);
+			if(Directory.Exists(path)) {
+				AssetDatabase.DeleteAsset(path);
+			}
+			AssetDatabase.Refresh();
+		}
+
+		private void SaveSampleFile(NodeData node, Type assetType) {
 			var samplingDirectoryPath = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
 			if (!Directory.Exists(samplingDirectoryPath)) {
 				Directory.CreateDirectory(samplingDirectoryPath);
 			}
 
-			var absoluteFilePath = asset.absoluteAssetPath;
-			var targetFilePath = FileUtility.PathCombine(samplingDirectoryPath, asset.fileNameAndExtension);
+			var filePath = FileUtility.PathCombine(samplingDirectoryPath, AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType]);
 
-			FileUtility.CopyFileFromGlobalToLocal(absoluteFilePath, targetFilePath);
+			FileUtility.CopyFileFromGlobalToLocal(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
 
 			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
 		}

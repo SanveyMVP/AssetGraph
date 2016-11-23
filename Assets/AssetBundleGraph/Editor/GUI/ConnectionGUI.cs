@@ -203,7 +203,6 @@ namespace AssetBundleGraph {
 			}
 
 			if (GUI.Button(buttonRect, connectionLabel, style)) {
-				conInsp.UpdateInspector(this, assetGroups);
 				ConnectionGUIUtility.ConnectionEventHandler(new ConnectionEvent(ConnectionEvent.EventType.EVENT_CONNECTION_TAPPED, this));
 			}
 		}
@@ -215,6 +214,7 @@ namespace AssetBundleGraph {
 		public void SetActive () {
 			connectionButtonStyle = "sv_label_1";
 			conInsp.isActive = true;
+			AssetBundleGraphEditorWindow.UpdateConnectionInspector(this);
 		}
 
 		public void SetInactive () {

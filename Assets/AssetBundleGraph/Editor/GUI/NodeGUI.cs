@@ -123,14 +123,18 @@ namespace AssetBundleGraph {
 			return new NodeGUI(data);
 		}
 
+		public void SetHighlighted() {
+			m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Highlighted);
+		}
+
 		public void SetActive () {
 			m_nodeInsp.UpdateNode(this);
 			m_nodeInsp.isActive = true;
-			this.m_nodeSyle = NodeGUIUtility.SelectedStyle[m_data.Kind];
+			this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Selected);
 		}
 
 		public void SetInactive () {
-			this.m_nodeSyle = NodeGUIUtility.UnselectedStyle[m_data.Kind];
+			this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.UnSelected);
 			m_nodeInsp.isActive = false;
 		}
 			
@@ -148,7 +152,11 @@ namespace AssetBundleGraph {
 
 		public void DrawNode() {
 			if(m_nodeSyle == null) {
-				m_nodeSyle = NodeGUIUtility.UnselectedStyle[Kind];
+				if(m_nodeInsp.isActive) {
+					this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Selected);
+				} else {
+					this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.UnSelected);
+				}
 			}
 
 			var scaledBaseRect = ScaleEffect(m_baseRect);

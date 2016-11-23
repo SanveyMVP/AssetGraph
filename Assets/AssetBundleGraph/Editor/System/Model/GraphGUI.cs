@@ -66,14 +66,14 @@ namespace AssetBundleGraph {
 			return id + 1;
 		}
 
-		public GraphGUI GetSubGraph(NodeGUI node) {
+		public GraphGUI GetSubGraph(NodeGUI node, bool includeWarps = true) {
 			var newgraph = new GraphGUI();
 			newgraph.Nodes.Add(node);
 			List<NodeGUI> nodesToAdd = new List<NodeGUI>();
 			List<ConnectionGUI> connectionsToAdd = new List<ConnectionGUI>();
 
-			GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd);
-			GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd);
+			GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+			GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
 
 			newgraph.Nodes.AddRange(nodesToAdd);
 			newgraph.Connections.AddRange(connectionsToAdd);
@@ -81,23 +81,31 @@ namespace AssetBundleGraph {
 			return newgraph;
 		}
 
-		private void GetParentRelatives(NodeGUI node, ref List<NodeGUI> graphRelatedNodes, ref List<ConnectionGUI> graphRelatedCon) {
+		private void GetParentRelatives(NodeGUI node, ref List<NodeGUI> graphRelatedNodes, ref List<ConnectionGUI> graphRelatedCon, bool includeWarps) {
+			if((node.Kind == NodeKind.WARP_IN || node.Kind == NodeKind.WARP_OUT) && !includeWarps) {
+				return;
+			}
+
 			var backConnections = connections.FindAll(x => x.OutputNodeId == node.Id);
 			foreach(ConnectionGUI c in backConnections) {
 				graphRelatedCon.Add(c);
 				var fromNode = nodes.Find(x => x.Id == c.InputNodeId);
 				graphRelatedNodes.Add(fromNode);
-				GetParentRelatives(fromNode, ref graphRelatedNodes, ref graphRelatedCon);
+				GetParentRelatives(fromNode, ref graphRelatedNodes, ref graphRelatedCon, includeWarps);
 			}
 		}
 
-		private void GetChildRelatives(NodeGUI node, ref List<NodeGUI> graphRelatedNodes, ref List<ConnectionGUI> graphRelatedCon) {
+		private void GetChildRelatives(NodeGUI node, ref List<NodeGUI> graphRelatedNodes, ref List<ConnectionGUI> graphRelatedCon, bool includeWarps) {
+			if((node.Kind == NodeKind.WARP_IN || node.Kind == NodeKind.WARP_OUT) && !includeWarps) {
+				return;
+			}
+
 			var forwardConnections = connections.FindAll(x => x.InputNodeId == node.Id);
 			foreach(ConnectionGUI c in forwardConnections) {
 				graphRelatedCon.Add(c);
 				var toNode = nodes.Find(x => x.Id == c.OutputNodeId);
 				graphRelatedNodes.Add(toNode);
-				GetChildRelatives(toNode, ref graphRelatedNodes, ref graphRelatedCon);
+				GetChildRelatives(toNode, ref graphRelatedNodes, ref graphRelatedCon, includeWarps);
 			}
 		}
 	}

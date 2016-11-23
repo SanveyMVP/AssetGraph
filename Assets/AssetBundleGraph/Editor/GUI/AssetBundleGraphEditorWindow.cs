@@ -245,6 +245,15 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		public static void UpdateConnectionInspector(ConnectionGUI con) {
+			var keyEnum = s_assetStreamMap.Keys.Where(c => c.Id == con.Id);
+			if(keyEnum.Any()) {
+				var assets = s_assetStreamMap[keyEnum.First()];
+				con.ConnectionInspectorHelper.UpdateInspector(con, assets);
+			}
+		}
+
+
 		private void Init() {
 			this.titleContent = new GUIContent("AssetBundle");
 			this.selectedTarget = EditorUserBuildSettings.activeBuildTarget;
@@ -664,27 +673,7 @@ namespace AssetBundleGraph {
 		private void HandleGraphGUIEvents() {
 			
 			//mouse drag event handling.
-			switch (Event.current.type) {
-
-				//case EventType.ScrollWheel: {
-				//		if(modifyMode == ModifyMode.NONE && Event.current.control) {
-				//			var distance = Mathf.Clamp01(Event.current.delta.y);
-				//			//var direction = (0 < Event.current.mousePosition.y - scalePoint.y);
-
-				//			//if(!direction) distance = -distance;
-
-				//			// var before = NodeGUI.scaleFactor;
-				//			NodeGUI.scaleFactor = scalePoint.startScale + (distance * NodeGUI.SCALE_RATIO);
-
-				//			if(NodeGUI.scaleFactor < NodeGUI.SCALE_MIN) NodeGUI.scaleFactor = NodeGUI.SCALE_MIN;
-				//			if(NodeGUI.SCALE_MAX < NodeGUI.scaleFactor) NodeGUI.scaleFactor = NodeGUI.SCALE_MAX;
-
-				//			HandleUtility.Repaint();
-				//			Event.current.Use();
-				//		}
-
-				//		break;
-				//	}					
+			switch (Event.current.type) {	
 
 			// draw line while dragging.
 			case EventType.MouseDrag: {
@@ -1155,8 +1144,9 @@ namespace AssetBundleGraph {
 						case "SelectAll": {
 							Undo.RecordObject(this, "Select All Objects");
 
-							var nodeIds = graphGUI.Nodes.Select(node => node.Id).ToList();
-							activeObject = RenewActiveObject(nodeIds);
+							var selectionIds = graphGUI.Nodes.Select(node => node.Id).ToList();
+							selectionIds.AddRange(graphGUI.Connections.Select(con => con.Id).ToList());
+							activeObject = RenewActiveObject(selectionIds);
 
 							// select all.
 							foreach (var node in graphGUI.Nodes) {
@@ -1176,7 +1166,13 @@ namespace AssetBundleGraph {
 							Undo.RecordObject(this, "Delete Selection");
 							foreach(var id in activeObject.idPosDict.ReadonlyDict().Keys) {
 								DeleteNode(id);
+								DeleteConnectionById(id);
 							}
+
+							SaveGraphWithReload();
+
+							activeObject = RenewActiveObject(new List<string>());
+							UpdateActivationOfObjects(activeObject);
 							Event.current.Use();
 							break;
 						}
@@ -1631,10 +1627,17 @@ namespace AssetBundleGraph {
 			var deletedNodeIndex = graphGUI.Nodes.FindIndex(node => node.Id == deletingNodeId);
 			if (0 <= deletedNodeIndex) {
 				var node = graphGUI.Nodes[deletedNodeIndex];
-				node.SetInactive();
-				graphGUI.Nodes.RemoveAt(deletedNodeIndex);
-				if(node.Kind == NodeKind.WARP_IN || node.Kind == NodeKind.WARP_OUT) {
-					DeleteNode(node.Data.RelatedNodeId);
+
+				if(node.Data.Kind != NodeKind.IMPORTSETTING_GUI || EditorUtility.DisplayDialog("Delete " + node.Name, "Deleting this node will also delete the placeholder asset for config, are you sure?", "Delete", "Cancel")) {
+					node.SetInactive();
+					graphGUI.Nodes.RemoveAt(deletedNodeIndex);
+
+					if(node.Kind == NodeKind.WARP_IN || node.Kind == NodeKind.WARP_OUT) {
+						DeleteNode(node.Data.RelatedNodeId);
+					}
+					if(node.Data.Kind == NodeKind.IMPORTSETTING_GUI) {
+						IntegratedGUIImportSetting.RemoveConfigFile(node.Data.Id);
+					}
 				}
 			}
 		}
@@ -1713,12 +1716,12 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public static void SelectAllRelatedTree(string nodeId) {
+		public static void SelectAllRelatedTree(string nodeId, bool includeWarps = true) {
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
 			window.InitializeGraph();
 
 			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
-			var subGraph = window.graphGUI.GetSubGraph(node);
+			var subGraph = window.graphGUI.GetSubGraph(node, includeWarps);
 
 			Vector2 upperLeft = new Vector2(node.Data.X, node.Data.Y);
 
@@ -1730,8 +1733,9 @@ namespace AssetBundleGraph {
 				ids.Add(nodeGUI.Id);
 			}
 			ids.AddRange(subGraph.Connections.ConvertAll(x => x.Id));
-
-			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));			
+			
+			window.activeObject = window.RenewActiveObject(ids);
+			window.UpdateActivationOfObjects(window.activeObject);			
 			window.scrollPos = new Vector2(upperLeft.x - window.position.width * 0.4f, upperLeft.y - window.position.height * 0.4f);
 		}
 
@@ -1739,7 +1743,8 @@ namespace AssetBundleGraph {
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
 			var ids = new List<string>();
 			ids.Add(nodeId);
-			window.UpdateActivationOfObjects(window.RenewActiveObject(ids));
+			window.activeObject = window.RenewActiveObject(ids);
+			window.UpdateActivationOfObjects(window.activeObject);
 			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
 			window.scrollPos = new Vector2(node.Data.X - window.position.width * 0.4f, node.Data.Y - window.position.height * 0.4f);
 		}
@@ -1767,6 +1772,15 @@ namespace AssetBundleGraph {
 				
 				connection.SetInactive();
 			}
+
+			var readOnlyDict = currentActiveObject.idPosDict.ReadonlyDict();
+			if(readOnlyDict.Count == 1) {
+				var node = graphGUI.Nodes.Find(x => readOnlyDict.Keys.First() == x.Id);
+				if(node != null && (node.Data.Kind == NodeKind.WARP_IN || node.Data.Kind == NodeKind.WARP_OUT)) {
+					graphGUI.Nodes.Find(x => x.Id == node.Data.RelatedNodeId).SetHighlighted();
+				}
+			}
+
 			UpdateUnitySelection();
 
 		}

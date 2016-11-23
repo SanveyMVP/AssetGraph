@@ -68,6 +68,12 @@ namespace AssetBundleGraph {
 					}
 				}
 			}
+
+			EditorGUILayout.Space();
+			if(GUILayout.Button("Select Tree")) {
+				AssetBundleGraphEditorWindow.SelectAllRelatedTree(node.Id, false);
+			}
+
 		}
 
 		private void DoInspectorFilterGUI (NodeGUI node) {
@@ -99,6 +105,7 @@ namespace AssetBundleGraph {
 
 								EditorGUILayout.LabelField("Filter:", GUILayout.MaxWidth(40));
 								newContainsKeyword = EditorGUILayout.TextField(cond.FilterKeyword, s, GUILayout.MaxWidth(200));
+								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Exclusion", GUILayout.MaxWidth(80));
 								if (GUILayout.Button(cond.FilterKeytype , "Popup", GUILayout.MinWidth(220))) {
 									var ind = i;// need this because of closure locality bug in unity C#
 									NodeGUI.ShowFilterKeyTypeMenu(
@@ -111,7 +118,6 @@ namespace AssetBundleGraph {
 									);
 								}
 
-								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Excludes", GUILayout.MaxWidth(80));
 							}
 							if(newName != cond.Name) {
 								using(new RecordUndoScope("Modify Filter Name", node, true)) {
