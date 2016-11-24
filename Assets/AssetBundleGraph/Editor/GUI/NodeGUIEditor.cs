@@ -21,6 +21,8 @@ namespace AssetBundleGraph {
 		[NonSerialized] private IValidator m_validator;
 		[NonSerialized] private IPrefabBuilder m_prefabBuilder;
 
+		private Type selectedType;
+
 		public override bool RequiresConstantRepaint() {
 			return true;
 		}
@@ -252,8 +254,18 @@ namespace AssetBundleGraph {
 					incomingType = ModifierUtility.GetModifierTargetType(node.Data.ScriptClassName);
 
 					if(incomingType == null) {
-						EditorGUILayout.HelpBox("Modifier needs a single type of incoming assets.", MessageType.Info);
-						return;
+						var selected = selectedType == null ? "Select Type" : selectedType.ToString();
+						if(GUILayout.Button(selected, "Popup", GUILayout.MinWidth(220))) {
+							NodeGUI.ShowKeyTypeMenu(selected, x => selectedType = x);
+						}
+						EditorGUILayout.Space();
+
+						incomingType = selectedType;
+
+						if(incomingType == null) {
+							EditorGUILayout.HelpBox("Modifier needs a single type of incoming assets.", MessageType.Info);
+							return;
+						}
 					}
 				}
 
@@ -290,6 +302,10 @@ namespace AssetBundleGraph {
 							"To start, select {0}>{1}>{2} menu and create a new script.",
 							menuNames[1],menuNames[2], menuNames[3], incomingType.FullName
 						), MessageType.Info);
+				}
+
+				if(m_modifier == null) {
+					return;
 				}
 
 				GUILayout.Space(10f);
@@ -744,8 +760,18 @@ namespace AssetBundleGraph {
 					incomingType = ValidatorUtility.GetValidatorTargetType(node.Data.ScriptClassName);
 
 					if(incomingType == null) {
-						EditorGUILayout.HelpBox("Validator needs a single type of incoming assets.", MessageType.Info);
-						return;
+						var selected = selectedType == null ? "Select Type" : selectedType.ToString();
+						if(GUILayout.Button(selected, "Popup", GUILayout.MinWidth(220))) {
+							NodeGUI.ShowKeyTypeMenu(selected, x => selectedType = x);
+						}
+						EditorGUILayout.Space();
+
+						incomingType = selectedType;
+
+						if(incomingType == null) {
+							EditorGUILayout.HelpBox("Validator needs a single type of incoming assets.", MessageType.Info);
+							return;
+						}
 					}
 				}
 
@@ -782,6 +808,11 @@ namespace AssetBundleGraph {
 							menuNames[1], menuNames[2], menuNames[3], incomingType.FullName
 						), MessageType.Info);
 				}
+
+				if(m_validator == null) {
+					return;
+				}
+
 
 				GUILayout.Space(10f);
 
@@ -828,7 +859,19 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		void OnEnable() {
+			var currentTarget = (NodeGUIInspectorHelper)target;
+			var node = currentTarget.node;
+			if(node == null) return;
 
+			switch(node.Kind) {
+				case NodeKind.MODIFIER_GUI:
+				case NodeKind.VALIDATOR_GUI: {
+						selectedType = null;
+						break;
+					}
+			}
+		}
 
 
 		public override void OnInspectorGUI () {
@@ -885,28 +928,6 @@ namespace AssetBundleGraph {
 					EditorGUILayout.HelpBox(error, MessageType.Error);
 				}
 			}
-		}
-
-		private void ShowFilterKeyTypeMenu (string current, Action<string> ExistSelected) {
-			var menu = new GenericMenu();
-			
-			menu.AddDisabledItem(new GUIContent(current));
-			
-			menu.AddSeparator(string.Empty);
-			
-			for (var i = 0; i < TypeUtility.KeyTypes.Count; i++) {
-				var type = TypeUtility.KeyTypes[i];
-				if (type == current) continue;
-				
-				menu.AddItem(
-					new GUIContent(type),
-					false,
-					() => {
-						ExistSelected(type);
-					}
-				);
-			}
-			menu.ShowAsContext();
 		}
 
 		private Type FindIncomingAssetType(ConnectionPointData inputPoint) {

@@ -13,7 +13,29 @@ namespace AssetBundleGraph {
 			// importers
 			typeof(TextureImporter),
 			typeof(ModelImporter),
-			typeof(AudioImporter),			
+			typeof(AudioImporter),
+		};
+
+		public static readonly List<Type> ModifierTypes = new List<Type>{			
+			// importers
+			typeof(TextureImporter),
+			typeof(ModelImporter),
+			typeof(AudioImporter),
+			typeof(Animation),
+			typeof(Animator),
+			typeof(AvatarMask),
+			typeof(Cubemap),
+			typeof(Flare),
+			typeof(Font),
+			typeof(GUISkin),
+			// typeof(LightmapParameters).ToString(),
+			typeof(Material),
+			typeof(PhysicMaterial),
+			typeof(PhysicsMaterial2D),
+			typeof(RenderTexture),
+			// typeof(SceneAsset).ToString(),
+			typeof(Shader),
+			typeof(Scene),
 		};
 
 
