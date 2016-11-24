@@ -14,17 +14,27 @@ namespace AssetBundleGraph {
 	 * Subclass of IValidator must have CustomValidator attribute.
 	 */
 	public interface IValidator {
+
 		/**
-		 * Test if incoming assset is different from this IValidator's setting.
-		 * asset is always type of object defined
+		 * Tells the validator if this object should be validated or is an exception.
 		 */
-		//bool IsModified (object asset);
+		bool ShouldValidate(object asset);
 
 		/**
 		 * Validates incoming asset.
-		 */ 
+		 */
 		bool Validate(object asset);
 
+		/**
+		 * When the validation fails you can try to recover in here and return if it is recovered
+		 */
+		bool TryToRecover(object asset);
+
+		/**
+		 * When validation is failed and unrecoverable you may perform your own operations here but a message needs to be returned to be printed.
+		 */
+		string ValidationFailed(object asset);
+		
 		/**
 		 * Draw Inspector GUI for this Validator.
 		 */ 

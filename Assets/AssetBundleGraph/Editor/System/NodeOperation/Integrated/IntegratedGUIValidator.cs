@@ -31,10 +31,35 @@ namespace AssetBundleGraph {
 			Output(connectionToOutput, inputGroupAssets, null);
 		}
 
-		public void Run(BuildTarget target, NodeData nodeData, ConnectionPointData inputPoint, ConnectionData connectionToOutput, Dictionary<string, List<Asset>> inputGroupAssets, List<string> alreadyCached, Action<ConnectionData, Dictionary<string, List<Asset>>, List<string>> Output) {
+		public void Run(BuildTarget target,
+				NodeData node,
+				ConnectionPointData inputPoint,
+				ConnectionData connectionToOutput,
+				Dictionary<string, List<Asset>> inputGroupAssets,
+				List<string> alreadyCached,
+				Action<ConnectionData, Dictionary<string, List<Asset>>, List<string>> Output) {
+			var incomingAssets = inputGroupAssets.SelectMany(v => v.Value).ToList();
+
+			var validator = ValidatorUtility.CreateValidator(node, target);
+			UnityEngine.Assertions.Assert.IsNotNull(validator);
+
+			foreach(var asset in incomingAssets) {
+				var loadedAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(asset.importFrom);
+				if(validator.ShouldValidate(loadedAsset)) {
+					if(!validator.Validate(loadedAsset)) {
+						if(validator.TryToRecover(loadedAsset)) {
+							Debug.LogWarning("Asset " + loadedAsset.name + " validation failed but has been recovered - Validator Node: " + node.Name);
+						} else {
+							Debug.LogError(validator.ValidationFailed(loadedAsset) + " - Validator Node: " + node.Name);
+						}
+					}
+				}
+			}			
+
+			// Modifier does not add, filter or change structure of group, so just pass given group of assets
 			Output(connectionToOutput, inputGroupAssets, null);
 		}
-		
+
 		public static void ValidateValidator(
 			NodeData node,
 			BuildTarget target,
