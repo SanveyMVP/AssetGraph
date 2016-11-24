@@ -9,6 +9,14 @@ using UnityEngine.SceneManagement;
 
 namespace AssetBundleGraph {
 	public static class TypeUtility {
+		public static readonly List<Type> ImporterTypes = new List<Type>{			
+			// importers
+			typeof(TextureImporter),
+			typeof(ModelImporter),
+			typeof(AudioImporter),			
+		};
+
+
 		public static readonly List<string> KeyTypes = new List<string>{
 			// empty
 			AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,

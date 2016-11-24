@@ -194,6 +194,18 @@ namespace AssetBundleGraph {
 						incomingType = IntegratedGUIImportSetting.GetReferenceAssetImporter(node.Data.Id).GetType();
 					} else {
 						EditorGUILayout.HelpBox("ImportSetting needs a single type of incoming assets.", MessageType.Info);
+
+
+						if(GUILayout.Button("Select Type", "Popup", GUILayout.MinWidth(220))) {
+							NodeGUI.ShowImportSettingsKeyTypeMenu(
+								"Select Type",
+								(Type selectedTypeStr) => {
+									IntegratedGUIImportSetting.SaveSampleFile(node.Data, selectedTypeStr);
+									status = IntegratedGUIImportSetting.ConfigStatus.GoodSampleFound;
+								}
+							);
+						}
+
 						return;
 					}
 				}

@@ -589,5 +589,29 @@ namespace AssetBundleGraph {
 			}
 			menu.ShowAsContext();
 		}
+
+
+		public static void ShowImportSettingsKeyTypeMenu(string current, Action<Type> Selected) {
+			var menu = new GenericMenu();
+
+			menu.AddDisabledItem(new GUIContent(current));
+
+			menu.AddSeparator(string.Empty);
+
+			for(var i = 0; i < TypeUtility.ImporterTypes.Count; i++) {
+				var type = TypeUtility.ImporterTypes[i];
+				if(type.ToString() == current) continue;
+
+				menu.AddItem(
+					new GUIContent(type.ToString()),
+					false,
+					() => {
+						Selected(type);
+					}
+				);
+			}
+			menu.ShowAsContext();
+		}
+
 	}
 }
