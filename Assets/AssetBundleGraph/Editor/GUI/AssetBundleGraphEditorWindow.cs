@@ -109,6 +109,8 @@ namespace AssetBundleGraph {
 		private double lastClickedTime = 0;
 		private double doubleClickTime = 0.3f;
 
+		private Vector2 deltaScrollPos = new Vector2(0,0);
+
 		private static Dictionary<ConnectionData,Dictionary<string, List<Asset>>> s_assetStreamMap = 
 			new Dictionary<ConnectionData, Dictionary<string, List<Asset>>>();
 		private static List<NodeException> s_nodeExceptionPool = new List<NodeException>();
@@ -612,7 +614,7 @@ namespace AssetBundleGraph {
 		}
 
 		public void DrawGUINodeGraph() {
-
+			
 			background.Draw(graphRegion, scrollPos);
 
 			using(var scrollScope = new EditorGUILayout.ScrollViewScope(scrollPos) ) {
@@ -674,6 +676,9 @@ namespace AssetBundleGraph {
 				}
 			}
 			if(Event.current.type == EventType.Repaint) {
+				scrollPos += deltaScrollPos;
+				deltaScrollPos = Vector2.zero;
+
 				var newRgn = GUILayoutUtility.GetLastRect();
 				if(newRgn != graphRegion) {
 					graphRegion = newRgn;
@@ -729,7 +734,7 @@ namespace AssetBundleGraph {
 							break;
 						}
 					case ModifyMode.SCROLLING: {
-							scrollPos += -Event.current.delta;			
+							deltaScrollPos += -Event.current.delta;			
 							break;
 						}
 					}
