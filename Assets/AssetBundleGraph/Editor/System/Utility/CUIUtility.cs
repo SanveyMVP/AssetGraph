@@ -43,10 +43,13 @@ namespace AssetBundleGraph {
 			try {
 				var arguments = new List<string>(System.Environment.GetCommandLineArgs());
 
+#if UNITY_5_4_OR_NEWER
+				Application.SetStackTraceLogType(LogType.Log,		StackTraceLogType.None);
+				Application.SetStackTraceLogType(LogType.Error,		StackTraceLogType.None);
+				Application.SetStackTraceLogType(LogType.Warning,	StackTraceLogType.None);
+#else
 				Application.stackTraceLogType = StackTraceLogType.None;
-				Application.stackTraceLogType = StackTraceLogType.None;
-				Application.stackTraceLogType = StackTraceLogType.None;
-
+#endif
 				BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
 
 				int targetIndex = arguments.FindIndex(a => a == "-target");
@@ -75,6 +78,7 @@ namespace AssetBundleGraph {
 
 				// load data from file.
 				SaveData saveData = SaveData.LoadFromDisk();
+				Graph graph = saveData.Graph;
 				List<NodeException> errors = new List<NodeException>();
 				Dictionary<ConnectionData,Dictionary<string, List<Asset>>> result = null;
 
@@ -83,7 +87,7 @@ namespace AssetBundleGraph {
 				};
 
 				// perform setup. Fails if any exception raises.
-				AssetBundleGraphController.Perform(saveData, target, false, errorHandler, null);
+				AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
 
 				// if there is error reported, then run
 				if(errors.Count > 0) {
@@ -113,10 +117,10 @@ namespace AssetBundleGraph {
 				};
 
 				// run datas.
-				result = AssetBundleGraphController.Perform(saveData, target, true, errorHandler, updateHandler);
+				result = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler);
 
 				AssetDatabase.Refresh();
-				AssetBundleGraphController.Postprocess(saveData, result, true);
+				AssetBundleGraphController.Postprocess(graph, result, true);
 
 			} catch(Exception e) {
 				Debug.LogError(e);

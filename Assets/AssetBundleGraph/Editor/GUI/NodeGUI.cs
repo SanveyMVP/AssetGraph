@@ -21,7 +21,7 @@ namespace AssetBundleGraph {
 
 		[SerializeField] private NodeData m_data;
 
-		[SerializeField] private string m_nodeSyle;
+		[SerializeField] private GUIStyle m_nodeSyle;
 		[SerializeField] private NodeGUIInspectorHelper m_nodeInsp;
 		
 		/*
@@ -106,9 +106,12 @@ namespace AssetBundleGraph {
 
 			this.m_data = data;
 
-			this.m_baseRect = new Rect(m_data.X, m_data.Y, AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH, AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT);
+			var width = (data.Kind == NodeKind.WARP_IN || data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.GUI.NODE_WARP_WIDTH : AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH;
 
-			this.m_nodeSyle = NodeGUIUtility.UnselectedStyle[m_data.Kind];
+			this.m_baseRect = new Rect(m_data.X, m_data.Y, width, AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT);
+
+			//We cant initialize the Style here because GUIStyles need to be created on OnGUI
+			this.m_nodeSyle = null;
 
 			UpdateNodeRect();
 		}
@@ -120,14 +123,18 @@ namespace AssetBundleGraph {
 			return new NodeGUI(data);
 		}
 
+		public void SetHighlighted() {
+			m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Highlighted);
+		}
+
 		public void SetActive () {
 			m_nodeInsp.UpdateNode(this);
 			m_nodeInsp.isActive = true;
-			this.m_nodeSyle = NodeGUIUtility.SelectedStyle[m_data.Kind];
+			this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Selected);
 		}
 
 		public void SetInactive () {
-			this.m_nodeSyle = NodeGUIUtility.UnselectedStyle[m_data.Kind];
+			this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.UnSelected);
 			m_nodeInsp.isActive = false;
 		}
 			
@@ -143,7 +150,15 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public void DrawNode () {
+		public void DrawNode() {
+			if(m_nodeSyle == null) {
+				if(m_nodeInsp.isActive) {
+					this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.Selected);
+				} else {
+					this.m_nodeSyle = NodeGUIUtility.GetStyle(m_data.Kind, StyleType.UnSelected);
+				}
+			}
+
 			var scaledBaseRect = ScaleEffect(m_baseRect);
 
 			var movedRect = GUI.Window(m_nodeWindowId, scaledBaseRect, DrawThisNode, string.Empty, m_nodeSyle);
@@ -204,7 +219,7 @@ namespace AssetBundleGraph {
 			case EventType.MouseDown: {
 					ConnectionPointData result = IsOverConnectionPoint(Event.current.mousePosition);
 
-					if (result != null) {
+					if (result != null && !result.IsHidden) {
 						if (scaleFactor == SCALE_MAX) {
 							NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_NODE_CONNECT_STARTED, this, Event.current.mousePosition, result));
 						}
@@ -266,8 +281,19 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		public void DoubleClickAction() {
+			switch(m_data.Kind) {
+				case NodeKind.WARP_IN:
+				case NodeKind.WARP_OUT:
+					AssetBundleGraphEditorWindow.SelectNodeById(m_data.RelatedNodeId);
+					break;
+			}
+		}
+
+
 		public void DrawConnectionInputPointMark (NodeEvent eventSource, bool justConnecting) {
 			if (scaleFactor != SCALE_MAX) return;
+			if (eventSource != null && eventSource.point.IsHidden) return;
 
 			var defaultPointTex = NodeGUIUtility.inputPointMarkTex;
 			bool shouldDrawEnable = 
@@ -358,6 +384,9 @@ namespace AssetBundleGraph {
 			if (scaleFactor == SCALE_MAX) {
 				Action<ConnectionPointData> drawConnectionPoint = (ConnectionPointData point) => 
 				{
+					if(point.IsHidden) {
+						return;
+					}
 					var label = point.Label;
 					if( label != AssetBundleGraphSettings.DEFAULT_INPUTPOINT_LABEL &&
 						label != AssetBundleGraphSettings.DEFAULT_OUTPUTPOINT_LABEL) 
@@ -406,7 +435,9 @@ namespace AssetBundleGraph {
 				AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT + (AssetBundleGraphSettings.GUI.FILTER_OUTPUT_SPAN * Mathf.Max(0, (nPoints - 1)))
 			);
 
-			var newWidth = Mathf.Max(AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH, contentLabelWordsLength * 10.0f);
+			var baseWidth = (m_data.Kind == NodeKind.WARP_IN || m_data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.GUI.NODE_WARP_WIDTH : AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH;
+
+			var newWidth = Mathf.Max(baseWidth, contentLabelWordsLength * 10.0f);
 			m_baseRect = new Rect(m_baseRect.x, m_baseRect.y, newWidth, m_baseRect.height);
 
 			RefreshConnectionPos();

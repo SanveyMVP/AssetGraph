@@ -28,6 +28,7 @@ namespace AssetBundleGraph {
 		public const string ASSETS_PATH = "Assets/";
 		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
+		public const string ASSET_PLACEHOLDER_FOLDER = ASSETBUNDLEGRAPH_PATH + "Editor/AssetPlaceholders/";
 		public const string SCRIPT_TEMPLATE_PATH = ASSETBUNDLEGRAPH_PATH + "Editor/ScriptTemplate/";
 		public const string USERSPACE_PATH = ASSETBUNDLEGRAPH_PATH + "Generated/Editor/";
 		public const string CUISPACE_PATH = ASSETBUNDLEGRAPH_PATH + "Generated/CUI/";
@@ -63,8 +64,10 @@ namespace AssetBundleGraph {
 			new BuildAssetBundleOption("Ignore TypeTree Changes", BuildAssetBundleOptions.IgnoreTypeTreeChanges),
 			new BuildAssetBundleOption("Append Hash To AssetBundle Name", BuildAssetBundleOptions.AppendHashToAssetBundleName),
 			new BuildAssetBundleOption("ChunkBased Compression", BuildAssetBundleOptions.ChunkBasedCompression),
-			//new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
-			//new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
+#if UNITY_5_4_OR_NEWER
+			new BuildAssetBundleOption("Strict Mode", BuildAssetBundleOptions.StrictMode),
+			new BuildAssetBundleOption("Omit Class Versions", BuildAssetBundleOptions.OmitClassVersions)
+#endif
 		};
 
 		//public const string PLATFORM_DEFAULT_NAME = "Default";
@@ -84,6 +87,7 @@ namespace AssetBundleGraph {
 		public const string MENU_BUNDLECONFIG_NAME = "BundleConfig";
 		public const string MENU_BUNDLEBUILDER_NAME = "BundleBuilder";
 		public const string MENU_EXPORTER_NAME = "Exporter";
+		public const string MENU_WARP_NAME = "Warp";
 
 		public static Dictionary<string, NodeKind> GUI_Menu_Item_TargetGUINodeDict = new Dictionary<string, NodeKind>{
 			{"Create " + MENU_LOADER_NAME + " Node", NodeKind.LOADER_GUI},
@@ -94,7 +98,8 @@ namespace AssetBundleGraph {
 			{"Create " + MENU_PREFABBUILDER_NAME + " Node", NodeKind.PREFABBUILDER_GUI},
 			{"Create " + MENU_BUNDLECONFIG_NAME + " Node", NodeKind.BUNDLECONFIG_GUI},
 			{"Create " + MENU_BUNDLEBUILDER_NAME + " Node", NodeKind.BUNDLEBUILDER_GUI},
-			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI}
+			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI},
+			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN }
 		};
 
 		public static Dictionary<NodeKind, string> DEFAULT_NODE_NAME = new Dictionary<NodeKind, string>{
@@ -106,7 +111,15 @@ namespace AssetBundleGraph {
 			{NodeKind.PREFABBUILDER_GUI, "PrefabBuilder"},
 			{NodeKind.BUNDLECONFIG_GUI, "BundleConfig"},
 			{NodeKind.BUNDLEBUILDER_GUI, "BundleBuilder"},
-			{NodeKind.EXPORTER_GUI, "Exporter"}
+			{NodeKind.EXPORTER_GUI, "Exporter"},
+			{NodeKind.WARP_IN, "In"},
+			{NodeKind.WARP_OUT, "Out"}
+		};
+
+		public static Dictionary<Type, string> PLACEHOLDER_FILE = new Dictionary<Type, string>{
+			{typeof(TextureImporter),  "config.png"},
+			{typeof(ModelImporter),  "config.fbx"},
+			{typeof(AudioImporter),  "config.mp3"}
 		};
 
 		/*
@@ -123,6 +136,7 @@ namespace AssetBundleGraph {
 		public const string BUNDLECONFIG_BUNDLE_OUTPUTPOINT_LABEL = "bundles";
 		public const string BUNDLECONFIG_VARIANTNAME_DEFAULT = "";
 
+		public const string DEFAULT_FILTER_NAME = "";
 		public const string DEFAULT_FILTER_KEYWORD = "";
 		public const string DEFAULT_FILTER_KEYTYPE = "Any";
 		public const bool DEFAULT_FILTER_EXCLUSION = false;
@@ -137,9 +151,12 @@ namespace AssetBundleGraph {
 
 		public class GUI {
 			public const string RESOURCE_BASEPATH = "Assets/AssetBundleGraph/Editor/GUI/GraphicResources/";
+			public const string RESOURCE_NODEPATH = RESOURCE_BASEPATH+"Nodes/";
 
 			public const float NODE_BASE_WIDTH = 120f;
 			public const float NODE_BASE_HEIGHT = 40f;
+
+			public const float NODE_WARP_WIDTH = 40f;
 
 			public const float CONNECTION_ARROW_WIDTH = 12f;
 			public const float CONNECTION_ARROW_HEIGHT = 15f;
@@ -167,8 +184,28 @@ namespace AssetBundleGraph {
 
 			public const string RESOURCE_INPUT_BG				= RESOURCE_BASEPATH + "AssetGraph_InputBG.png";
 			public const string RESOURCE_OUTPUT_BG				= RESOURCE_BASEPATH + "AssetGraph_OutputBG.png";
-
+			
 			public const string RESOURCE_SELECTION				= RESOURCE_BASEPATH + "AssetGraph_Selection.png";
+			
+
+			public const string RESOURCE_NODE_GREY = RESOURCE_NODEPATH + "grey.png";
+			public const string RESOURCE_NODE_GREY_ON = RESOURCE_NODEPATH + "grey_on.png";
+			public const string RESOURCE_NODE_GREY_HIGHLIGHT = RESOURCE_NODEPATH + "grey_highlight.png";
+			public const string RESOURCE_NODE_BLUE = RESOURCE_NODEPATH + "blue.png";
+			public const string RESOURCE_NODE_BLUE_ON = RESOURCE_NODEPATH + "blue_on.png";
+			public const string RESOURCE_NODE_BLUE_HIGHLIGHT = RESOURCE_NODEPATH + "blue_highlight.png";
+			public const string RESOURCE_NODE_AQUA = RESOURCE_NODEPATH + "aqua.png";
+			public const string RESOURCE_NODE_AQUA_ON = RESOURCE_NODEPATH + "aqua_on.png";
+			public const string RESOURCE_NODE_AQUA_HIGHLIGHT = RESOURCE_NODEPATH + "aqua_highlight.png";
+			public const string RESOURCE_NODE_ORANGE = RESOURCE_NODEPATH + "orange.png";
+			public const string RESOURCE_NODE_ORANGE_ON = RESOURCE_NODEPATH + "orange_on.png";
+			public const string RESOURCE_NODE_ORANGE_HIGHLIGHT = RESOURCE_NODEPATH + "orange_highlight.png";
+			public const string RESOURCE_NODE_RED = RESOURCE_NODEPATH + "red.png";
+			public const string RESOURCE_NODE_RED_ON = RESOURCE_NODEPATH + "red_on.png";
+			public const string RESOURCE_NODE_RED_HIGHLIGHT = RESOURCE_NODEPATH + "red_highlight.png";
+			public const string RESOURCE_NODE_YELLOW = RESOURCE_NODEPATH + "yellow.png";
+			public const string RESOURCE_NODE_YELLOW_ON = RESOURCE_NODEPATH + "yellow_on.png";
+			public const string RESOURCE_NODE_YELLOW_HIGHLIGHT = RESOURCE_NODEPATH + "yellow_highlight.png";
 		}
 	}
 }

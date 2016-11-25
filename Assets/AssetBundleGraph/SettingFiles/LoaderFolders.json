@@ -1,25 +1,33 @@
 {
 	"loaders":[
 		{
-			"id":"e44b12e2-0283-4645-a060-957c9f138fe1",
+			"id":"ca69fc98-2d14-4077-993b-49831b413f45",
+			"path":{
+				"Unknown":"Folder1/Folder2",
+				"Standalone":"Folder1/Folder2"
+			},
+			"preprocess":false
+		},
+		{
+			"id":"d2089ee0-bb7b-44ae-b602-e8ed4e33e03b",
+			"path":{
+				"Unknown":""
+			},
+			"preprocess":true
+		},
+		{
+			"id":"d92b50a2-dc6a-4684-9e9f-f8195a5801aa",
 			"path":{
 				"Unknown":"Folder1"
 			},
 			"preprocess":false
 		},
 		{
-			"id":"ca69fc98-2d14-4077-993b-49831b413f45",
+			"id":"e166e317-a30e-4143-9688-ef1105dd1a26",
 			"path":{
-				"Unknown":"Folder1/Folder2"
+				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
 			},
 			"preprocess":true
-		},
-		{
-			"id":"e94b1684-bc66-4c80-b9b0-8e6cf9c36ef6",
-			"path":{
-				"Unknown":"Folder1/Folder2/Folder3"
-			},
-			"preprocess":false
 		}
 	]
 }

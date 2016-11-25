@@ -18,6 +18,7 @@ namespace AssetBundleGraph {
 		private const string COLOR = "labelColor";
 		private const string PRIORITY = "orderPriority";
 		private const string SHOWLABEL = "showLabel";
+		private const string HIDDEN = "hidden";
 
 		/**
 		* In order to support Unity serialization for Undo, cyclic reference need to be avoided.
@@ -29,27 +30,32 @@ namespace AssetBundleGraph {
 		[SerializeField] private string parentId;
 		[SerializeField] private bool isInput;
 		[SerializeField] private Rect buttonRect;
-		private Color labelColor;
+		[SerializeField] private Color labelColor;
+		[SerializeField] private bool hidden;
 
 		//		private int orderPriority;
 		//		private bool showLabel;
 
-		public ConnectionPointData(string id, string label, NodeData parent, bool isInput/*, int orderPriority, bool showLabel */) {
+		public ConnectionPointData(string id, string label, NodeData parent, bool isInput, bool isHidden = false/*, int orderPriority, bool showLabel */) {
 			this.id = id;
 			this.label = label;
 			this.parentId = parent.Id;
 			this.isInput = isInput;
+			labelColor = NodeData.DEFAULT_COLOR;
+			hidden = isHidden;
 					//			this.orderPriority = orderPriority;
 //			this.showLabel = showLabel;
 		}
 
-		public ConnectionPointData(string label, NodeData parent, bool isInput) {
+		public ConnectionPointData(string label, NodeData parent, bool isInput, bool isHidden = false) {
 			this.id = Guid.NewGuid().ToString();
 			this.label = label;
 			this.parentId = parent.Id;
 			this.isInput = isInput;
-//			this.orderPriority = pointGui.orderPriority;
-//			this.showLabel = pointGui.showLabel;
+			labelColor = NodeData.DEFAULT_COLOR;
+			hidden = isHidden;
+			//			this.orderPriority = pointGui.orderPriority;
+			//			this.showLabel = pointGui.showLabel;
 		}
 
 		public ConnectionPointData(Dictionary<string, object> dic, NodeData parent, bool isInput) {
@@ -58,6 +64,12 @@ namespace AssetBundleGraph {
 			this.label = dic[LABEL] as string;
 			this.parentId = parent.Id;
 			this.isInput = isInput;
+			labelColor = NodeData.DEFAULT_COLOR;
+			if(dic.ContainsKey(HIDDEN)) {
+				hidden = Convert.ToBoolean(dic[HIDDEN]);
+			}else {
+				hidden = false;
+			}
 
 			//			this.orderPriority = pointGui.orderPriority;
 			//			this.showLabel = pointGui.showLabel;
@@ -103,6 +115,12 @@ namespace AssetBundleGraph {
 		public bool IsOutput {
 			get {
 				return !isInput;
+			}
+		}
+
+		public bool IsHidden{
+			get {
+				return hidden;
 			}
 		}
 
@@ -210,7 +228,8 @@ namespace AssetBundleGraph {
 		public Dictionary<string, object> ToJsonDictionary() {
 			return new Dictionary<string, object>() {
 				{ID, this.id},
-				{LABEL, this.label}
+				{LABEL, this.label},
+				{HIDDEN, this.hidden}
 			};
 		}
 	}

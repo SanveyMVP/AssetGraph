@@ -34,30 +34,26 @@ namespace AssetBundleGraph {
 	/*
 	 * Json save data which holds all AssetBundleGraph settings and configurations.
 	 */ 
-	public class SaveData {
-
+	public class SaveData {		
 		public const string LASTMODIFIED 	= "lastModified";
 		public const string NODES 			= "nodes";
 		public const string CONNECTIONS 	= "connections";
 
 		private Dictionary<string, object> m_jsonData;
 
-		private List<NodeData> m_allNodes;
-		private List<ConnectionData> m_allConnections;
+		private Graph m_graph;
 		private DateTime m_lastModified;
 
 		private LoaderSaveData loaderSaveData = new LoaderSaveData();
 
 		public SaveData() {
 			m_lastModified = DateTime.UtcNow;
-			m_allNodes = new List<NodeData>();
-			m_allConnections = new List<ConnectionData>();
+			m_graph = new Graph();
 		}
 
 		public SaveData(Dictionary<string, object> jsonData) {
 			m_jsonData = jsonData;
-			m_allNodes = new List<NodeData>();
-			m_allConnections = new List<ConnectionData>();
+			m_graph = new Graph();
 
 			m_lastModified = Convert.ToDateTime(m_jsonData[LASTMODIFIED] as string);
 
@@ -65,24 +61,20 @@ namespace AssetBundleGraph {
 			var connList = m_jsonData[CONNECTIONS] as List<object>;
 
 			foreach(var n in nodeList) {
-				m_allNodes.Add(new NodeData(n as Dictionary<string, object>));
+				m_graph.Nodes.Add(new NodeData(n as Dictionary<string, object>));
 			}
 
 			foreach(var c in connList) {
-				m_allConnections.Add(new ConnectionData(c as Dictionary<string, object>));
-			}
+				m_graph.Connections.Add(new ConnectionData(c as Dictionary<string, object>));
+			}			
+
 		}
 
 		public SaveData(List<NodeGUI> nodes, List<ConnectionGUI> connections) {
 			m_jsonData = null;
 
 			m_lastModified = DateTime.UtcNow;
-			m_allNodes = nodes.Select(n => n.Data).ToList();
-			m_allConnections = new List<ConnectionData>();
-
-			foreach(var cgui in connections) {
-				m_allConnections.Add(new ConnectionData(cgui));
-			}
+			m_graph = new Graph(nodes, connections);
 		}
 
 		public DateTime LastModified {
@@ -91,28 +83,22 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public List<NodeData> Nodes {
-			get{ 
-				return m_allNodes;
+		public Graph Graph {
+			get {
+				return m_graph;
 			}
-		}
-
-		public List<ConnectionData> Connections {
-			get{ 
-				return m_allConnections;
-			}
-		}
-
+		}		
+		
 		private Dictionary<string, object> ToJsonDictionary() {
 
 			var nodeList = new List<Dictionary<string, object>>();
 			var connList = new List<Dictionary<string, object>>();
 
-			foreach(NodeData n in m_allNodes) {
+			foreach(NodeData n in m_graph.Nodes) {
 				nodeList.Add(n.ToJsonDictionary());
 			}
 
-			foreach(ConnectionData c in m_allConnections) {
+			foreach(ConnectionData c in m_graph.Connections) {
 				connList.Add(c.ToJsonDictionary());
 			}
 
@@ -122,24 +108,8 @@ namespace AssetBundleGraph {
 				{CONNECTIONS, connList}
 			};
 		}
-
-
-		public List<NodeData> CollectAllLeafNodes() {
-
-			var nodesWithChild = new List<NodeData>();
-			foreach(var c in m_allConnections) {
-				NodeData n = m_allNodes.Find(v => v.Id == c.FromNodeId);
-				if(n != null) {
-					nodesWithChild.Add(n);
-				}
-			}
-			return m_allNodes.Except(nodesWithChild).ToList();
-		}
-
-		public List<NodeData> CollectAllNodes(Predicate<NodeData> condition) { 
-			return m_allNodes.FindAll(condition);
-		}
-
+		
+		
 		//
 		// Save/Load to disk
 		//
@@ -172,7 +142,7 @@ namespace AssetBundleGraph {
 				sw.Write(prettified);
 			}
 			
-			loaderSaveData.UpdateLoaderData(CollectAllNodes(x=>x.Kind == NodeKind.LOADER_GUI));
+			loaderSaveData.UpdateLoaderData(m_graph.CollectAllNodes(x=>x.Kind == NodeKind.LOADER_GUI));
 			loaderSaveData.Save();
 
 			// reflect change of data.
@@ -182,7 +152,7 @@ namespace AssetBundleGraph {
 		private Dictionary<string, object> ToJsonRootNodes() {
 			Dictionary<string, object> res = new Dictionary<string, object>();
 
-			var rootNodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && x.LoaderLoadPath != null);
+			var rootNodes = m_graph.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && x.LoaderLoadPath != null);
 
 			foreach(var loaderNode in rootNodes) {
 				res.Add(loaderNode.Id, loaderNode.LoaderLoadPath.ToJsonDictionary());
@@ -195,25 +165,7 @@ namespace AssetBundleGraph {
 			return File.Exists(SaveDataPath);
 		}
 
-		/// <summary>
-		/// Finds the best suitable loader for the provided asset path
-		/// </summary>
-		/// <param name="path">Path of the asset</param>
-		/// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
-		public NodeData GetBestLoaderData(string assetPath) {
-			NodeData res = null;
-			var nodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
 
-			foreach(NodeData node in nodes) {
-				if(assetPath.Contains(node.LoaderLoadPath.CurrentPlatformValue)) {
-					if(res == null || res.LoaderLoadPath.CurrentPlatformValue.Length < node.LoaderLoadPath.CurrentPlatformValue.Length) {
-						res = node;
-					}
-				}
-			}
-
-			return res;
-		}
 
 		private static SaveData Load() {
 			var dataStr = string.Empty;
@@ -267,23 +219,23 @@ namespace AssetBundleGraph {
 			/*
 				delete undetectable node.
 			*/
-			foreach (var n in m_allNodes) {
-				if(!n.Validate(m_allNodes, m_allConnections)) {
+			foreach (var n in m_graph.Nodes) {
+				if(!n.Validate(m_graph.Nodes, m_graph.Connections)) {
 					removingNodes.Add(n);
 					changed = true;
 				}
 			}
 
-			foreach (var c in m_allConnections) {
-				if(!c.Validate(m_allNodes, m_allConnections)) {
+			foreach (var c in m_graph.Connections) {
+				if(!c.Validate(m_graph.Nodes, m_graph.Connections)) {
 					removingConnections.Add(c);
 					changed = true;
 				}
 			}
 
 			if(changed) {
-				Nodes.RemoveAll(n => removingNodes.Contains(n));
-				Connections.RemoveAll(c => removingConnections.Contains(c));
+				m_graph.Nodes.RemoveAll(n => removingNodes.Contains(n));
+				m_graph.Connections.RemoveAll(c => removingConnections.Contains(c));
 				m_lastModified = DateTime.UtcNow;
 			}
 
@@ -343,8 +295,8 @@ namespace AssetBundleGraph {
 		}
 
 
-		public LoaderSaveData(SaveData savedata) {
-			var fullLoaders = savedata.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
+		public LoaderSaveData(Graph graph) {
+			var fullLoaders = graph.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
 			UpdateLoaderData(fullLoaders);
 		}
 
