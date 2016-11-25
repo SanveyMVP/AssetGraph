@@ -289,6 +289,8 @@ namespace AssetBundleGraph {
 										}
 									}  
 								);
+							}else {
+								return;
 							}
 						}
 					}
@@ -302,11 +304,8 @@ namespace AssetBundleGraph {
 							"To start, select {0}>{1}>{2} menu and create a new script.",
 							menuNames[1],menuNames[2], menuNames[3], incomingType.FullName
 						), MessageType.Info);
-				}
-
-				if(m_modifier == null) {
 					return;
-				}
+				}				
 
 				GUILayout.Space(10f);
 
@@ -784,8 +783,7 @@ namespace AssetBundleGraph {
 							var builders = map.Keys.ToList();
 
 							if(builders.Count > 0) {
-								NodeGUI.ShowTypeNamesMenu(guiName, builders, (string selectedGUIName) =>
-								{
+								NodeGUI.ShowTypeNamesMenu(guiName, builders, (string selectedGUIName) => {
 									using(new RecordUndoScope("Change Validator class", node, true)) {
 										m_validator = ValidatorUtility.CreateValidator(selectedGUIName, incomingType);
 										if(m_validator != null) {
@@ -795,6 +793,8 @@ namespace AssetBundleGraph {
 									}
 								}
 								);
+							} else {
+								return;
 							}
 						}
 					}
@@ -807,12 +807,8 @@ namespace AssetBundleGraph {
 							"To start, select {0}>{1}>{2} menu and create a new script.",
 							menuNames[1], menuNames[2], menuNames[3], incomingType.FullName
 						), MessageType.Info);
-				}
-
-				if(m_validator == null) {
 					return;
 				}
-
 
 				GUILayout.Space(10f);
 
