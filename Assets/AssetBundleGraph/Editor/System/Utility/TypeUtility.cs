@@ -153,7 +153,6 @@ namespace AssetBundleGraph {
 		}			
 
 		public static Type FindIncomingAssetType(List<Asset> assets) {
-
 			if(assets.Any()) {
 				Type expectedType = FindTypeOfAsset(assets.First().importFrom);
 				return expectedType;

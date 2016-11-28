@@ -54,7 +54,10 @@ namespace AssetBundleGraph {
 			var targetFilePaths = FileUtility.GetAllFilePathsInFolder(node.GetLoaderFullLoadPath(target));
 
 			var loaderSaveData = LoaderSaveData.LoadFromDisk();
-			targetFilePaths.RemoveAll(x => loaderSaveData.GetBestLoaderData(x).id != node.Id);
+			targetFilePaths.RemoveAll(x => {
+				var bestLoader = loaderSaveData.GetBestLoaderData(x);
+				return bestLoader == null || bestLoader.id != node.Id;
+				});
 
 			foreach (var targetFilePath in targetFilePaths) {
 

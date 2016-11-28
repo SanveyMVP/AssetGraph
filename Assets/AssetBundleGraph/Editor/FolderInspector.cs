@@ -22,10 +22,14 @@ public class FolderInspector : Editor {
 	protected void OnEnable() {
 		path = AssetDatabase.GetAssetPath(target);
 
-		if(IsValid) {			
-			LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
-			loader = loaderSaveData.GetBestLoaderData(path);
+		if(IsValid) {
+			CheckForLoader();
 		}
+	}
+
+	private void CheckForLoader() {
+		LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
+		loader = loaderSaveData.GetBestLoaderData(path);
 	}
 
 	public override void OnInspectorGUI() {
@@ -65,7 +69,8 @@ public class FolderInspector : Editor {
 
 			if(!perfectMatch) {
 				if(GUILayout.Button("Setup Graph Loader for this folder")){
-					throw new System.NotImplementedException();
+					AssetBundleGraphEditorWindow.OpenAndCreateLoader(path);
+					CheckForLoader();
 				}
 			}
 		}		

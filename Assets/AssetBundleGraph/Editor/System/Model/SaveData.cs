@@ -351,7 +351,10 @@ namespace AssetBundleGraph {
 		/// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
 		public LoaderData GetBestLoaderData(string assetPath) {
 			LoaderData res = null;
-
+			if((assetPath + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH)) {
+				return res;
+			}
+			
 			foreach(LoaderData dataPath in loaders) {
 				if(assetPath.Contains(dataPath.paths.CurrentPlatformValue)) {                 
 					if(res == null || res.paths.CurrentPlatformValue.Length < dataPath.paths.CurrentPlatformValue.Length) {

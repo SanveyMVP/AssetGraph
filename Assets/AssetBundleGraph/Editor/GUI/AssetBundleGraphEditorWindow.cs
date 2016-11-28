@@ -560,15 +560,6 @@ namespace AssetBundleGraph {
 				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
 				tbLabelTarget.fontStyle = FontStyle.Bold;
 				
-
-				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
-					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
-						SaveGraph();
-						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
-						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
-					}
-				}
-
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 //				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 
@@ -584,6 +575,13 @@ namespace AssetBundleGraph {
 					Setup(ActiveBuildTarget);
 				}
 
+				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
+					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+						SaveGraph();
+						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
+						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
+					}
+				}
 				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound)) {
 					if (GUILayout.Button("Build", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 						SaveGraph();
@@ -1256,7 +1254,7 @@ namespace AssetBundleGraph {
 			AddNodeGUI(newNode);
 		}
 
-		private void AddNodeFromGUI (NodeKind kind, float x, float y) {
+		private NodeGUI AddNodeFromGUI (NodeKind kind, float x, float y) {
 
 			Undo.RecordObject(this, "Add " + AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + " Node");
 
@@ -1275,6 +1273,8 @@ namespace AssetBundleGraph {
 				AddNodeGUI(outNode);
 				AddConnection("warpConnection", newNode, newNode.Data.OutputPoints[0], outNode, outNode.Data.InputPoints[0]);
 			}
+
+			return newNode;
 		}
 
 		private void DrawStraightLineFromCurrentEventSourcePointTo (Vector2 to, NodeEvent eventSource) {
@@ -1739,6 +1739,23 @@ namespace AssetBundleGraph {
 					break;
 				}
 			}
+		}
+
+		public static void OpenAndCreateLoader(string path) {
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			var node = window.AddNodeFromGUI(NodeKind.LOADER_GUI, 50, 50);
+			var subpath = path.Replace("Assets/", "");
+			node.Name = subpath;
+			node.Data.LoaderLoadPath[BuildTargetUtility.DefaultTarget] = subpath;
+			node.UpdateNodeRect();
+			window.SaveGraphWithReload();
+			window.Repaint();
+			var ids = new List<string>();
+			ids.Add(node.Id);
+			window.activeObject = window.RenewActiveObject(ids);
+			window.UpdateActivationOfObjects(window.activeObject);
+			window.scrollPos = new Vector2(0, 0);
+
 		}
 
 		public static void OpenAndRunSelected(string[] nodeIds) {

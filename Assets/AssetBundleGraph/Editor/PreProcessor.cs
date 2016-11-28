@@ -41,6 +41,12 @@ public class PreProcessor : AssetPostprocessor {
 	void OnPreprocessModel() {
 		var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
 		if(asset == null) {
+			var loader = LoaderData.GetBestLoaderData(assetPath);
+
+			if(loader != null && (loader.isPreProcess || loader.isPermanent)) {
+				//If we import materials we will do it later on post process.
+				((ModelImporter)assetImporter).importMaterials = false; 
+			}
 			preprocessingAssets.Add(assetImporter.assetPath);
 		}
 	}
@@ -63,9 +69,7 @@ public class PreProcessor : AssetPostprocessor {
 
 		preprocessingAssets.Clear();
 	}
-
-
-
+	
 	static void GenericProcessing(string path, bool isMoving) {
 		var importer = AssetImporter.GetAtPath(path);
 		
