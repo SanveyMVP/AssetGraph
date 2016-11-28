@@ -9,6 +9,36 @@ using UnityEngine.SceneManagement;
 
 namespace AssetBundleGraph {
 	public static class TypeUtility {
+		public static readonly List<Type> ImporterTypes = new List<Type>{			
+			// importers
+			typeof(TextureImporter),
+			typeof(ModelImporter),
+			typeof(AudioImporter),
+		};
+
+		public static readonly List<Type> ModifierTypes = new List<Type>{			
+			// importers
+			typeof(TextureImporter),
+			typeof(ModelImporter),
+			typeof(AudioImporter),
+			typeof(Animation),
+			typeof(Animator),
+			typeof(AvatarMask),
+			typeof(Cubemap),
+			typeof(Flare),
+			typeof(Font),
+			typeof(GUISkin),
+			// typeof(LightmapParameters).ToString(),
+			typeof(Material),
+			typeof(PhysicMaterial),
+			typeof(PhysicsMaterial2D),
+			typeof(RenderTexture),
+			// typeof(SceneAsset).ToString(),
+			typeof(Shader),
+			typeof(Scene),
+		};
+
+
 		public static readonly List<string> KeyTypes = new List<string>{
 			// empty
 			AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,

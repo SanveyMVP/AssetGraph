@@ -29,7 +29,7 @@ public class MyModifier : AssetBundleGraph.IModifier {
 		GUILayout.Label("Model Modifiers", EditorStyles.largeLabel);
 		EditorGUILayout.Space();
 
-		var newValue = GUILayout.Toggle(disableShadows, "Disable Mesh Renderer Shadows");
+		var newValue = EditorGUILayout.Toggle("Disable Mesh Renderer Shadows", disableShadows);
 		if(newValue != disableShadows) {
 			disableShadows = newValue;
 			onValueChanged();

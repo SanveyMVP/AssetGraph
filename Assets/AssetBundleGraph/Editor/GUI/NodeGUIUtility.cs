@@ -253,7 +253,8 @@ namespace AssetBundleGraph {
 						}
 						break;
 					}
-				case NodeKind.BUNDLECONFIG_GUI: {
+				case NodeKind.BUNDLECONFIG_GUI:
+				case NodeKind.VALIDATOR_GUI: {
 						if(style == StyleType.Highlighted) {
 							if(NodeSingleton.s.nodeYellowHighlight == null) {
 								Debug.LogWarning("Highlight texture not found, showing selected style");

@@ -84,7 +84,7 @@ namespace AssetBundleGraph {
 			AssetDatabase.Refresh();
 		}
 
-		private void SaveSampleFile(NodeData node, Type assetType) {
+		public static void SaveSampleFile(NodeData node, Type assetType) {
 			var samplingDirectoryPath = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
 			if (!Directory.Exists(samplingDirectoryPath)) {
 				Directory.CreateDirectory(samplingDirectoryPath);

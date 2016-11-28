@@ -286,7 +286,6 @@ namespace AssetBundleGraph {
 						executor = new IntegratedGUIBundleBuilder();
 						break;
 					}
-
 				case NodeKind.EXPORTER_GUI: {
 						executor = new IntegratedGUIExporter();
 						break;
@@ -297,6 +296,10 @@ namespace AssetBundleGraph {
 					}
 				case NodeKind.WARP_OUT: {
 						executor = new IntegratedGUIWarpOut();
+						break;
+					}
+				case NodeKind.VALIDATOR_GUI: {
+						executor = new IntegratedGUIValidator();
 						break;
 					}
 				default: {
