@@ -150,6 +150,7 @@ namespace AssetBundleGraph {
 		//loader settings
 		private const string NODE_LOADER_LOAD_PATH = "loadPath";
 		private const string NODE_LOADER_PREPROCESS = "preProcess";
+		private const string NODE_LOADER_PERMANENT = "permanent";
 
 		//exporter settings
 		private const string NODE_EXPORTER_EXPORT_PATH = "exportTo";
@@ -185,6 +186,7 @@ namespace AssetBundleGraph {
 
 		public static readonly Color DEFAULT_COLOR = new Color(0.705f, 0.705f, 0.705f,1);
 		public static readonly Color LOADER_PREPROCESS_COLOR = Color.yellow * 0.9f;
+		public static readonly Color LOADER_PERMANENT_COLOR = Color.red * 0.9f;
 		public static readonly Color FILTER_EXCLUDED_OUTPUT = DEFAULT_COLOR;
 
 		[SerializeField] private string m_name;		
@@ -194,6 +196,7 @@ namespace AssetBundleGraph {
 		[SerializeField] private float m_y;
 		[SerializeField] private string m_scriptClassName;
 		[SerializeField] private bool m_isPreProcess;
+		[SerializeField] private bool m_isPermanent;
 		[SerializeField] private string relatedNodeId;
 		[SerializeField] private List<FilterEntry> m_filter;
 		[SerializeField] private List<ConnectionPointData> 	m_inputPoints; 
@@ -290,9 +293,33 @@ namespace AssetBundleGraph {
 				ValidateAccess(NodeKind.LOADER_GUI);
 				m_isPreProcess = value;
 				if(value) {
-					m_name_color = LOADER_PREPROCESS_COLOR;
+					if(!m_isPermanent) {
+						m_name_color = LOADER_PREPROCESS_COLOR;
+					}
 				} else {
-					m_name_color = DEFAULT_COLOR;
+					if(!m_isPermanent) {
+						m_name_color = DEFAULT_COLOR;
+					}
+				}
+			}
+		}
+
+		public bool Permanent {
+			get {
+				ValidateAccess(NodeKind.LOADER_GUI);
+				return m_isPermanent;
+			}
+			set {
+				ValidateAccess(NodeKind.LOADER_GUI);
+				m_isPermanent = value;
+				if(value) {
+					m_name_color = LOADER_PERMANENT_COLOR;
+				} else {
+					if(m_isPreProcess) {
+						m_name_color = LOADER_PREPROCESS_COLOR;
+					} else {
+						m_name_color = DEFAULT_COLOR;
+					}
 				}
 			}
 		}
@@ -481,6 +508,12 @@ namespace AssetBundleGraph {
 							m_name_color = LOADER_PREPROCESS_COLOR;
 						}
 					}
+					if(jsonData.ContainsKey(NODE_LOADER_PERMANENT)) {
+						m_isPermanent = Convert.ToBoolean(jsonData[NODE_LOADER_PERMANENT]);
+						if(m_isPermanent) {
+							m_name_color = LOADER_PERMANENT_COLOR;
+						}
+					}
 				}
 				break;
 			case NodeKind.FILTER_GUI:
@@ -615,6 +648,7 @@ namespace AssetBundleGraph {
 			case NodeKind.LOADER_GUI:
 				m_loaderLoadPath = new SerializableMultiTargetString();
 				m_isPreProcess = false;
+				m_isPermanent = false;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -671,6 +705,7 @@ namespace AssetBundleGraph {
 			case NodeKind.LOADER_GUI:
 				newData.m_loaderLoadPath = new SerializableMultiTargetString(m_loaderLoadPath);
 				newData.m_isPreProcess = m_isPreProcess;
+				newData.m_isPermanent = m_isPermanent;
 				break;
 
 			case NodeKind.GROUPING_GUI:
@@ -865,6 +900,7 @@ namespace AssetBundleGraph {
 			case NodeKind.LOADER_GUI:
 				nodeDict[NODE_LOADER_LOAD_PATH] = m_loaderLoadPath.ToJsonDictionary();
 				nodeDict[NODE_LOADER_PREPROCESS] = m_isPreProcess;
+				nodeDict[NODE_LOADER_PERMANENT] = m_isPermanent;
 				break;
 
 			case NodeKind.FILTER_GUI:

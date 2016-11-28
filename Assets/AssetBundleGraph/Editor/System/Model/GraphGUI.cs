@@ -66,14 +66,16 @@ namespace AssetBundleGraph {
 			return id + 1;
 		}
 
-		public GraphGUI GetSubGraph(NodeGUI node, bool includeWarps = true) {
+		public GraphGUI GetSubGraph(NodeGUI[] rootNodes, bool includeWarps = true) {
 			var newgraph = new GraphGUI();
-			newgraph.Nodes.Add(node);
+			newgraph.Nodes.AddRange(rootNodes);
 			List<NodeGUI> nodesToAdd = new List<NodeGUI>();
 			List<ConnectionGUI> connectionsToAdd = new List<ConnectionGUI>();
 
-			GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
-			GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+			foreach(NodeGUI node in rootNodes) {
+				GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+				GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+			}
 
 			newgraph.Nodes.AddRange(nodesToAdd);
 			newgraph.Connections.AddRange(connectionsToAdd);

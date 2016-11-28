@@ -433,7 +433,7 @@ namespace AssetBundleGraph {
 		/**
 		 * Execute the build.
 		 */
-		private void Run (BuildTarget target, List<string> selectedLoaders = null) {
+		private void Run (BuildTarget target, List<string> nodeIds = null) {
 
 			try {
 				ResetNodeExceptionPool();
@@ -443,15 +443,21 @@ namespace AssetBundleGraph {
 					Debug.Log("AssetBundleGraph save data not found. Creating from scratch...");
 					return;
 				}
-
+				
 				// load data from file.
 				var saveData = SaveData.LoadFromDisk();
-				Graph graph = saveData.Graph;				
+				var graph = saveData.Graph;
 
-				graphGUI = new GraphGUI(graph);
+				if(nodeIds != null) {
+					var rootNodes = graph.Nodes.FindAll(x => nodeIds.Contains(x.Id));
+					graph = graph.GetSubGraph(rootNodes.ToArray());
+				}
+
+				var subgraphGUI = new GraphGUI(graph);
+
 
 				var currentCount = 0.00f;
-				var totalCount = graphGUI.Nodes.Count * 1f;
+				var totalCount = subgraphGUI.Nodes.Count * 1f;
 
 				Action<NodeData, float> updateHandler = (node, progress) => {
 					var progressPercentage = ((currentCount/totalCount) * 100).ToString();				
@@ -474,16 +480,7 @@ namespace AssetBundleGraph {
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
 					// run datas.
-
-					Dictionary<string, List<string>> fakeLoaders = null;
-					if(selectedLoaders != null) {
-						fakeLoaders = new Dictionary<string, List<string>>();
-						foreach(NodeData loader in graph.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
-							fakeLoaders.Add(loader.Id, new List<string>());
-						}
-					}
-
-					s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler, fakeLoaders);
+					s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler);
 				}
 				RefreshInspector(s_assetStreamMap);
 				AssetDatabase.Refresh();
@@ -1656,7 +1653,7 @@ namespace AssetBundleGraph {
 			if (0 <= deletedNodeIndex) {
 				var node = graphGUI.Nodes[deletedNodeIndex];
 
-				if(node.Data.Kind != NodeKind.IMPORTSETTING_GUI || EditorUtility.DisplayDialog("Delete " + node.Name, "Deleting this node will also delete the placeholder asset for config, are you sure?", "Delete", "Cancel")) {
+				if(node.Data.Kind != NodeKind.IMPORTSETTING_GUI || EditorUtility.DisplayDialog("Delete " + node.Name, "Deleting the "+node.Name+" importer node will also delete the placeholder asset for config, are you sure?", "Delete", "Cancel")) {
 					node.SetInactive();
 					graphGUI.Nodes.RemoveAt(deletedNodeIndex);
 
@@ -1744,14 +1741,21 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public static void SelectAllRelatedTree(string nodeId, bool includeWarps = true) {
+		public static void OpenAndRunSelected(string[] nodeIds) {
+			SelectAllRelatedTree(nodeIds.ToArray(), true);
+
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			
+			window.Run(window.ActiveBuildTarget, new List<string>(nodeIds));
+		}
+
+		public static void SelectAllRelatedTree(string[] nodeIds, bool includeWarps = true) {
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
 			window.InitializeGraph();
 
-			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
-			var subGraph = window.graphGUI.GetSubGraph(node, includeWarps);
-
-			Vector2 upperLeft = new Vector2(node.Data.X, node.Data.Y);
+			var rootNodes = window.graphGUI.Nodes.FindAll(x => nodeIds.Contains(x.Id));
+			var subGraph = window.graphGUI.GetSubGraph(rootNodes.ToArray(), includeWarps);
+			Vector2 upperLeft = new Vector2(float.MaxValue, float.MaxValue);
 
 			List<string> ids = new List<string>();
 			foreach(NodeGUI nodeGUI in subGraph.Nodes) {
@@ -1761,9 +1765,9 @@ namespace AssetBundleGraph {
 				ids.Add(nodeGUI.Id);
 			}
 			ids.AddRange(subGraph.Connections.ConvertAll(x => x.Id));
-			
+
 			window.activeObject = window.RenewActiveObject(ids);
-			window.UpdateActivationOfObjects(window.activeObject);			
+			window.UpdateActivationOfObjects(window.activeObject);
 			window.scrollPos = new Vector2(upperLeft.x - window.position.width * 0.4f, upperLeft.y - window.position.height * 0.4f);
 		}
 

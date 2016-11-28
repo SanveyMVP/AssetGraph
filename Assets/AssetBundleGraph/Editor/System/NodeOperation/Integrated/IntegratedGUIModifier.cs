@@ -57,6 +57,11 @@ namespace AssetBundleGraph {
 
 			foreach(var asset in incomingAssets) {
 				var loadedAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(asset.importFrom);
+
+				if(loadedAsset == null) {
+					Debug.LogWarning("Modifier " + node.Name + " couldn't be applied for asset " +asset.fileNameAndExtension+". Modifiers can't be applied on preprocess, run it again manually to apply");
+				}
+
 				if(modifier.IsModified(loadedAsset)) {
 					modifier.Modify(loadedAsset);
 					isAnyAssetModified = true;

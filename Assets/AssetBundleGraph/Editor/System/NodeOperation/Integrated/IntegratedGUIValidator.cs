@@ -45,6 +45,11 @@ namespace AssetBundleGraph {
 
 			foreach(var asset in incomingAssets) {
 				var loadedAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(asset.importFrom);
+
+				if(loadedAsset == null) {
+					Debug.LogWarning("Validator " + node.Name + " couldn't be applied for asset " + asset.fileNameAndExtension + ". Validators can't be applied on preprocess, run it again manually to apply");
+				}
+
 				if(validator.ShouldValidate(loadedAsset)) {
 					if(!validator.Validate(loadedAsset)) {
 						if(validator.TryToRecover(loadedAsset)) {

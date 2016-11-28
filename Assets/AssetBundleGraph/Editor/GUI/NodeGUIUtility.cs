@@ -191,7 +191,6 @@ namespace AssetBundleGraph {
 						break;
 					}
 				case NodeKind.IMPORTSETTING_GUI:
-				case NodeKind.MODIFIER_GUI:
 				case NodeKind.GROUPING_GUI: {
 						if(style == StyleType.Highlighted) {
 							if(NodeSingleton.s.nodeAquaHighlight == null) {
@@ -254,7 +253,7 @@ namespace AssetBundleGraph {
 						break;
 					}
 				case NodeKind.BUNDLECONFIG_GUI:
-				case NodeKind.VALIDATOR_GUI: {
+				case NodeKind.MODIFIER_GUI: {
 						if(style == StyleType.Highlighted) {
 							if(NodeSingleton.s.nodeYellowHighlight == null) {
 								Debug.LogWarning("Highlight texture not found, showing selected style");
@@ -272,6 +271,28 @@ namespace AssetBundleGraph {
 							res.name = "Yellow node On";
 							res.normal.background = NodeSingleton.s.nodeYellowOn;
 						}
+						break;
+					}
+
+				case NodeKind.VALIDATOR_GUI: {
+						if(style == StyleType.Highlighted) {
+							if(NodeSingleton.s.nodeGreenHighlight == null) {
+								Debug.LogWarning("Highlight texture not found, showing selected style");
+								style = StyleType.Selected;
+							} else {
+								res.name = "Green node Highlight";
+								res.normal.background = NodeSingleton.s.nodeGreenHighlight;
+							}
+						}
+
+						if(style == StyleType.UnSelected) {
+							res.name = "Green node";
+							res.normal.background = NodeSingleton.s.nodeGreen;
+						} else if(style == StyleType.Selected) {
+							res.name = "Green node On";
+							res.normal.background = NodeSingleton.s.nodeGreenOn;
+						}
+
 						break;
 					}
 			}
@@ -301,6 +322,9 @@ namespace AssetBundleGraph {
 			public Texture2D nodeYellow;
 			public Texture2D nodeYellowOn;
 			public Texture2D nodeYellowHighlight;
+			public Texture2D nodeGreen;
+			public Texture2D nodeGreenOn;
+			public Texture2D nodeGreenHighlight;
 
 			public Texture2D inputPointTex;
 			public Texture2D outputPointTex;
@@ -350,9 +374,12 @@ namespace AssetBundleGraph {
 				nodeRed = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED);
 				nodeRedOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_ON);
 				nodeRedHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_HIGHLIGHT);
-				nodeYellow= AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW);
-				nodeYellowOn= AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW_ON);
+				nodeYellow = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW);
+				nodeYellowOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW_ON);
 				nodeYellowHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW_HIGHLIGHT);
+				nodeGreen = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN);
+				nodeGreenOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN_ON);
+				nodeGreenHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN_HIGHLIGHT);
 			}
 
 			public void SetupPlatformButtons () {

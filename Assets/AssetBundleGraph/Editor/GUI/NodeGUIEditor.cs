@@ -43,6 +43,13 @@ namespace AssetBundleGraph {
 				}
 			}
 
+			bool newPermanent = EditorGUILayout.Toggle("Permanent Processing", node.Data.Permanent);
+			if(newPermanent != node.Data.Permanent) {
+				using(new RecordUndoScope("Permanent Changed", node, true)) {
+					node.Data.Permanent = newPermanent;
+				}
+			}
+
 			GUILayout.Space(10f);
 
 			//Show target configuration tab
@@ -74,7 +81,7 @@ namespace AssetBundleGraph {
 
 			EditorGUILayout.Space();
 			if(GUILayout.Button("Select Tree")) {
-				AssetBundleGraphEditorWindow.SelectAllRelatedTree(node.Id, false);
+				AssetBundleGraphEditorWindow.SelectAllRelatedTree(new string[] { node.Id }, false);
 			}
 
 		}

@@ -249,21 +249,29 @@ namespace AssetBundleGraph {
 			private const string LOADER_ID = "id";
 			private const string LOADER_PATH = "path";
 			private const string LOADER_PREPROCESS = "preprocess";
+			private const string LOADER_PERMANENT = "permanent";
 
 			public string id;
 			public SerializableMultiTargetString paths;
 			public bool isPreProcess;
+			public bool isPermanent;
 
-			public LoaderData(string id, SerializableMultiTargetString paths, bool isPreProcess) {
+			public LoaderData(string id, SerializableMultiTargetString paths, bool isPreProcess, bool isPermanent) {
 				this.id = id;
 				this.paths = paths;
 				this.isPreProcess = isPreProcess;
+				this.isPermanent = isPermanent;
 			}
 
 			public LoaderData(Dictionary<string, object> rawData) {
 				this.id = rawData[LOADER_ID] as string;
 				this.paths = new SerializableMultiTargetString(rawData[LOADER_PATH] as Dictionary<string, object>);
-				this.isPreProcess = Convert.ToBoolean(rawData[LOADER_PREPROCESS]);
+				if(rawData.ContainsKey(LOADER_PREPROCESS)) {
+					this.isPreProcess = Convert.ToBoolean(rawData[LOADER_PREPROCESS]);
+				}
+				if(rawData.ContainsKey(LOADER_PERMANENT)) {
+					this.isPermanent = Convert.ToBoolean(rawData[LOADER_PERMANENT]);
+				}
 			}
 
 			public Dictionary<string, object> ToJsonDictionary() {
@@ -272,6 +280,7 @@ namespace AssetBundleGraph {
 				jsonDict.Add(LOADER_ID, id);
 				jsonDict.Add(LOADER_PATH, paths.ToJsonDictionary());
 				jsonDict.Add(LOADER_PREPROCESS, isPreProcess);
+				jsonDict.Add(LOADER_PERMANENT, isPermanent);
 
 				return jsonDict;
 			}
@@ -310,7 +319,7 @@ namespace AssetBundleGraph {
 		}     
 		
 		public void UpdateLoaderData(List<NodeData> fullLoaders) {
-			loaders = fullLoaders.ConvertAll(x => new LoaderData(x.Id, x.LoaderLoadPath, x.PreProcess));
+			loaders = fullLoaders.ConvertAll(x => new LoaderData(x.Id, x.LoaderLoadPath, x.PreProcess, x.Permanent));
 		}
 
 		public void Save() {

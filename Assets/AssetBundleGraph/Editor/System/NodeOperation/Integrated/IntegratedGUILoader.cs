@@ -87,37 +87,23 @@ namespace AssetBundleGraph {
 		}
 
 
-		public void FakeLoad(NodeData node,
+		public void LoadSingleAsset(NodeData node,
 			ConnectionData connectionToOutput,
-			List<string> fakeAssets,
-			Action<ConnectionData, Dictionary<string, List<Asset>>, List<string>> Output,
-			AssetImporter preImporter) {
-
-			// SOMEWHERE_FULLPATH/PROJECT_FOLDER/Assets/
-			var assetsFolderPath = Application.dataPath + AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR;
-
+			string path,
+			Action<ConnectionData, Dictionary<string, List<Asset>>, List<string>> Output
+			) {
 			var outputSource = new List<Asset>();
-
-			foreach(string targetFilePath in fakeAssets) {
-
-				if(targetFilePath.StartsWith(assetsFolderPath)) {
-					var relativePath = targetFilePath.Replace(assetsFolderPath, AssetBundleGraphSettings.ASSETS_PATH);
-
-					if(preImporter != null && preImporter.assetPath == relativePath) {
-						outputSource.Add(Asset.CreateNewAssetFromImporter(preImporter));
-						continue;
-					}
-					
-					var assetType = TypeUtility.GetTypeOfAsset(relativePath);
-					if(assetType == typeof(object)) {
-						continue;
-					} 
-					outputSource.Add(Asset.CreateNewAssetFromLoader(targetFilePath, relativePath));
-					
-				}else {
-					throw new NodeException(node.Name + ": Invalid Load Path. Path must start with Assets/", node.Name);
-				}
+			Asset asset = null;
+			var assetType = TypeUtility.GetTypeOfAsset(path);
+			if(assetType == typeof(object)) {
+				AssetImporter importer = AssetImporter.GetAtPath(path);
+				asset = Asset.CreateNewAssetFromImporter(importer);
+			}else {
+				var absPath = Application.dataPath + AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR + path;
+				asset = Asset.CreateNewAssetFromLoader(absPath, path);
 			}
+
+			outputSource.Add(asset);			
 
 			var outputDir = new Dictionary<string, List<Asset>> {
 				{"0", outputSource}
