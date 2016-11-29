@@ -96,13 +96,13 @@ namespace AssetBundleGraph {
 			{"Create " + MENU_FILTER_NAME + " Node", NodeKind.FILTER_GUI},
 			{"Create " + MENU_IMPORTSETTING_NAME + " Node", NodeKind.IMPORTSETTING_GUI},
 			{"Create " + MENU_MODIFIER_NAME + " Node", NodeKind.MODIFIER_GUI},
+			{"Create " + MENU_VALIDATOR_NAME + " Node", NodeKind.VALIDATOR_GUI },
 			{"Create " + MENU_GROUPING_NAME + " Node", NodeKind.GROUPING_GUI},
 			{"Create " + MENU_PREFABBUILDER_NAME + " Node", NodeKind.PREFABBUILDER_GUI},
 			{"Create " + MENU_BUNDLECONFIG_NAME + " Node", NodeKind.BUNDLECONFIG_GUI},
 			{"Create " + MENU_BUNDLEBUILDER_NAME + " Node", NodeKind.BUNDLEBUILDER_GUI},
 			{"Create " + MENU_EXPORTER_NAME + " Node", NodeKind.EXPORTER_GUI},
-			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN },
-			{"Create " + MENU_VALIDATOR_NAME + " Node", NodeKind.VALIDATOR_GUI }
+			{"Create " + MENU_WARP_NAME + " Node", NodeKind.WARP_IN }
 		};
 
 		public static Dictionary<NodeKind, string> DEFAULT_NODE_NAME = new Dictionary<NodeKind, string>{
@@ -123,7 +123,7 @@ namespace AssetBundleGraph {
 		public static Dictionary<Type, string> PLACEHOLDER_FILE = new Dictionary<Type, string>{
 			{typeof(TextureImporter),  "config.png"},
 			{typeof(ModelImporter),  "config.fbx"},
-			{typeof(AudioImporter),  "config.mp3"}
+			{typeof(AudioImporter),  "config.wav"}
 		};
 
 		/*
