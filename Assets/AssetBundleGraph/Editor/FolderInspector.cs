@@ -14,14 +14,17 @@ public class FolderInspector : Editor {
 
 	private bool IsValid {
 		get {
+			var newPath = AssetDatabase.GetAssetPath(target);
+			if(newPath != path) {
+				path = newPath;
+				CheckForLoader();
+			}
 			return Directory.Exists(path) && !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
 		}
 	}
 
 
 	protected void OnEnable() {
-		path = AssetDatabase.GetAssetPath(target);
-
 		if(IsValid) {
 			CheckForLoader();
 		}
@@ -35,10 +38,10 @@ public class FolderInspector : Editor {
 	public override void OnInspectorGUI() {
 		base.OnInspectorGUI();
 		if(IsValid) {
+			GUI.enabled = true;
 			bool perfectMatch = false;
 
 			if(loader != null) {
-				GUI.enabled = true;
 				var folderConfigured = loader.paths.CurrentPlatformValue;
 				if(folderConfigured == string.Empty) {
 					folderConfigured = "Global";
