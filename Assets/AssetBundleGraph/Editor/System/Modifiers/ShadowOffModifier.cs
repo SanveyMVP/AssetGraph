@@ -4,11 +4,8 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
-[AssetBundleGraph.CustomModifier("ModelModifier", typeof(ModelImporter))]
-public class MyModifier : AssetBundleGraph.IModifier {
-
-	[SerializeField]
-	private bool disableShadows = true;
+[AssetBundleGraph.CustomModifier("ShadowOffModifier", typeof(ModelImporter))]
+public class ShadowOffModifier : AssetBundleGraph.IModifier {
 
 	// Test if asset is different from intended configuration 
 	public bool IsModified(object asset) {
@@ -26,14 +23,7 @@ public class MyModifier : AssetBundleGraph.IModifier {
 
 	// Draw inspector gui 
 	public void OnInspectorGUI(Action onValueChanged) {
-		GUILayout.Label("Model Modifiers", EditorStyles.largeLabel);
-		EditorGUILayout.Space();
-
-		var newValue = EditorGUILayout.Toggle("Disable Mesh Renderer Shadows", disableShadows);
-		if(newValue != disableShadows) {
-			disableShadows = newValue;
-			onValueChanged();
-		}
+		EditorGUILayout.HelpBox("This modifier disables shadows in the model GameObject", MessageType.Info);
 	}
 
 	// serialize this class to JSON 

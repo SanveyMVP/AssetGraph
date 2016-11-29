@@ -52,34 +52,16 @@ namespace AssetBundleGraph {
 			return Nodes.FindAll(condition);
 		}
 
-		/// <summary>
-		/// Finds the best suitable loader for the provided asset path
-		/// </summary>
-		/// <param name="path">Path of the asset</param>
-		/// <returns>LoaderData of the nearest LoaderFolder, null if none are suitable</returns>
-		public NodeData GetBestLoaderData(string assetPath) {
-			NodeData res = null;
-			var nodes = CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI);
-
-			foreach(NodeData node in nodes) {
-				if(assetPath.Contains(node.LoaderLoadPath.CurrentPlatformValue)) {
-					if(res == null || res.LoaderLoadPath.CurrentPlatformValue.Length < node.LoaderLoadPath.CurrentPlatformValue.Length) {
-						res = node;
-					}
-				}
-			}
-
-			return res;
-		}
-
-		public Graph GetSubGraph(NodeData node, bool includeWarps = true) {
+		public Graph GetSubGraph(NodeData[] rootNodes, bool includeWarps = true) {
 			var newgraph = new Graph();
-			newgraph.Nodes.Add(node);
+			newgraph.Nodes.AddRange(rootNodes);
 			List<NodeData> nodesToAdd = new List<NodeData>();
 			List<ConnectionData> connectionsToAdd = new List<ConnectionData>();
 
-			GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
-			GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+			foreach(NodeData node in rootNodes) {
+				GetParentRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+				GetChildRelatives(node, ref nodesToAdd, ref connectionsToAdd, includeWarps);
+			}
 
 			newgraph.Nodes.AddRange(nodesToAdd);
 			newgraph.Connections.AddRange(connectionsToAdd);

@@ -210,6 +210,9 @@ namespace AssetBundleGraph {
 			public const string RESOURCE_NODE_YELLOW = RESOURCE_NODEPATH + "yellow.png";
 			public const string RESOURCE_NODE_YELLOW_ON = RESOURCE_NODEPATH + "yellow_on.png";
 			public const string RESOURCE_NODE_YELLOW_HIGHLIGHT = RESOURCE_NODEPATH + "yellow_highlight.png";
+			public const string RESOURCE_NODE_GREEN= RESOURCE_NODEPATH + "green.png";
+			public const string RESOURCE_NODE_GREEN_ON = RESOURCE_NODEPATH + "green_on.png";
+			public const string RESOURCE_NODE_GREEN_HIGHLIGHT = RESOURCE_NODEPATH + "green_highlight.png";
 		}
 	}
 }

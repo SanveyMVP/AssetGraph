@@ -57,8 +57,7 @@ namespace AssetBundleGraph {
 			bool isRun,
 			Action<NodeException> errorHandler,
 			Action<NodeData, float> updateHandler,
-			Dictionary<string,List<string>> fakeLoaders = null,
-			AssetImporter preImporter = null) 
+			string preImporter = null) 
 		{
 			bool validateFailed = false;
 			try {
@@ -80,10 +79,10 @@ namespace AssetBundleGraph {
 
 				foreach (var leafNode in leaf) {
 					if( leafNode.InputPoints.Count == 0 ) {
-						DoNodeOperation(target, leafNode, null, null, graph, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, fakeLoaders, preImporter);
+						DoNodeOperation(target, leafNode, null, null, graph, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, preImporter);
 					} else {
 						foreach(var inputPoint in leafNode.InputPoints) {
-							DoNodeOperation(target, leafNode, inputPoint, null, graph, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, fakeLoaders, preImporter);
+							DoNodeOperation(target, leafNode, inputPoint, null, graph, resultDict, cacheDict, performedIds, isRun, errorHandler, updateHandler, preImporter);
 						}
 					}
 				}
@@ -106,8 +105,7 @@ namespace AssetBundleGraph {
 			bool isActualRun,
 			Action<NodeException> errorHandler,
 			Action<NodeData, float> updateHandler,
-			Dictionary<string, List<string>> fakeLoaders,
-			AssetImporter preImporter
+			string preImporter
 		) {
 			if (performedIds.Contains(currentNodeData.Id) || (currentInputPoint != null && performedIds.Contains(currentInputPoint.Id))) {
 				return;
@@ -128,12 +126,12 @@ namespace AssetBundleGraph {
 				if( parentNode.InputPoints.Count > 0 ) {
 					// if node has multiple input, node is operated per input
 					foreach(var parentInputPoint in parentNode.InputPoints) {
-						DoNodeOperation(target, parentNode, parentInputPoint, c, graph, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, fakeLoaders, preImporter);
+						DoNodeOperation(target, parentNode, parentInputPoint, c, graph, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, preImporter);
 					}
 				} 
 				// if parent does not have input point, call with inputPoint==null
 				else {
-					DoNodeOperation(target, parentNode, null, c, graph, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, fakeLoaders, preImporter);
+					DoNodeOperation(target, parentNode, null, c, graph, resultDict, cachedDict, performedIds, isActualRun, errorHandler, updateHandler, preImporter);
 				}
 			}
 
@@ -220,9 +218,9 @@ namespace AssetBundleGraph {
 			try {
 				INodeOperation executor = CreateOperation(graph, currentNodeData, errorHandler);
 				if(executor != null) {
-					if(fakeLoaders != null && fakeLoaders.ContainsKey(currentNodeData.Id)) {
+					if(executor is IntegratedGUILoader && preImporter != null) {
 						var loader = executor as IntegratedGUILoader;
-						loader.FakeLoad(currentNodeData,connectionToOutput, fakeLoaders[currentNodeData.Id], Output, preImporter);
+						loader.LoadSingleAsset(currentNodeData,connectionToOutput, preImporter, Output);
 					} else {
 						if(isActualRun) {
 							executor.Run(target, currentNodeData, currentInputPoint, connectionToOutput, inputGroupAssets, alreadyCachedPaths, Output);

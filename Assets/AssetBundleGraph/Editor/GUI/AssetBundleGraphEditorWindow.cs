@@ -433,7 +433,7 @@ namespace AssetBundleGraph {
 		/**
 		 * Execute the build.
 		 */
-		private void Run (BuildTarget target, List<string> selectedLoaders = null) {
+		private void Run (BuildTarget target, List<string> nodeIds = null) {
 
 			try {
 				ResetNodeExceptionPool();
@@ -443,15 +443,21 @@ namespace AssetBundleGraph {
 					Debug.Log("AssetBundleGraph save data not found. Creating from scratch...");
 					return;
 				}
-
+				
 				// load data from file.
 				var saveData = SaveData.LoadFromDisk();
-				Graph graph = saveData.Graph;				
+				var graph = saveData.Graph;
 
-				graphGUI = new GraphGUI(graph);
+				if(nodeIds != null) {
+					var rootNodes = graph.Nodes.FindAll(x => nodeIds.Contains(x.Id));
+					graph = graph.GetSubGraph(rootNodes.ToArray());
+				}
+
+				var subgraphGUI = new GraphGUI(graph);
+
 
 				var currentCount = 0.00f;
-				var totalCount = graphGUI.Nodes.Count * 1f;
+				var totalCount = subgraphGUI.Nodes.Count * 1f;
 
 				Action<NodeData, float> updateHandler = (node, progress) => {
 					var progressPercentage = ((currentCount/totalCount) * 100).ToString();				
@@ -474,16 +480,7 @@ namespace AssetBundleGraph {
 				// if there is not error reported, then run
 				if(s_nodeExceptionPool.Count == 0) {
 					// run datas.
-
-					Dictionary<string, List<string>> fakeLoaders = null;
-					if(selectedLoaders != null) {
-						fakeLoaders = new Dictionary<string, List<string>>();
-						foreach(NodeData loader in graph.CollectAllNodes(x => x.Kind == NodeKind.LOADER_GUI && !selectedLoaders.Contains(x.Id))) {
-							fakeLoaders.Add(loader.Id, new List<string>());
-						}
-					}
-
-					s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler, fakeLoaders);
+					s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, true, errorHandler, updateHandler);
 				}
 				RefreshInspector(s_assetStreamMap);
 				AssetDatabase.Refresh();
@@ -563,15 +560,6 @@ namespace AssetBundleGraph {
 				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
 				tbLabelTarget.fontStyle = FontStyle.Bold;
 				
-
-				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
-					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
-						SaveGraph();
-						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
-						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
-					}
-				}
-
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 //				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 
@@ -587,6 +575,13 @@ namespace AssetBundleGraph {
 					Setup(ActiveBuildTarget);
 				}
 
+				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
+					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+						SaveGraph();
+						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
+						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
+					}
+				}
 				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound)) {
 					if (GUILayout.Button("Build", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 						SaveGraph();
@@ -1259,7 +1254,7 @@ namespace AssetBundleGraph {
 			AddNodeGUI(newNode);
 		}
 
-		private void AddNodeFromGUI (NodeKind kind, float x, float y) {
+		private NodeGUI AddNodeFromGUI (NodeKind kind, float x, float y) {
 
 			Undo.RecordObject(this, "Add " + AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + " Node");
 
@@ -1278,6 +1273,8 @@ namespace AssetBundleGraph {
 				AddNodeGUI(outNode);
 				AddConnection("warpConnection", newNode, newNode.Data.OutputPoints[0], outNode, outNode.Data.InputPoints[0]);
 			}
+
+			return newNode;
 		}
 
 		private void DrawStraightLineFromCurrentEventSourcePointTo (Vector2 to, NodeEvent eventSource) {
@@ -1656,7 +1653,7 @@ namespace AssetBundleGraph {
 			if (0 <= deletedNodeIndex) {
 				var node = graphGUI.Nodes[deletedNodeIndex];
 
-				if(node.Data.Kind != NodeKind.IMPORTSETTING_GUI || EditorUtility.DisplayDialog("Delete " + node.Name, "Deleting this node will also delete the placeholder asset for config, are you sure?", "Delete", "Cancel")) {
+				if(node.Data.Kind != NodeKind.IMPORTSETTING_GUI || EditorUtility.DisplayDialog("Delete " + node.Name, "Deleting the "+node.Name+" importer node will also delete the placeholder asset for config, are you sure?", "Delete", "Cancel")) {
 					node.SetInactive();
 					graphGUI.Nodes.RemoveAt(deletedNodeIndex);
 
@@ -1744,14 +1741,38 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		public static void SelectAllRelatedTree(string nodeId, bool includeWarps = true) {
+		public static void OpenAndCreateLoader(string path) {
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			var node = window.AddNodeFromGUI(NodeKind.LOADER_GUI, 50, 50);
+			var subpath = path.Replace("Assets/", "");
+			node.Name = subpath;
+			node.Data.LoaderLoadPath[BuildTargetUtility.DefaultTarget] = subpath;
+			node.UpdateNodeRect();
+			window.SaveGraphWithReload();
+			window.Repaint();
+			var ids = new List<string>();
+			ids.Add(node.Id);
+			window.activeObject = window.RenewActiveObject(ids);
+			window.UpdateActivationOfObjects(window.activeObject);
+			window.scrollPos = new Vector2(0, 0);
+
+		}
+
+		public static void OpenAndRunSelected(string[] nodeIds) {
+			SelectAllRelatedTree(nodeIds.ToArray(), true);
+
+			var window = GetWindow<AssetBundleGraphEditorWindow>();
+			
+			window.Run(window.ActiveBuildTarget, new List<string>(nodeIds));
+		}
+
+		public static void SelectAllRelatedTree(string[] nodeIds, bool includeWarps = true) {
 			var window = GetWindow<AssetBundleGraphEditorWindow>();
 			window.InitializeGraph();
 
-			var node = window.graphGUI.Nodes.Find(x => x.Id == nodeId);
-			var subGraph = window.graphGUI.GetSubGraph(node, includeWarps);
-
-			Vector2 upperLeft = new Vector2(node.Data.X, node.Data.Y);
+			var rootNodes = window.graphGUI.Nodes.FindAll(x => nodeIds.Contains(x.Id));
+			var subGraph = window.graphGUI.GetSubGraph(rootNodes.ToArray(), includeWarps);
+			Vector2 upperLeft = new Vector2(float.MaxValue, float.MaxValue);
 
 			List<string> ids = new List<string>();
 			foreach(NodeGUI nodeGUI in subGraph.Nodes) {
@@ -1761,9 +1782,9 @@ namespace AssetBundleGraph {
 				ids.Add(nodeGUI.Id);
 			}
 			ids.AddRange(subGraph.Connections.ConvertAll(x => x.Id));
-			
+
 			window.activeObject = window.RenewActiveObject(ids);
-			window.UpdateActivationOfObjects(window.activeObject);			
+			window.UpdateActivationOfObjects(window.activeObject);
 			window.scrollPos = new Vector2(upperLeft.x - window.position.width * 0.4f, upperLeft.y - window.position.height * 0.4f);
 		}
 
