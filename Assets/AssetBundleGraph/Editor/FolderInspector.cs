@@ -16,7 +16,7 @@ public class FolderInspector : Editor {
 		get {
 			bool shouldPaintInspector = false;
 			var currentPath = AssetDatabase.GetAssetPath(target);
-			if(Directory.Exists(path)) {
+			if(Directory.Exists(currentPath)) {
 				if(currentPath != path) {
 					path = currentPath;
 					CheckForLoader();
