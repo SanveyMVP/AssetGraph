@@ -9,24 +9,22 @@ using System;
 [CustomEditor(typeof(DefaultAsset))]
 public class FolderInspector : Editor {
 
-	private string path;
+	private string path = null;
 	private LoaderSaveData.LoaderData loader = null;
 
 	private bool IsValid {
 		get {
-			var newPath = AssetDatabase.GetAssetPath(target);
-			if(newPath != path) {
-				path = newPath;
-				CheckForLoader();
+			bool shouldPaintInspector = false;
+			var currentPath = AssetDatabase.GetAssetPath(target);
+			if(Directory.Exists(path)) {
+				if(currentPath != path) {
+					path = currentPath;
+					CheckForLoader();
+				}
+
+				shouldPaintInspector = !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
 			}
-			return Directory.Exists(path) && !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
-		}
-	}
-
-
-	protected void OnEnable() {
-		if(IsValid) {
-			CheckForLoader();
+			return shouldPaintInspector;
 		}
 	}
 
