@@ -7,18 +7,37 @@ using System.Collections.Generic;
 [AssetBundleGraph.CustomModifier("ShadowOffModifier", typeof(ModelImporter))]
 public class ShadowOffModifier : AssetBundleGraph.IModifier {
 
+	private bool isSkinned;
 	// Test if asset is different from intended configuration 
 	public bool IsModified(object asset) {
-		return asset is GameObject && ((GameObject)asset).GetComponent<MeshRenderer>() != null;
+		var target = (GameObject)asset;
+
+		var staticMesh = target.GetComponent<MeshRenderer>();
+
+		isSkinned = staticMesh == null;
+
+		return !isSkinned || target.GetComponentInChildren<SkinnedMeshRenderer>() != null;
 	}
 
 	// Actually change asset configurations. 
 	public void Modify(object asset) {
-		var meshRenderer = ((GameObject)asset).GetComponent<MeshRenderer>();
-		meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-		meshRenderer.receiveShadows = false;
-		meshRenderer.useLightProbes = false;
-		meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+		var target = (GameObject)asset;
+
+		if(isSkinned) {
+			var skinnedMeshes = target.GetComponentsInChildren<SkinnedMeshRenderer>();
+			foreach(SkinnedMeshRenderer skinnedMesh in skinnedMeshes) {
+				DisableShadows(skinnedMesh);
+			}
+		}else {
+			DisableShadows(target.GetComponent<MeshRenderer>());
+		}
+	}
+
+	private void DisableShadows(Renderer renderer) {
+		renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+		renderer.receiveShadows = false;
+		renderer.useLightProbes = false;
+		renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
 	}
 
 	// Draw inspector gui 

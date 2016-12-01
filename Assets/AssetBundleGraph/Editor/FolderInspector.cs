@@ -9,21 +9,22 @@ using System;
 [CustomEditor(typeof(DefaultAsset))]
 public class FolderInspector : Editor {
 
-	private string path;
+	private string path = null;
 	private LoaderSaveData.LoaderData loader = null;
 
 	private bool IsValid {
 		get {
-			return Directory.Exists(path) && !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
-		}
-	}
+			bool shouldPaintInspector = false;
+			var currentPath = AssetDatabase.GetAssetPath(target);
+			if(Directory.Exists(currentPath)) {
+				if(currentPath != path) {
+					path = currentPath;
+					CheckForLoader();
+				}
 
-
-	protected void OnEnable() {
-		path = AssetDatabase.GetAssetPath(target);
-
-		if(IsValid) {
-			CheckForLoader();
+				shouldPaintInspector = !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
+			}
+			return shouldPaintInspector;
 		}
 	}
 
@@ -35,10 +36,10 @@ public class FolderInspector : Editor {
 	public override void OnInspectorGUI() {
 		base.OnInspectorGUI();
 		if(IsValid) {
+			GUI.enabled = true;
 			bool perfectMatch = false;
 
 			if(loader != null) {
-				GUI.enabled = true;
 				var folderConfigured = loader.paths.CurrentPlatformValue;
 				if(folderConfigured == string.Empty) {
 					folderConfigured = "Global";

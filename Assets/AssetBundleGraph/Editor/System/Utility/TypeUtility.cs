@@ -97,6 +97,7 @@ namespace AssetBundleGraph {
 			".sh",
 			".json",
 			".js",
+			".sbsar",
 		};
 
 		/**
