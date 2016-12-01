@@ -37,15 +37,20 @@ namespace AssetBundleGraph {
 		}
 
 		public List<NodeData> CollectAllLeafNodes() {
-
-			var nodesWithChild = new List<NodeData>();
+			var nodesWithIn = new List<NodeData>();
+			var nodesWithOut = new List<NodeData>();
 			foreach(var c in Connections) {
-				NodeData n = Nodes.Find(v => v.Id == c.FromNodeId);
-				if(n != null) {
-					nodesWithChild.Add(n);
+				foreach(NodeData node in Nodes) {
+					if(node.Id == c.FromNodeId) {
+						nodesWithOut.Add(node);
+					}else if(node.Id == c.ToNodeId) {
+						nodesWithIn.Add(node);
+					}
 				}
 			}
-			return Nodes.Except(nodesWithChild).ToList();
+
+			//nodes which have inputs and doesn't have output
+			return Nodes.FindAll(x => !nodesWithOut.Contains(x) && nodesWithIn.Contains(x));
 		}
 
 		public List<NodeData> CollectAllNodes(Predicate<NodeData> condition) {

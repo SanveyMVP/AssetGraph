@@ -169,6 +169,7 @@ namespace AssetBundleGraph {
 							AssetBundleGraphSettings.DEFAULT_FILTER_KEYTYPE,
 							AssetBundleGraphSettings.DEFAULT_FILTER_EXCLUSION
 							);
+						NodeGUIUtility.NodeEventHandler(new NodeEvent(NodeEvent.EventType.EVENT_CONNECTIONPOINT_ADDED));
 					}
 				}
 

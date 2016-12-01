@@ -105,7 +105,7 @@ namespace AssetBundleGraph {
 		private AssetBundleGraphSelection selection;
 		private ScalePoint scalePoint;
 		private GraphBackground background = new GraphBackground();
-		//private Vector2 lastMousePosition;
+		private bool validated = false;
 		private double lastClickedTime = 0;
 		private double doubleClickTime = 0.3f;
 
@@ -250,7 +250,7 @@ namespace AssetBundleGraph {
 		public void SelectNode(string nodeId) {
 			var selectObject = graphGUI.Nodes.Find(node => node.Id == nodeId);
 			// set deactive for all nodes.
-			foreach (var node in graphGUI.Nodes) {
+			foreach(var node in graphGUI.Nodes) {
 				node.SetInactive();
 			}
 			if(selectObject != null) {
@@ -273,7 +273,7 @@ namespace AssetBundleGraph {
 			this.selectedTarget = EditorUserBuildSettings.activeBuildTarget;
 
 			Undo.undoRedoPerformed += () => {
-				SaveGraphWithReload();
+				SaveGraphThatRequiresReload();
 				Repaint();
 			};
 
@@ -282,7 +282,7 @@ namespace AssetBundleGraph {
 			ConnectionGUIUtility.ConnectionEventHandler = HandleConnectionEvent;
 
 			InitializeGraph();
-			Setup(ActiveBuildTarget);
+			//Setup(ActiveBuildTarget);
 
 			if (graphGUI.Nodes.Any()) {
 				UpdateSpacerRect();
@@ -356,6 +356,7 @@ namespace AssetBundleGraph {
 			*/
 
 			graphGUI = new GraphGUI(graph);
+			validated = false;
 		}
 
 		/**
@@ -377,15 +378,10 @@ namespace AssetBundleGraph {
 			newSaveData.Save();
 		}
 
-		private void SaveGraphWithReload (bool silent = false) {
+		private void SaveGraphThatRequiresReload (bool silent = false) {
+			validated = false;
+			PreProcessor.MarkForReload();
 			SaveGraph();
-			try {
-				Setup(ActiveBuildTarget);
-			} catch (Exception e) {
-				if(!silent){
-					Debug.LogError("Error occured during reload:" + e);
-				}
-			}
 		}
 
 		
@@ -394,13 +390,7 @@ namespace AssetBundleGraph {
 			EditorUtility.ClearProgressBar();
 
 			try {
-				ResetNodeExceptionPool();
-
-				if (!SaveData.IsSaveDataAvailableAtDisk()) {
-					SaveData.RecreateDataOnDisk();
-					Debug.Log("AssetBundleGraph save data not found. Creating from scratch...");
-					return;
-				}
+				ResetNodeExceptionPool();			
 
 				foreach (var node in graphGUI.Nodes) {
 					node.HideProgress();
@@ -414,7 +404,7 @@ namespace AssetBundleGraph {
 				NodeGUIUtility.allNodeNames = new List<string>(graphGUI.Nodes.Select(node => node.Name).ToList());
 
 				Action<NodeException> errorHandler = (NodeException e) => {
-					AssetBundleGraphEditorWindow.AddNodeException(e);
+					AddNodeException(e);
 				};
 
 				s_assetStreamMap = AssetBundleGraphController.Perform(graph, target, false, errorHandler, null);
@@ -423,6 +413,8 @@ namespace AssetBundleGraph {
 				ShowErrorOnNodes();
 
 				AssetBundleGraphController.Postprocess(graph, s_assetStreamMap, false);
+
+				validated = true;
 			} catch(Exception e) {
 				Debug.LogError(e);
 			} finally {
@@ -539,11 +531,25 @@ namespace AssetBundleGraph {
 
 		private void DrawGUIToolBar() {
 			using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar)) {
+				GUIStyle tbLabel = new GUIStyle(EditorStyles.toolbarButton);
+
+				tbLabel.alignment = TextAnchor.MiddleCenter;
+
+				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
+				tbLabelTarget.fontStyle = FontStyle.Bold;
+
 				if (GUILayout.Button(new GUIContent("Refresh", reloadButtonTexture.image, "Refresh and reload"), EditorStyles.toolbarButton, GUILayout.Width(80), GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 					Setup(ActiveBuildTarget);
 				}
 				showErrors = GUILayout.Toggle(showErrors, "Show Error", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 
+				GUILayout.Label("Zoom:", tbLabel);
+
+				var rect = GUILayoutUtility.GetRect(100, 50);
+				rect.x += 10;
+
+				NodeGUI.scaleFactor = GUI.HorizontalSlider(rect, NodeGUI.scaleFactor, 0.2f, 1f);
+				//NodeGUI.scaleFactor = EditorGUILayout.Slider(NodeGUI.scaleFactor, 0.2f, 1f, GUILayout.MaxWidth(150));
 				GUILayout.FlexibleSpace();
 
 				if(isAnyIssueFound) {
@@ -552,13 +558,7 @@ namespace AssetBundleGraph {
 					GUILayout.Label("All errors needs to be fixed before building", errorStyle);
 					GUILayout.FlexibleSpace();
 				}
-
-				GUIStyle tbLabel = new GUIStyle(EditorStyles.toolbarButton);
-
-				tbLabel.alignment = TextAnchor.MiddleCenter;
-
-				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
-				tbLabelTarget.fontStyle = FontStyle.Bold;
+				
 				
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 //				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
@@ -575,15 +575,21 @@ namespace AssetBundleGraph {
 					Setup(ActiveBuildTarget);
 				}
 
-				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)))) {
+				using(new EditorGUI.DisabledGroupScope(validated)) {
+					if(GUILayout.Button("Validate", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+						Setup(ActiveBuildTarget);						
+					}
+				}
+
+				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)) || !validated)) {
 					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 						SaveGraph();
 						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
 						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
 					}
 				}
-				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound)) {
-					if (GUILayout.Button("Build", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
+				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound || !validated)) {
+					if (GUILayout.Button("Run", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT))) {
 						SaveGraph();
 						Run(ActiveBuildTarget);
 					}
@@ -600,7 +606,7 @@ namespace AssetBundleGraph {
 					foreach(NodeException e in s_nodeExceptionPool) {
 						EditorGUILayout.HelpBox(e.reason, MessageType.Error);
 						if( GUILayout.Button("Go to Node") ) {
-							SelectNode(e.Id);
+							SelectNodeById(e.Id);
 						}
 					}
 				}
@@ -902,7 +908,7 @@ namespace AssetBundleGraph {
 					}
 
 					if (shouldSave) {
-						SaveGraphWithReload();
+						SaveGraphThatRequiresReload();
 					}
 					break;
 				}
@@ -918,7 +924,7 @@ namespace AssetBundleGraph {
 							false, 
 							() => {
 								AddNodeFromGUI(kind, rightClickPos.x, rightClickPos.y);
-								SaveGraphWithReload();
+								SaveGraphThatRequiresReload();
 								Repaint();
 							}
 						);
@@ -1049,7 +1055,7 @@ namespace AssetBundleGraph {
 								DeleteConnectionById(targetId);
 							}
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 
 							activeObject = RenewActiveObject(new List<string>());
 							UpdateActivationOfObjects(activeObject);
@@ -1088,7 +1094,7 @@ namespace AssetBundleGraph {
 								DeleteConnectionById(targetId);
 							}
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							InitializeGraph();
 
 							activeObject = RenewActiveObject(new List<string>());
@@ -1146,7 +1152,7 @@ namespace AssetBundleGraph {
 								DuplicateNode(newNode);
 							}
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							InitializeGraph();
 
 							Event.current.Use();
@@ -1181,7 +1187,7 @@ namespace AssetBundleGraph {
 								DeleteConnectionById(id);
 							}
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 
 							activeObject = RenewActiveObject(new List<string>());
 							UpdateActivationOfObjects(activeObject);
@@ -1261,10 +1267,16 @@ namespace AssetBundleGraph {
 			var number = graphGUI.Nodes.Where(node => node.Kind == kind).ToList().Count;
 			string nodeName = AssetBundleGraphSettings.DEFAULT_NODE_NAME[kind] + number;
 
-			NodeGUI newNode = new NodeGUI(new NodeData(nodeName, kind, x, y));
-			
+			NodeGUI newNode = new NodeGUI(new NodeData(nodeName, kind, x, y));			
+
 			AddNodeGUI(newNode);
 
+			if(kind  == NodeKind.FILTER_GUI) {
+				newNode.Data.AddFilterCondition("Textures", string.Empty, typeof(TextureImporter).ToString(), false);
+				newNode.Data.AddFilterCondition("Models", string.Empty, typeof(ModelImporter).ToString(), false);
+				newNode.Data.AddFilterCondition("Audio", string.Empty, typeof(AudioImporter).ToString(), false);
+				newNode.UpdateNodeRect();
+			}
 			if(kind == NodeKind.WARP_IN) {
 				string outNodeName = AssetBundleGraphSettings.DEFAULT_NODE_NAME[NodeKind.WARP_OUT] + number;
 				NodeGUI outNode = new NodeGUI(new NodeData(outNodeName, NodeKind.WARP_OUT, x+100, y));
@@ -1273,6 +1285,7 @@ namespace AssetBundleGraph {
 				AddNodeGUI(outNode);
 				AddConnection("warpConnection", newNode, newNode.Data.OutputPoints[0], outNode, outNode.Data.InputPoints[0]);
 			}
+
 
 			return newNode;
 		}
@@ -1348,7 +1361,7 @@ namespace AssetBundleGraph {
 							}
 
 							AddConnection(label, startNode, outputPoint, endNode, inputPoint);
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							break;
 						}
 
@@ -1399,7 +1412,7 @@ namespace AssetBundleGraph {
 							}
 
 							AddConnection(label, startNode, outputPoint, endNode, inputPoint);
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							break;
 						}
 
@@ -1468,7 +1481,7 @@ namespace AssetBundleGraph {
 							var deletingNodeId = e.eventSourceNode.Id;
 							DeleteNode(deletingNodeId);
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							InitializeGraph();
 							break;
 						}
@@ -1538,6 +1551,7 @@ namespace AssetBundleGraph {
 									Undo.RecordObject(this, "Select Objects");
 
 									activeObject = RenewActiveObject(activeIds);
+									//break;
 								}
 								
 								UpdateActivationOfObjects(activeObject);
@@ -1572,6 +1586,7 @@ namespace AssetBundleGraph {
 							activeObject = RenewActiveObject(new List<string>{movedNodeId});
 							UpdateActivationOfObjects(activeObject);
 
+
 							UpdateSpacerRect();
 							SaveGraph();
 							break;
@@ -1586,6 +1601,12 @@ namespace AssetBundleGraph {
 			}
 
 			switch (e.eventType) {
+				case NodeEvent.EventType.EVENT_CONNECTIONPOINT_ADDED: {
+					// adding point is handled by caller just repainting.
+					Repaint();
+					break;
+				}
+
 				case NodeEvent.EventType.EVENT_CONNECTIONPOINT_DELETED: {
 					// deleting point is handled by caller, so we are deleting connections associated with it.
 					graphGUI.Connections.RemoveAll( c => (c.InputPoint == e.point || c.OutputPoint == e.point) );
@@ -1604,7 +1625,7 @@ namespace AssetBundleGraph {
 					break;
 				}
 				case NodeEvent.EventType.EVENT_SAVE: {
-					SaveGraphWithReload(true);
+					SaveGraphThatRequiresReload(true);
 					Repaint();
 					break;
 				}
@@ -1728,7 +1749,7 @@ namespace AssetBundleGraph {
 
 							DeleteConnectionById(deletedConnectionId);
 
-							SaveGraphWithReload();
+							SaveGraphThatRequiresReload();
 							Repaint();
 							break;
 						}
@@ -1748,7 +1769,7 @@ namespace AssetBundleGraph {
 			node.Name = subpath;
 			node.Data.LoaderLoadPath[BuildTargetUtility.DefaultTarget] = subpath;
 			node.UpdateNodeRect();
-			window.SaveGraphWithReload();
+			window.SaveGraphThatRequiresReload();
 			window.Repaint();
 			var ids = new List<string>();
 			ids.Add(node.Id);

@@ -12,7 +12,7 @@ public class ShadowOffModifier : AssetBundleGraph.IModifier {
 	public bool IsModified(object asset) {
 		var target = (GameObject)asset;
 
-		var staticMesh = target.GetComponent<MeshRenderer>();
+		var staticMesh = target.GetComponentInChildren<MeshRenderer>();
 
 		isSkinned = staticMesh == null;
 
@@ -29,7 +29,10 @@ public class ShadowOffModifier : AssetBundleGraph.IModifier {
 				DisableShadows(skinnedMesh);
 			}
 		}else {
-			DisableShadows(target.GetComponent<MeshRenderer>());
+			var skinnedMeshes = target.GetComponentsInChildren<MeshRenderer>();
+			foreach(MeshRenderer skinnedMesh in skinnedMeshes) {
+				DisableShadows(skinnedMesh);
+			}
 		}
 	}
 

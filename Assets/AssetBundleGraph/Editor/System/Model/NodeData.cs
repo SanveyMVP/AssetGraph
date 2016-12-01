@@ -640,9 +640,6 @@ namespace AssetBundleGraph {
 
 			case NodeKind.FILTER_GUI:
 				m_filter = new List<FilterEntry>();
-				AddFilterCondition("Textures", string.Empty, typeof(TextureImporter).ToString(), false);
-				AddFilterCondition("Models", string.Empty, typeof(ModelImporter).ToString(), false);
-				AddFilterCondition("Audio", string.Empty, typeof(AudioImporter).ToString(), false);
 				break;
 
 			case NodeKind.LOADER_GUI:
@@ -688,6 +685,7 @@ namespace AssetBundleGraph {
 
 			switch(m_kind) {
 			case NodeKind.IMPORTSETTING_GUI:
+				IntegratedGUIImportSetting.CopySampleFile(this,newData);
 				break;
 			case NodeKind.PREFABBUILDER_GUI:
 			case NodeKind.MODIFIER_GUI:
