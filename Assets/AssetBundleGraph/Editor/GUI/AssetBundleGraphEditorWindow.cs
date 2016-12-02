@@ -282,7 +282,6 @@ namespace AssetBundleGraph {
 			ConnectionGUIUtility.ConnectionEventHandler = HandleConnectionEvent;
 
 			InitializeGraph();
-			//Setup(ActiveBuildTarget);
 
 			if (graphGUI.Nodes.Any()) {
 				UpdateSpacerRect();
@@ -549,7 +548,6 @@ namespace AssetBundleGraph {
 				rect.x += 10;
 
 				NodeGUI.scaleFactor = GUI.HorizontalSlider(rect, NodeGUI.scaleFactor, 0.2f, 1f);
-				//NodeGUI.scaleFactor = EditorGUILayout.Slider(NodeGUI.scaleFactor, 0.2f, 1f, GUILayout.MaxWidth(150));
 				GUILayout.FlexibleSpace();
 
 				if(isAnyIssueFound) {
@@ -561,7 +559,6 @@ namespace AssetBundleGraph {
 				
 				
 				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
-//				GUILayout.Label(BuildTargetUtility.TargetToHumaneString(ActiveBuildTarget), tbLabelTarget, GUILayout.Height(AssetBundleGraphSettings.GUI.TOOLBAR_HEIGHT));
 
 
 				var supportedTargets = NodeGUIUtility.SupportedBuildTargets;

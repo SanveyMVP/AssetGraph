@@ -146,7 +146,7 @@ namespace AssetBundleGraph {
 			loaderSaveData.Save();
 
 			// reflect change of data.
-			//AssetDatabase.Refresh();
+			//AssetDatabase.Refresh(); COMMENTED FOR PERFORMANCE PURPOSES, NO DRAWBACK FOUND.
 		}
 
 		private Dictionary<string, object> ToJsonRootNodes() {
