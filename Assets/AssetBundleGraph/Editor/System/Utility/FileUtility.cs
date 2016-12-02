@@ -12,6 +12,7 @@ namespace AssetBundleGraph {
 		public static void RemakeDirectory (string localFolderPath) {
 			if (Directory.Exists(localFolderPath)) Directory.Delete(localFolderPath, true);
 			Directory.CreateDirectory(localFolderPath);
+			AssetDatabase.Refresh();
 		}
 		
 		public static void CopyFileFromGlobalToLocal (string absoluteSourceFilePath, string localTargetFilePath) {

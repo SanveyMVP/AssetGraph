@@ -91,8 +91,8 @@ namespace AssetBundleGraph {
 			}
 
 			var filePath = FileUtility.PathCombine(samplingDirectoryPath, AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType]);
-
-			FileUtility.CopyFileFromGlobalToLocal(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
+			
+			AssetDatabase.CopyAsset(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
 
 			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
 		}
@@ -107,6 +107,7 @@ namespace AssetBundleGraph {
 			if(!Directory.Exists(destinationPath)) {
 				Directory.CreateDirectory(destinationPath);
 			}
+
 			
 			var file = Directory.GetFiles(samplingDirectoryPath, "config.*", SearchOption.TopDirectoryOnly)[0];
 
@@ -116,7 +117,7 @@ namespace AssetBundleGraph {
 
 			destinationPath = FileUtility.PathCombine(destinationPath, "config" + Path.GetExtension(file));
 
-			FileUtility.CopyFileFromGlobalToLocal(file, destinationPath);
+			AssetDatabase.CopyAsset(file, destinationPath);
 
 			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
 		}
