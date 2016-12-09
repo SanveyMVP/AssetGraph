@@ -92,6 +92,22 @@ namespace AssetBundleGraph {
 
 			importer.textureType = reference.textureType;
 			importer.wrapMode = reference.wrapMode;
+
+			OverwriteOverrideImportSettings (importer);
+		}
+
+		private void OverwriteOverrideImportSettings (TextureImporter target) {
+			var reference = referenceImporter as TextureImporter;
+
+			int size;
+			int comp;
+			bool alpha;
+			TextureImporterFormat tf;
+			foreach (string platform in new[]{"Web","Standalone","iPhone","Android",}) {
+				if (reference.GetPlatformTextureSettings (platform, out size, out tf, out comp, out alpha)) {
+					target.SetPlatformTextureSettings (platform, size, tf, comp, alpha);
+				}
+			}
 		}
 
 		private bool IsEqual (TextureImporter target) {
@@ -142,6 +158,31 @@ namespace AssetBundleGraph {
 			if (target.textureFormat != reference.textureFormat) return false;
 			if (target.textureType != reference.textureType) return false;
 			if (target.wrapMode != reference.wrapMode) return false;
+
+			if (!IsEqualOverrideImportSettings (target)) return false;
+
+			return true;
+		}
+
+		bool IsEqualOverrideImportSettings(TextureImporter target)
+		{
+			var reference = referenceImporter as TextureImporter;
+			int size1, size2;
+			int comp1, comp2;
+			bool alpha1, alpha2;
+			TextureImporterFormat tf1, tf2;
+
+			foreach (string platform in new[]{"Web","Standalone","iPhone","Android",}) {
+				bool contains1 = reference.GetPlatformTextureSettings (platform, out size1, out tf1, out comp1, out alpha1);
+				bool contains2 = target.GetPlatformTextureSettings (platform, out size2, out tf2, out comp2, out alpha2);
+
+				if (contains1 != contains2) return false;
+				if (size1 != size2) return false;
+				if (comp1 != comp2) return false;
+				if (alpha1 != alpha2) return false;
+				if (tf1 != tf2) return false;
+			}
+
 			return true;
 		}
 
@@ -153,6 +194,18 @@ namespace AssetBundleGraph {
 			importer.forceToMono = reference.forceToMono;
 			importer.loadInBackground = reference.loadInBackground;
 			importer.preloadAudioData = reference.preloadAudioData;
+
+		}
+
+		private void OverwriteOverrideImportSettings(AudioImporter target)
+		{
+			var reference = referenceImporter as AudioImporter;
+
+			foreach (string platform in new[]{"Web","Standalone","iPhone","Android",}) {
+				if (reference.ContainsSampleSettingsOverride (platform)) {
+					target.SetOverrideSampleSettings (platform, reference.GetOverrideSampleSettings(platform));
+				}
+			}
 		}
 
 		private bool IsEqual (AudioImporter target) {
@@ -170,6 +223,32 @@ namespace AssetBundleGraph {
 			if (target.loadInBackground != reference.loadInBackground) return false;
 			if (target.preloadAudioData != reference.preloadAudioData) return false;
 
+			if (!IsEqualOverrideImportSettings (target)) return false;
+
+			return true;
+		}
+
+		bool IsEqualOverrideImportSettings(AudioImporter target)
+		{
+			var reference = referenceImporter as AudioImporter;
+
+			foreach (string platform in new[]{"Web","Standalone","iPhone","Android",}) {
+				bool contains1 = reference.ContainsSampleSettingsOverride (platform);
+				bool contains2 = target.ContainsSampleSettingsOverride (platform);
+				if (contains1 != contains2) return false;
+
+				if (contains1 && contains2) {
+					AudioImporterSampleSettings setting1 = reference.GetOverrideSampleSettings (platform);
+					AudioImporterSampleSettings setting2 = target.GetOverrideSampleSettings (platform);
+
+					if (setting1.compressionFormat != setting2.compressionFormat) return false;
+					if (setting1.loadType != setting2.loadType) return false;
+					if (setting1.conversionMode != setting2.conversionMode) return false;
+					if (setting1.quality != setting2.quality) return false;
+					if (setting1.sampleRateOverride != setting2.sampleRateOverride) return false;
+					if (setting1.sampleRateSetting != setting2.sampleRateSetting) return false;
+				}
+			}
 			return true;
 		}
 		
