@@ -44,11 +44,12 @@ namespace AssetBundleGraph {
 			UnityEngine.Assertions.Assert.IsNotNull(validator);
 
 			foreach(var asset in incomingAssets) {
-				var loadedAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(asset.importFrom);
-
-				if(loadedAsset == null) {
-					Debug.LogWarning("Validator " + node.Name + " couldn't be applied for asset " + asset.fileNameAndExtension + ". Validators can't be applied on preprocess, run it again manually to apply");
+				// Validations are performed only on PostProcessing
+				if(PreProcessor.isPreProcessing) {
+					PreProcessor.AssetsToPostProcess.Add(asset.importFrom);
+					continue;
 				}
+				var loadedAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(asset.importFrom);
 
 				if(validator.ShouldValidate(loadedAsset)) {
 					if(!validator.Validate(loadedAsset)) {
@@ -59,7 +60,7 @@ namespace AssetBundleGraph {
 						}
 					}
 				}
-			}			
+			}
 
 			// Modifier does not add, filter or change structure of group, so just pass given group of assets
 			Output(connectionToOutput, inputGroupAssets, null);

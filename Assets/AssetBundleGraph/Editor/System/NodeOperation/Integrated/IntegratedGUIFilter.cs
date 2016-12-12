@@ -64,7 +64,7 @@ namespace AssetBundleGraph {
 					List<FilterableAsset> keywordContainsAssets = filteringAssets.Where(
 						assetData => 
 						!assetData.isFiltered && 
-						(filter.IsExclusion ^ Regex.IsMatch(assetData.asset.importFrom, filter.FilterKeyword, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
+						(filter.IsExclusion ^ Regex.IsMatch(assetData.asset.importFrom, WildcardToRegex(filter.FilterKeyword), RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
 					).ToList();
 
 					List<FilterableAsset> finalFilteredAsset = new List<FilterableAsset>();
@@ -90,6 +90,14 @@ namespace AssetBundleGraph {
 
 				Output(connToChild, output, null);
 			}
+		}
+
+
+		public static string WildcardToRegex(string pattern) {
+			return "^" + Regex.Escape(pattern)
+							  .Replace(@"\*", ".*")
+							  .Replace(@"\?", ".")
+					   + "$";
 		}
 	}
 }

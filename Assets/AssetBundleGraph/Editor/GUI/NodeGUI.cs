@@ -361,6 +361,10 @@ namespace AssetBundleGraph {
 			style.alignment = TextAnchor.MiddleCenter;
 			style.normal.textColor = m_data.NameColor;
 
+			if(Data.Kind == NodeKind.FILTER_GUI) {
+				style.padding = new RectOffset(0, (int)(m_baseRect.width - AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH)/2, 0, 0);
+			}
+
 			var connectionNodeStyleOutput = new GUIStyle(EditorStyles.label);
 			connectionNodeStyleOutput.alignment = TextAnchor.MiddleRight;
 

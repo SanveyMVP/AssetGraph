@@ -11,13 +11,14 @@ public class TriCountValidator : AssetBundleGraph.IValidator {
 
 	private bool isSkinned;
 	private int triangleCount;
-	private string offendingMesh;
+	private List<string> offendingMeshes = new List<string>();
+
 
 	// Tells the validator if this object should be validated or is an exception.	
 	public bool ShouldValidate(object asset) {
 		var target = (GameObject)asset;
 
-		var staticMesh = target.GetComponent<MeshFilter>();
+		var staticMesh = target.GetComponentInChildren<MeshFilter>();
 
 		isSkinned = staticMesh == null;
 
@@ -29,21 +30,27 @@ public class TriCountValidator : AssetBundleGraph.IValidator {
 	public bool Validate (object asset) {
 		var target = (GameObject)asset;
 		bool exceedsMaximum = false;
+		offendingMeshes.Clear();
 
 		if(isSkinned) {
 			foreach(SkinnedMeshRenderer skinnedMesh in target.GetComponentsInChildren<SkinnedMeshRenderer>()) {
 				triangleCount = skinnedMesh.sharedMesh.triangles.Length / 3;
 				exceedsMaximum = triangleCount > maxTriangleCount;
-				offendingMesh = skinnedMesh.name;
 
 				if(exceedsMaximum) {
-					break;
+					offendingMeshes.Add(skinnedMesh.name);					
 				}
 			}
 		} else {
-			triangleCount = target.GetComponent<MeshFilter>().sharedMesh.triangles.Length / 3;
-			offendingMesh = target.name;
-			exceedsMaximum = triangleCount > maxTriangleCount;
+			foreach(MeshFilter skinnedMesh in target.GetComponentsInChildren<MeshFilter>()) {
+				triangleCount = skinnedMesh.sharedMesh.triangles.Length / 3;
+				exceedsMaximum = triangleCount > maxTriangleCount;
+
+				if(exceedsMaximum) {
+					offendingMeshes.Add(skinnedMesh.name);
+					
+				}
+			}
 		}
 
 		return !exceedsMaximum;
@@ -60,7 +67,19 @@ public class TriCountValidator : AssetBundleGraph.IValidator {
 	public string ValidationFailed(object asset) {
 		var target = (GameObject)asset;
 
-		return "The mesh " + offendingMesh + " of " + AssetDatabase.GetAssetPath(target) + " has " + triangleCount + " triangles, this exceeds the maximum threshold of " + maxTriangleCount;
+		var message = "[<color=yellow>";
+
+		for(int i=0;i<offendingMeshes.Count;i++) {
+			if(i > 0) {
+				message += ", ";
+			}
+
+			message += offendingMeshes[i];
+		}
+
+		message += "</color>]";
+
+		return "The meshes " + message + " of " + AssetDatabase.GetAssetPath(target) + " exceeds the maximum triangle threshold of " + maxTriangleCount;
 	}
 
 

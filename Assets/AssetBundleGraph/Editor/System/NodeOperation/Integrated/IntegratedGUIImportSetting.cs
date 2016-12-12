@@ -86,13 +86,38 @@ namespace AssetBundleGraph {
 
 		public static void SaveSampleFile(NodeData node, Type assetType) {
 			var samplingDirectoryPath = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, node.Id);
-			if (!Directory.Exists(samplingDirectoryPath)) {
+			if(!Directory.Exists(samplingDirectoryPath)) {
 				Directory.CreateDirectory(samplingDirectoryPath);
 			}
 
 			var filePath = FileUtility.PathCombine(samplingDirectoryPath, AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType]);
+			
+			AssetDatabase.CopyAsset(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
 
-			FileUtility.CopyFileFromGlobalToLocal(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
+			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
+		}
+
+		public static void CopySampleFile(NodeData source, NodeData destination) {
+			var samplingDirectoryPath = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, source.Id);
+			var destinationPath = FileUtility.PathCombine(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE, destination.Id);
+			if(!Directory.Exists(samplingDirectoryPath)) {
+				Debug.Log("No config found to copy");
+				return;
+			}
+			if(!Directory.Exists(destinationPath)) {
+				Directory.CreateDirectory(destinationPath);
+			}
+
+			
+			var file = Directory.GetFiles(samplingDirectoryPath, "config.*", SearchOption.TopDirectoryOnly)[0];
+
+			if(Path.DirectorySeparatorChar != AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR) {
+				file = file.Replace(Path.DirectorySeparatorChar.ToString(), AssetBundleGraphSettings.UNITY_FOLDER_SEPARATOR.ToString());
+			}
+
+			destinationPath = FileUtility.PathCombine(destinationPath, "config" + Path.GetExtension(file));
+
+			AssetDatabase.CopyAsset(file, destinationPath);
 
 			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
 		}
@@ -164,7 +189,11 @@ namespace AssetBundleGraph {
 				var importer = AssetImporter.GetAtPath(asset.importFrom);
 				if(!configurator.IsEqual(importer)) {
 					configurator.OverwriteImportSettings(importer);
-					AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
+
+					// if the importsettings are applied manually we need to reimport the asset.
+					if(!PreProcessor.isPreProcessing) {
+						AssetDatabase.ImportAsset(asset.importFrom, ImportAssetOptions.ForceUpdate);
+					}
 				}
 			}
 		}
