@@ -51,7 +51,7 @@ public class PreProcessor : AssetPostprocessor {
 			GenericProcess(assetPath);
 		}
 
-		if(assetPath.Contains(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER)) {
+		if(assetPath.Contains(AssetBundleGraphSettings.AssetGraphRelativePaths.ASSET_PLACEHOLDER_FOLDER)) {
 			((ModelImporter)assetImporter).importMaterials = false;
 		}
 	}

@@ -106,9 +106,9 @@ namespace AssetBundleGraph {
 
 			this.m_data = data;
 
-			var width = (data.Kind == NodeKind.WARP_IN || data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.GUI.NODE_WARP_WIDTH : AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH;
+			var width = (data.Kind == NodeKind.WARP_IN || data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_WARP_WIDTH : AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_BASE_WIDTH;
 
-			this.m_baseRect = new Rect(m_data.X, m_data.Y, width, AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT);
+			this.m_baseRect = new Rect(m_data.X, m_data.Y, width, AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_BASE_HEIGHT);
 
 			//We cant initialize the Style here because GUIStyles need to be created on OnGUI
 			this.m_nodeSyle = null;
@@ -362,7 +362,7 @@ namespace AssetBundleGraph {
 			style.normal.textColor = m_data.NameColor;
 
 			if(Data.Kind == NodeKind.FILTER_GUI) {
-				style.padding = new RectOffset(0, (int)(m_baseRect.width - AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH)/2, 0, 0);
+				style.padding = new RectOffset(0, (int)(m_baseRect.width - AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_BASE_WIDTH)/2, 0, 0);
 			}
 
 			var connectionNodeStyleOutput = new GUIStyle(EditorStyles.label);
@@ -397,7 +397,7 @@ namespace AssetBundleGraph {
 					{
 						var region = point.Region;
 						// if point is output node, then label position offset is minus. otherwise plus.
-						var xOffset = (point.IsOutput) ? - m_baseRect.width : AssetBundleGraphSettings.GUI.INPUT_POINT_WIDTH;
+						var xOffset = (point.IsOutput) ? - m_baseRect.width : AssetBundleGraphSettings.AssetGraphRelativePaths.INPUT_POINT_WIDTH;
 						var labelStyle = (point.IsOutput) ? connectionNodeStyleOutput : connectionNodeStyleInput;
 						labelStyle.normal.textColor = point.LabelColor;
 						var labelRect = new Rect(region.x + xOffset, region.y - (region.height/2), m_baseRect.width, region.height*2);
@@ -436,10 +436,10 @@ namespace AssetBundleGraph {
 			var nPoints = Mathf.Max(m_data.OutputPoints.Count, m_data.InputPoints.Count);
 			this.m_baseRect = new Rect(m_baseRect.x, m_baseRect.y, 
 				m_baseRect.width, 
-				AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT + (AssetBundleGraphSettings.GUI.FILTER_OUTPUT_SPAN * Mathf.Max(0, (nPoints - 1)))
+				AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_BASE_HEIGHT + (AssetBundleGraphSettings.AssetGraphRelativePaths.FILTER_OUTPUT_SPAN * Mathf.Max(0, (nPoints - 1)))
 			);
 
-			var baseWidth = (m_data.Kind == NodeKind.WARP_IN || m_data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.GUI.NODE_WARP_WIDTH : AssetBundleGraphSettings.GUI.NODE_BASE_WIDTH;
+			var baseWidth = (m_data.Kind == NodeKind.WARP_IN || m_data.Kind == NodeKind.WARP_OUT) ? AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_WARP_WIDTH : AssetBundleGraphSettings.AssetGraphRelativePaths.NODE_BASE_WIDTH;
 
 			var newWidth = Mathf.Max(baseWidth, contentLabelWordsLength * 10.0f);
 			m_baseRect = new Rect(m_baseRect.x, m_baseRect.y, newWidth, m_baseRect.height);

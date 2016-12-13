@@ -92,7 +92,7 @@ namespace AssetBundleGraph {
 
 			var filePath = FileUtility.PathCombine(samplingDirectoryPath, AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType]);
 			
-			AssetDatabase.CopyAsset(AssetBundleGraphSettings.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath);
+			AssetDatabase.CopyAsset(AssetBundleGraphSettings.AssetGraphRelativePaths.ASSET_PLACEHOLDER_FOLDER + AssetBundleGraphSettings.PLACEHOLDER_FILE[assetType], filePath); 
 
 			AssetDatabase.Refresh(ImportAssetOptions.ImportRecursive);
 		}
