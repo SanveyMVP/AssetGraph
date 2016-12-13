@@ -95,9 +95,10 @@ namespace AssetBundleGraph {
 
 		public static string WildcardToRegex(string pattern) {
 			// empty filter keyword means 'no filtering'.
-			if (string.IsNullOrEmpty (pattern))
+			if (string.IsNullOrEmpty (pattern)) {
 				pattern = "*";
-			
+			}
+				
 			return "^" + Regex.Escape(pattern)
 							  .Replace(@"\*", ".*")
 							  .Replace(@"\?", ".")
