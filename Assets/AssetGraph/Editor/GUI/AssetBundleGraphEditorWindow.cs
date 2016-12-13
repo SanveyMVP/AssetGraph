@@ -204,31 +204,31 @@ namespace AssetBundleGraph {
 			window.InitializeGraph();
 		}
 
-		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, true, 1 + 11)]
-		public static bool BuildFromMenuValidator () {
-			// Calling GetWindow<>() will force open window
-			// That's not what we want to do in validator function,
-			// so just reference s_nodeExceptionPool directly
-			return (s_nodeExceptionPool != null && s_nodeExceptionPool.Count == 0);
-		}
+		//[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, true, 1 + 11)]
+		//public static bool BuildFromMenuValidator () {
+		//	// Calling GetWindow<>() will force open window
+		//	// That's not what we want to do in validator function,
+		//	// so just reference s_nodeExceptionPool directly
+		//	return (s_nodeExceptionPool != null && s_nodeExceptionPool.Count == 0);
+		//}
 
-		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, false, 1 + 11)]
-		public static void BuildFromMenu () {
-			var window = GetWindow<AssetBundleGraphEditorWindow>();
-			window.Run(window.ActiveBuildTarget);
-		}
+		//[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_BUILD, false, 1 + 11)]
+		//public static void BuildFromMenu () {
+		//	var window = GetWindow<AssetBundleGraphEditorWindow>();
+		//	window.Run(window.ActiveBuildTarget);
+		//}
 
-		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_DELETE_CACHE)] public static void DeleteCache () {
-			FileUtility.RemakeDirectory(AssetBundleGraphSettings.APPLICATIONDATAPATH_CACHE_PATH);
+		//[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_DELETE_CACHE)] public static void DeleteCache () {
+		//	FileUtility.RemakeDirectory(AssetBundleGraphSettings.APPLICATIONDATAPATH_CACHE_PATH);
 
-			AssetDatabase.Refresh();
-		}
+		//	AssetDatabase.Refresh();
+		//}
 
-		[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS)] public static void DeleteImportSettingSample () {
-			FileUtility.RemakeDirectory(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE);
+		//[MenuItem(AssetBundleGraphSettings.GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS)] public static void DeleteImportSettingSample () {
+		//	FileUtility.RemakeDirectory(AssetBundleGraphSettings.IMPORTER_SETTINGS_PLACE);
 
-			AssetDatabase.Refresh();
-		}
+		//	AssetDatabase.Refresh();
+		//}
 
 		public BuildTarget ActiveBuildTarget {
 			get {
@@ -269,7 +269,7 @@ namespace AssetBundleGraph {
 
 
 		private void Init() {
-			this.titleContent = new GUIContent("AssetBundle");
+			this.titleContent = new GUIContent("AssetGraph");
 			this.selectedTarget = EditorUserBuildSettings.activeBuildTarget;
 
 			Undo.undoRedoPerformed += () => {

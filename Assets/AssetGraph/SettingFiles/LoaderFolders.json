@@ -6,28 +6,32 @@
 				"Unknown":"Folder1/Folder2",
 				"Standalone":"Folder1/Folder2"
 			},
-			"preprocess":false
+			"preprocess":false,
+			"permanent":false
 		},
 		{
 			"id":"d2089ee0-bb7b-44ae-b602-e8ed4e33e03b",
 			"path":{
 				"Unknown":""
 			},
-			"preprocess":true
+			"preprocess":true,
+			"permanent":false
 		},
 		{
 			"id":"d92b50a2-dc6a-4684-9e9f-f8195a5801aa",
 			"path":{
 				"Unknown":"Folder1"
 			},
-			"preprocess":false
+			"preprocess":false,
+			"permanent":false
 		},
 		{
 			"id":"e166e317-a30e-4143-9688-ef1105dd1a26",
 			"path":{
 				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
 			},
-			"preprocess":true
+			"preprocess":true,
+			"permanent":false
 		}
 	]
 }

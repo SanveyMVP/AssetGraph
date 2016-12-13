@@ -9,25 +9,25 @@ namespace AssetBundleGraph {
 		*/
 		public const bool IGNORE_META = true;
 
-		public const string GUI_TEXT_MENU_OPEN = "Window/AssetBundleGraph/Open Graph Editor";
-		public const string GUI_TEXT_MENU_BUILD = "Window/AssetBundleGraph/Build Bundles for Current Platform";
-		public const string GUI_TEXT_MENU_GENERATE = "Window/AssetBundleGraph/Create Node Script";
+		public const string GUI_TEXT_MENU_OPEN = "Window/AssetGraph/Open Graph Editor";
+		public const string GUI_TEXT_MENU_BUILD = "Window/AssetGraph/Build Bundles for Current Platform";
+		public const string GUI_TEXT_MENU_GENERATE = "Window/AssetGraph/Create Node Script";
 		public const string GUI_TEXT_MENU_GENERATE_MODIFIER = GUI_TEXT_MENU_GENERATE + "/Modifier Script";
 		public const string GUI_TEXT_MENU_GENERATE_PREFABBUILDER = GUI_TEXT_MENU_GENERATE + "/PrefabBuilder Script";
 		public const string GUI_TEXT_MENU_GENERATE_VALIDATOR = GUI_TEXT_MENU_GENERATE + "/Validator Script";
-		public const string GUI_TEXT_MENU_GENERATE_CUITOOL = "Window/AssetBundleGraph/Create CUI Tool";
+		public const string GUI_TEXT_MENU_GENERATE_CUITOOL = "Window/AssetGraph/Create CUI Tool";
 
 		public const string GUI_TEXT_MENU_GENERATE_POSTPROCESS = GUI_TEXT_MENU_GENERATE + "/Postprocess Script";
-		public const string GUI_TEXT_MENU_DELETE_CACHE = "Window/AssetBundleGraph/Clear Build Cache";
+		public const string GUI_TEXT_MENU_DELETE_CACHE = "Window/AssetGraph/Clear Build Cache";
 		
-		public const string GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS = "Window/AssetBundleGraph/Clear Saved ImportSettings";
+		public const string GUI_TEXT_MENU_DELETE_IMPORTSETTING_SETTINGS = "Window/AssetGraph/Clear Saved ImportSettings";
 
-		public const string ASSETNBUNDLEGRAPH_DATA_PATH = "AssetBundleGraph/SettingFiles";
-		public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetBundleGraph.json";
+		public const string ASSETNBUNDLEGRAPH_DATA_PATH = "AssetGraph/SettingFiles";
+		public const string ASSETBUNDLEGRAPH_DATA_NAME = "AssetGraph.json";
 		public const string ASSETBUNDLEGRAPH_LOADER_DATA_NAME = "LoaderFolders.json";
 
 		public const string ASSETS_PATH = "Assets/";
-		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetBundleGraph/";
+		public const string ASSETBUNDLEGRAPH_PATH = ASSETS_PATH + "AssetGraph/";
 		public const string APPLICATIONDATAPATH_CACHE_PATH = ASSETBUNDLEGRAPH_PATH + "Cache/";
 		public const string ASSET_PLACEHOLDER_FOLDER = ASSETBUNDLEGRAPH_PATH + "Editor/AssetPlaceholders/";
 		public const string SCRIPT_TEMPLATE_PATH = ASSETBUNDLEGRAPH_PATH + "Editor/ScriptTemplate/";
@@ -154,7 +154,7 @@ namespace AssetBundleGraph {
 		}
 
 		public class GUI {
-			public const string RESOURCE_BASEPATH = "Assets/AssetBundleGraph/Editor/GUI/GraphicResources/";
+			public const string RESOURCE_BASEPATH = "Assets/AssetGraph/Editor/GUI/GraphicResources/";
 			public const string RESOURCE_NODEPATH = RESOURCE_BASEPATH+"Nodes/";
 
 			public const float NODE_BASE_WIDTH = 120f;

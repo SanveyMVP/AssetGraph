@@ -115,7 +115,7 @@ namespace AssetBundleGraph {
 
 								EditorGUILayout.LabelField("Filter:", GUILayout.MaxWidth(40));
 								newContainsKeyword = EditorGUILayout.TextField(cond.FilterKeyword, s, GUILayout.MaxWidth(200));
-								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Exclusion", GUILayout.MaxWidth(80));
+								newIsExclusion = GUILayout.Toggle(cond.IsExclusion, " Negated", GUILayout.MaxWidth(80));
 								if (GUILayout.Button(cond.FilterKeytype , "Popup", GUILayout.MinWidth(220))) {
 									var ind = i;// need this because of closure locality bug in unity C#
 									NodeGUI.ShowFilterKeyTypeMenu(

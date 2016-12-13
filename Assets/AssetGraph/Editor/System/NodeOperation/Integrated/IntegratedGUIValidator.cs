@@ -57,6 +57,7 @@ namespace AssetBundleGraph {
 							Debug.LogWarning("Asset " + loadedAsset.name + " validation failed but has been recovered - Validator Node: " + node.Name);
 						} else {
 							Debug.LogError(validator.ValidationFailed(loadedAsset) + " - Validator Node: " + node.Name);
+							incomingAssets.Remove(asset);
 						}
 					}
 				}
