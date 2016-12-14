@@ -55,11 +55,11 @@ namespace AssetBundleGraph {
 				var output = new Dictionary<string, List<Asset>>();
 
 				foreach(var groupKey in inputGroupAssets.Keys) {
-                    var filteringKeyword = string.IsNullOrEmpty(filter.FilterKeyword) ? "*" : filter.FilterKeyword;
-                    var assets = inputGroupAssets[groupKey];
+					var filteringKeyword = string.IsNullOrEmpty(filter.FilterKeyword) ? "*" : filter.FilterKeyword;
+					var assets = inputGroupAssets[groupKey];
 					var filteringAssets = new List<FilterableAsset>();
 					assets.ForEach(a => filteringAssets.Add(new FilterableAsset(a)));
-                    
+					
 
 					// filter by keyword first
 					List<FilterableAsset> keywordContainsAssets = filteringAssets.Where(
@@ -92,43 +92,43 @@ namespace AssetBundleGraph {
 				Output(connToChild, output, null);
 			}
 		}
-        
-        public const char WildcardMultiChar = '*';
-        public const string WildcardDeep = "**";
-        public const char WildcardOneChar = '?';
+		
+		public const char WildcardMultiChar = '*';
+		public const string WildcardDeep = "**";
+		public const char WildcardOneChar = '?';
 
-        public static bool GlobMatch(string pattern, string value) {    
-            bool deep = pattern.Contains(WildcardDeep);
-            if(deep) {
-                pattern = pattern.Replace(WildcardDeep, WildcardMultiChar.ToString());
-            } else if(value.Split(Path.DirectorySeparatorChar).Length != pattern.Split(Path.DirectorySeparatorChar).Length) {
-                return false;
-            }
+		public static bool GlobMatch(string pattern, string value) {    
+			bool deep = pattern.Contains(WildcardDeep);
+			if(deep) {
+				pattern = pattern.Replace(WildcardDeep, WildcardMultiChar.ToString());
+			} else if(value.Split(Path.DirectorySeparatorChar).Length != pattern.Split(Path.DirectorySeparatorChar).Length) {
+				return false;
+			}
 
-            int pos = 0;
-            while(pattern.Length != pos) {
-                switch(pattern[pos]) {
-                    case WildcardOneChar:
-                        break;
+			int pos = 0;
+			while(pattern.Length != pos) {
+				switch(pattern[pos]) {
+					case WildcardOneChar:
+						break;
 
-                    case WildcardMultiChar:
-                        for(int i = value.Length; i >= pos; i--) {
-                            if(GlobMatch(pattern.Substring(pos + 1), value.Substring(i))) {
-                                return true;
-                            }
-                        }
-                        return false;
+					case WildcardMultiChar:
+						for(int i = value.Length; i >= pos; i--) {
+							if(GlobMatch(pattern.Substring(pos + 1), value.Substring(i))) {
+								return true;
+							}
+						}
+						return false;
 
-                    default:
-                        if(value.Length == pos || char.ToUpper(pattern[pos]) != char.ToUpper(value[pos])) {
-                            return false;
-                        }
-                        break;
-                }
+					default:
+						if(value.Length == pos || char.ToUpper(pattern[pos]) != char.ToUpper(value[pos])) {
+							return false;
+						}
+						break;
+				}
 
-                pos++;
-            }
-            return value.Length == pos;
-        }
-    }
+				pos++;
+			}
+			return value.Length == pos;
+		}
+	}
 }
