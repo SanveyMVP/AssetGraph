@@ -184,24 +184,24 @@ namespace AssetBundleGraph {
 			var parentRegion = node.Region;
 			if(IsInput){
 
-				var initialY = (AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT - AssetBundleGraphSettings.GUI.INPUT_POINT_HEIGHT) / 2f;
-				var marginY  = initialY + AssetBundleGraphSettings.GUI.FILTER_OUTPUT_SPAN * (index);
+				var initialY = (AssetGraphRelativePaths.NODE_BASE_HEIGHT - AssetGraphRelativePaths.INPUT_POINT_HEIGHT) / 2f;
+				var marginY  = initialY + AssetGraphRelativePaths.FILTER_OUTPUT_SPAN * (index);
 
 				buttonRect = new Rect(
 					0,
 					marginY, 
-					AssetBundleGraphSettings.GUI.INPUT_POINT_WIDTH, 
-					AssetBundleGraphSettings.GUI.INPUT_POINT_HEIGHT);
+					AssetGraphRelativePaths.INPUT_POINT_WIDTH, 
+					AssetGraphRelativePaths.INPUT_POINT_HEIGHT);
 			} else {
 
-				var initialY = (AssetBundleGraphSettings.GUI.NODE_BASE_HEIGHT - AssetBundleGraphSettings.GUI.OUTPUT_POINT_HEIGHT) / 2f;
-				var marginY  = initialY + AssetBundleGraphSettings.GUI.FILTER_OUTPUT_SPAN * (index);
+				var initialY = (AssetGraphRelativePaths.NODE_BASE_HEIGHT - AssetGraphRelativePaths.OUTPUT_POINT_HEIGHT) / 2f;
+				var marginY  = initialY + AssetGraphRelativePaths.FILTER_OUTPUT_SPAN * (index);
 
 				buttonRect = new Rect(
-					parentRegion.width - AssetBundleGraphSettings.GUI.OUTPUT_POINT_WIDTH + 1f, 
+					parentRegion.width - AssetGraphRelativePaths.OUTPUT_POINT_WIDTH + 1f, 
 					marginY, 
-					AssetBundleGraphSettings.GUI.OUTPUT_POINT_WIDTH, 
-					AssetBundleGraphSettings.GUI.OUTPUT_POINT_HEIGHT);
+					AssetGraphRelativePaths.OUTPUT_POINT_WIDTH, 
+					AssetGraphRelativePaths.OUTPUT_POINT_HEIGHT);
 			}
 		}
 
@@ -210,8 +210,8 @@ namespace AssetBundleGraph {
 			return new Rect(
 				baseRect.x + baseRect.width - 8f, 
 				baseRect.y + buttonRect.y + 1f, 
-				AssetBundleGraphSettings.GUI.CONNECTION_POINT_MARK_SIZE, 
-				AssetBundleGraphSettings.GUI.CONNECTION_POINT_MARK_SIZE
+				AssetGraphRelativePaths.CONNECTION_POINT_MARK_SIZE, 
+				AssetGraphRelativePaths.CONNECTION_POINT_MARK_SIZE
 			);
 		}
 
@@ -220,8 +220,8 @@ namespace AssetBundleGraph {
 			return new Rect(
 				baseRect.x - 2f, 
 				baseRect.y + buttonRect.y + 3f, 
-				AssetBundleGraphSettings.GUI.CONNECTION_POINT_MARK_SIZE, 
-				AssetBundleGraphSettings.GUI.CONNECTION_POINT_MARK_SIZE
+				AssetGraphRelativePaths.CONNECTION_POINT_MARK_SIZE, 
+				AssetGraphRelativePaths.CONNECTION_POINT_MARK_SIZE
 			);
 		}
 
