@@ -154,14 +154,10 @@ namespace AssetBundleGraph {
 
         [InitializeOnLoad]
         public static class AssetGraphRelativePaths {
+            
             private const string ARROW_NAME = "AssetGraph_Arrow";
-
-            //static AssetGraphRelativePaths() {
-            //    //This asset will be at path *****/Editor/GUI/GraphicResources/AssetGraph_Arrow"
-            //    var path = AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets(ARROW_NAME)[0]);
-            //    ASSETBUNDLEGRAPH_PATH = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(path))); //three times up
-            //}
-
+            //This asset will be at path *****/Editor/GUI/GraphicResources/AssetGraph_Arrow" so we go three times up to get the Editor/ root folder
+            // This initialization needs to be done here because static constructors are executed after static field initialization.
             public static readonly string RELATIVE_FOLDER = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets(ARROW_NAME)[0])))) + "/";
             public static readonly string SCRIPT_TEMPLATE_PATH = RELATIVE_FOLDER + "ScriptTemplate/";
             public static readonly string ASSET_PLACEHOLDER_FOLDER = RELATIVE_FOLDER + "AssetPlaceholders/";
