@@ -118,7 +118,7 @@ namespace AssetBundleGraph {
 		private Texture2D selectionTex {
 			get{
 				if(_selectionTex == null) {
-					_selectionTex = LoadTextureFromFile(AssetBundleGraphSettings.AssetGraphRelativePaths.RESOURCE_SELECTION);
+					_selectionTex = LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_SELECTION);
 				}
 				return _selectionTex;
 			}
@@ -141,22 +141,22 @@ namespace AssetBundleGraph {
 
 			switch (scriptType) {
 			case ScriptType.SCRIPT_VALIDATOR: {
-				sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyValidator.cs.template");
+				sourceFileName = FileUtility.PathCombine(AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyValidator.cs.template");
 				destinationPath = FileUtility.PathCombine(destinationBasePath, "MyValidator.cs");
 				break;
 			}
 			case ScriptType.SCRIPT_MODIFIER: {
-				sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyModifier.cs.template");
+				sourceFileName = FileUtility.PathCombine(AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyModifier.cs.template");
 				destinationPath = FileUtility.PathCombine(destinationBasePath, "MyModifier.cs");
 				break;
 			}
 			case ScriptType.SCRIPT_PREFABBUILDER: {
-					sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyPrefabBuilder.cs.template");
+					sourceFileName = FileUtility.PathCombine(AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyPrefabBuilder.cs.template");
 					destinationPath = FileUtility.PathCombine(destinationBasePath, "MyPrefabBuilder.cs");
 					break;
 				}
 			case ScriptType.SCRIPT_POSTPROCESS: {
-					sourceFileName = FileUtility.PathCombine(AssetBundleGraphSettings.AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyPostprocess.cs.template");
+					sourceFileName = FileUtility.PathCombine(AssetGraphRelativePaths.SCRIPT_TEMPLATE_PATH, "MyPostprocess.cs.template");
 					destinationPath = FileUtility.PathCombine(destinationBasePath, "MyPostprocess.cs");
 					break;
 				}
@@ -537,10 +537,10 @@ namespace AssetBundleGraph {
 				GUIStyle tbLabelTarget = new GUIStyle(tbLabel);
 				tbLabelTarget.fontStyle = FontStyle.Bold;
 
-				if (GUILayout.Button(new GUIContent("Refresh", reloadButtonTexture.image, "Refresh and reload"), EditorStyles.toolbarButton, GUILayout.Width(80), GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
+				if (GUILayout.Button(new GUIContent("Refresh", reloadButtonTexture.image, "Refresh and reload"), EditorStyles.toolbarButton, GUILayout.Width(80), GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
 					Setup(ActiveBuildTarget);
 				}
-				showErrors = GUILayout.Toggle(showErrors, "Show Error", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT));
+				showErrors = GUILayout.Toggle(showErrors, "Show Error", EditorStyles.toolbarButton, GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT));
 
 				GUILayout.Label("Zoom:", tbLabel);
 
@@ -558,14 +558,14 @@ namespace AssetBundleGraph {
 				}
 				
 				
-				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT));
+				GUILayout.Label("Platform:", tbLabel, GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT));
 
 
 				var supportedTargets = NodeGUIUtility.SupportedBuildTargets;
 				int currentIndex = Mathf.Max(0, supportedTargets.FindIndex(t => t == selectedTarget));
 
 				int newIndex = EditorGUILayout.Popup(currentIndex, NodeGUIUtility.supportedBuildTargetNames, 
-					EditorStyles.toolbarButton, GUILayout.Width(150), GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT));
+					EditorStyles.toolbarButton, GUILayout.Width(150), GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT));
 
 				if(newIndex != currentIndex) {
 					selectedTarget = supportedTargets[newIndex];
@@ -573,20 +573,20 @@ namespace AssetBundleGraph {
 				}
 
 				using(new EditorGUI.DisabledGroupScope(validated)) {
-					if(GUILayout.Button("Validate", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
+					if(GUILayout.Button("Validate", EditorStyles.toolbarButton, GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
 						Setup(ActiveBuildTarget);						
 					}
 				}
 
 				using(new EditorGUI.DisabledGroupScope(!(Selection.objects.Length > 0 && Selection.objects.All(x=> x is NodeGUIInspectorHelper && ((NodeGUIInspectorHelper)x).node.Kind == NodeKind.LOADER_GUI)) || !validated)) {
-					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
+					if(GUILayout.Button("Run Selected", EditorStyles.toolbarButton, GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
 						SaveGraph();
 						var selectedLoaderIds = Array.ConvertAll(Selection.objects.Cast<NodeGUIInspectorHelper>().ToArray(), x => x.node.Id);      
 						Run(ActiveBuildTarget, selectedLoaderIds.ToList());
 					}
 				}
 				using(new EditorGUI.DisabledGroupScope(isAnyIssueFound || !validated)) {
-					if (GUILayout.Button("Run", EditorStyles.toolbarButton, GUILayout.Height(AssetBundleGraphSettings.AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
+					if (GUILayout.Button("Run", EditorStyles.toolbarButton, GUILayout.Height(AssetGraphRelativePaths.TOOLBAR_HEIGHT))) {
 						SaveGraph();
 						Run(ActiveBuildTarget);
 					}
