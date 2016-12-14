@@ -179,7 +179,7 @@ namespace AssetBundleGraph {
 		public static SaveData RecreateDataOnDisk () {
 			SaveData newSaveData = new SaveData();
 			newSaveData.Save();
-            AssetDatabase.Refresh();
+			AssetDatabase.Refresh();
 			return newSaveData;
 		}
 			
@@ -324,12 +324,12 @@ namespace AssetBundleGraph {
 		}
 
 		public void Save() {
-            var dir = SaveData.SaveDataDirectoryPath;
-            if(!Directory.Exists(dir)) {
-                Directory.CreateDirectory(dir);
-            }
+			var dir = SaveData.SaveDataDirectoryPath;
+			if(!Directory.Exists(dir)) {
+				Directory.CreateDirectory(dir);
+			}
 
-            var serializedData = Json.Serialize(ToJsonDictionary());
+			var serializedData = Json.Serialize(ToJsonDictionary());
 			var loaderPrettyfied = Json.Prettify(serializedData);
 
 			using(var sw = new StreamWriter(LoaderSaveDataPath)) {
@@ -377,7 +377,7 @@ namespace AssetBundleGraph {
 		public static LoaderSaveData RecreateDataOnDisk() {
 			LoaderSaveData lSaveData = new LoaderSaveData();
 			lSaveData.Save();
-            AssetDatabase.Refresh();
+			AssetDatabase.Refresh();
 			return lSaveData;
 		}
 

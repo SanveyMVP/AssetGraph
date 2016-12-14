@@ -41,21 +41,21 @@ public class PreProcessor : AssetPostprocessor {
 	}
 
 	void OnPreprocessTexture() {
-        if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
-            return;
-        }
+		if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
+			return;
+		}
 
-        if(!wasMoving) {
+		if(!wasMoving) {
 			GenericProcess(assetPath);
 		}
 	}
 
 	void OnPreprocessModel() {
-        if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
-            return;
-        }
+		if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
+			return;
+		}
 
-        if(!wasMoving) {
+		if(!wasMoving) {
 			GenericProcess(assetPath);
 		}
 
@@ -65,22 +65,22 @@ public class PreProcessor : AssetPostprocessor {
 	}
 
 	void OnPreprocessAudio() {
-        if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
-            return;
-        }
+		if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
+			return;
+		}
 
-        if(!wasMoving) {
+		if(!wasMoving) {
 			GenericProcess(assetPath);
 		}
 	}
 
 	// TODO: PostProcess assets in a single run 
 	static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFromAssetPaths) {
-        if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
-            return;
-        }
+		if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
+			return;
+		}
 
-        float i = 0;
+		float i = 0;
 		bool clearBar = false;
 
 		foreach(string path in AssetsToPostProcess) {
@@ -107,7 +107,7 @@ public class PreProcessor : AssetPostprocessor {
 
 		AssetsToPostProcess.Clear();
 	}
-    
+	
 
 	static void GenericProcess(string path, bool isPostProcessing = false, bool isMoving = false) {
 		var loader = LoaderData.GetBestLoaderData(path);
