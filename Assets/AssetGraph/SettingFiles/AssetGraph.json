@@ -1,5 +1,5 @@
 {
-	"lastModified":"11/23/2016 2:40:04 PM",
+	"lastModified":"12/13/2016 1:57:02 PM",
 	"nodes":[
 		{
 			"name":"Folder1/Folder2/",
@@ -23,7 +23,8 @@
 				"Unknown":"Folder1/Folder2",
 				"Standalone":"Folder1/Folder2"
 			},
-			"preProcess":false
+			"preProcess":false,
+			"permanent":false
 		},
 		{
 			"name":"Cookie",
@@ -113,7 +114,8 @@
 			"loadPath":{
 				"Unknown":""
 			},
-			"preProcess":true
+			"preProcess":true,
+			"permanent":false
 		},
 		{
 			"name":"Folder1/",
@@ -130,13 +132,14 @@
 				}
 			],
 			"pos":{
-				"x":168,
-				"y":199
+				"x":159,
+				"y":213
 			},
 			"loadPath":{
 				"Unknown":"Folder1"
 			},
-			"preProcess":false
+			"preProcess":false,
+			"permanent":false
 		},
 		{
 			"name":"Mesh Renderer Shadow Off",
@@ -157,13 +160,13 @@
 				}
 			],
 			"pos":{
-				"x":1129,
-				"y":254
+				"x":1097,
+				"y":300
 			},
 			"scriptClassName":"MyModifier",
 			"scriptInstanceData":{
 				"Unknown":"{
-					\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\"disableShadows\":true\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t
+					\n\t\t\t\t\t\n\t\t\t\t\t\"doSomething\":false\n\t\t\t\t\n\t\t\t\t
 				}"
 			}
 		},
@@ -356,7 +359,8 @@
 			"loadPath":{
 				"Unknown":"AssetBundleGraph/Editor/GUI/GraphicResources/Nodes"
 			},
-			"preProcess":true
+			"preProcess":true,
+			"permanent":false
 		},
 		{
 			"name":"Filter4",
@@ -433,8 +437,8 @@
 				}
 			],
 			"pos":{
-				"x":798,
-				"y":507
+				"x":786,
+				"y":499
 			}
 		},
 		{
@@ -456,8 +460,8 @@
 				}
 			],
 			"pos":{
-				"x":598,
-				"y":111
+				"x":555,
+				"y":103
 			},
 			"relatedNode":"d0c7d129-b3bd-4040-b6ac-ba551b8c9a97"
 		},
@@ -480,8 +484,8 @@
 				}
 			],
 			"pos":{
-				"x":658,
-				"y":399
+				"x":687,
+				"y":382
 			},
 			"relatedNode":"9bd27e49-2403-4ef6-b80e-6ae28de1fc59"
 		},
@@ -504,8 +508,8 @@
 				}
 			],
 			"pos":{
-				"x":824,
-				"y":272
+				"x":833,
+				"y":299
 			}
 		},
 		{
@@ -527,7 +531,7 @@
 				}
 			],
 			"pos":{
-				"x":1021,
+				"x":1034,
 				"y":17
 			}
 		}

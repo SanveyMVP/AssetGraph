@@ -38,7 +38,7 @@ namespace AssetBundleGraph {
 		public static Texture2D inputPointTex {
 			get {
 				if(NodeSingleton.s.inputPointTex == null) {
-					NodeSingleton.s.inputPointTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_INPUT_BG);
+					NodeSingleton.s.inputPointTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_INPUT_BG);
 				}
 				return NodeSingleton.s.inputPointTex;
 			}
@@ -47,7 +47,7 @@ namespace AssetBundleGraph {
 		public static Texture2D outputPointTex {
 			get {
 				if(NodeSingleton.s.outputPointTex == null) {
-					NodeSingleton.s.outputPointTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_OUTPUT_BG);
+					NodeSingleton.s.outputPointTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_OUTPUT_BG);
 				}
 				return NodeSingleton.s.outputPointTex;
 			}
@@ -56,7 +56,7 @@ namespace AssetBundleGraph {
 		public static Texture2D enablePointMarkTex {
 			get {
 				if(NodeSingleton.s.enablePointMarkTex == null) {
-					NodeSingleton.s.enablePointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_CONNECTIONPOINT_ENABLE);
+					NodeSingleton.s.enablePointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_CONNECTIONPOINT_ENABLE);
 				}
 				return NodeSingleton.s.enablePointMarkTex;
 			}
@@ -65,7 +65,7 @@ namespace AssetBundleGraph {
 		public static Texture2D inputPointMarkTex {
 			get {
 				if(NodeSingleton.s.inputPointMarkTex == null) {
-					NodeSingleton.s.inputPointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_CONNECTIONPOINT_INPUT);
+					NodeSingleton.s.inputPointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_CONNECTIONPOINT_INPUT);
 				}
 				return NodeSingleton.s.inputPointMarkTex;
 			}
@@ -74,7 +74,7 @@ namespace AssetBundleGraph {
 		public static Texture2D outputPointMarkTex {
 			get {
 				if(NodeSingleton.s.outputPointMarkTex == null) {
-					NodeSingleton.s.outputPointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_CONNECTIONPOINT_OUTPUT);
+					NodeSingleton.s.outputPointMarkTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_CONNECTIONPOINT_OUTPUT);
 				}
 				return NodeSingleton.s.outputPointMarkTex;
 			}
@@ -83,7 +83,7 @@ namespace AssetBundleGraph {
 		public static Texture2D outputPointMarkConnectedTex {
 			get {
 				if(NodeSingleton.s.outputPointMarkConnectedTex == null) {
-					NodeSingleton.s.outputPointMarkConnectedTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetBundleGraphSettings.GUI.RESOURCE_CONNECTIONPOINT_OUTPUT_CONNECTED);
+					NodeSingleton.s.outputPointMarkConnectedTex = AssetBundleGraphEditorWindow.LoadTextureFromFile(AssetGraphRelativePaths.RESOURCE_CONNECTIONPOINT_OUTPUT_CONNECTED);
 				}
 				return NodeSingleton.s.outputPointMarkConnectedTex;
 			}
@@ -356,30 +356,30 @@ namespace AssetBundleGraph {
 
 
 			public NodeSingleton() {				
-				nodeAqua = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_AQUA);
-				nodeAquaOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_AQUA_ON);
-				nodeAquaHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_AQUA_HIGHLIGHT);
-				nodeGrey = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREY);
-				nodeGreyOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREY_ON);
-				nodeGreyHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREY_HIGHLIGHT);
-				nodeBlue = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_BLUE);
-				nodeBlueOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_BLUE_ON);
-				nodeBlueHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_BLUE_HIGHLIGHT);
-				nodeOrange = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_ORANGE);
-				nodeOrangeOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_ORANGE_ON);
-				nodeOrangeHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_ORANGE_HIGHLIGHT);
-				nodeRed = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED);
-				nodeRedOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_ON);
-				nodeRedHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_HIGHLIGHT);
-				nodeRed = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED);
-				nodeRedOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_ON);
-				nodeRedHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_RED_HIGHLIGHT);
-				nodeYellow = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW);
-				nodeYellowOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW_ON);
-				nodeYellowHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_YELLOW_HIGHLIGHT);
-				nodeGreen = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN);
-				nodeGreenOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN_ON);
-				nodeGreenHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetBundleGraphSettings.GUI.RESOURCE_NODE_GREEN_HIGHLIGHT);
+				nodeAqua = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_AQUA);
+				nodeAquaOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_AQUA_ON);
+				nodeAquaHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_AQUA_HIGHLIGHT);
+				nodeGrey = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREY);
+				nodeGreyOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREY_ON);
+				nodeGreyHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREY_HIGHLIGHT);
+				nodeBlue = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_BLUE);
+				nodeBlueOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_BLUE_ON);
+				nodeBlueHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_BLUE_HIGHLIGHT);
+				nodeOrange = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_ORANGE);
+				nodeOrangeOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_ORANGE_ON);
+				nodeOrangeHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_ORANGE_HIGHLIGHT);
+				nodeRed = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED);
+				nodeRedOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED_ON);
+				nodeRedHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED_HIGHLIGHT);
+				nodeRed = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED);
+				nodeRedOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED_ON);
+				nodeRedHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_RED_HIGHLIGHT);
+				nodeYellow = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_YELLOW);
+				nodeYellowOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_YELLOW_ON);
+				nodeYellowHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_YELLOW_HIGHLIGHT);
+				nodeGreen = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREEN);
+				nodeGreenOn = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREEN_ON);
+				nodeGreenHighlight = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetGraphRelativePaths.RESOURCE_NODE_GREEN_HIGHLIGHT);
 			}
 
 			public void SetupPlatformButtons () {
