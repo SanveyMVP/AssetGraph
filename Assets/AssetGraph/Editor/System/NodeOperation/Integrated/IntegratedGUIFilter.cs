@@ -4,7 +4,7 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.IO;
 
 namespace AssetBundleGraph {
 	public class IntegratedGUIFilter : INodeOperation {
@@ -55,16 +55,17 @@ namespace AssetBundleGraph {
 				var output = new Dictionary<string, List<Asset>>();
 
 				foreach(var groupKey in inputGroupAssets.Keys) {
-					var assets = inputGroupAssets[groupKey];
+                    var filteringKeyword = string.IsNullOrEmpty(filter.FilterKeyword) ? "*" : filter.FilterKeyword;
+                    var assets = inputGroupAssets[groupKey];
 					var filteringAssets = new List<FilterableAsset>();
 					assets.ForEach(a => filteringAssets.Add(new FilterableAsset(a)));
-
+                    
 
 					// filter by keyword first
 					List<FilterableAsset> keywordContainsAssets = filteringAssets.Where(
 						assetData => 
 						!assetData.isFiltered && 
-						(filter.IsExclusion ^ Regex.IsMatch(assetData.asset.importFrom, WildcardToRegex(filter.FilterKeyword), RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
+						(filter.IsExclusion ^ GlobMatch(filteringKeyword, assetData.asset.importFrom))
 					).ToList();
 
 					List<FilterableAsset> finalFilteredAsset = new List<FilterableAsset>();
@@ -91,18 +92,43 @@ namespace AssetBundleGraph {
 				Output(connToChild, output, null);
 			}
 		}
+        
+        public const char WildcardMultiChar = '*';
+        public const string WildcardDeep = "**";
+        public const char WildcardOneChar = '?';
 
+        public static bool GlobMatch(string pattern, string value) {    
+            bool deep = pattern.Contains(WildcardDeep);
+            if(deep) {
+                pattern = pattern.Replace(WildcardDeep, WildcardMultiChar.ToString());
+            } else if(value.Split(Path.DirectorySeparatorChar).Length != pattern.Split(Path.DirectorySeparatorChar).Length) {
+                return false;
+            }
 
-		public static string WildcardToRegex(string pattern) {
-			// empty filter keyword means 'no filtering'.
-			if (string.IsNullOrEmpty (pattern)) {
-				pattern = "*";
-			}
-				
-			return "^" + Regex.Escape(pattern)
-							  .Replace(@"\*", ".*")
-							  .Replace(@"\?", ".")
-					   + "$";
-		}
-	}
+            int pos = 0;
+            while(pattern.Length != pos) {
+                switch(pattern[pos]) {
+                    case WildcardOneChar:
+                        break;
+
+                    case WildcardMultiChar:
+                        for(int i = value.Length; i >= pos; i--) {
+                            if(GlobMatch(pattern.Substring(pos + 1), value.Substring(i))) {
+                                return true;
+                            }
+                        }
+                        return false;
+
+                    default:
+                        if(value.Length == pos || char.ToUpper(pattern[pos]) != char.ToUpper(value[pos])) {
+                            return false;
+                        }
+                        break;
+                }
+
+                pos++;
+            }
+            return value.Length == pos;
+        }
+    }
 }

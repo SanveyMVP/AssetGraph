@@ -179,6 +179,7 @@ namespace AssetBundleGraph {
 		public static SaveData RecreateDataOnDisk () {
 			SaveData newSaveData = new SaveData();
 			newSaveData.Save();
+            AssetDatabase.Refresh();
 			return newSaveData;
 		}
 			
@@ -293,7 +294,7 @@ namespace AssetBundleGraph {
 			}
 		}
 
-		private static string SaveLoaderDataPath {
+		private static string LoaderSaveDataPath {
 			get {
 				return FileUtility.PathCombine(SaveData.SaveDataDirectoryPath, AssetBundleGraphSettings.ASSETBUNDLEGRAPH_LOADER_DATA_NAME);
 			}
@@ -323,10 +324,15 @@ namespace AssetBundleGraph {
 		}
 
 		public void Save() {
-			var serializedData = Json.Serialize(ToJsonDictionary());
+            var dir = SaveData.SaveDataDirectoryPath;
+            if(!Directory.Exists(dir)) {
+                Directory.CreateDirectory(dir);
+            }
+
+            var serializedData = Json.Serialize(ToJsonDictionary());
 			var loaderPrettyfied = Json.Prettify(serializedData);
 
-			using(var sw = new StreamWriter(SaveLoaderDataPath)) {
+			using(var sw = new StreamWriter(LoaderSaveDataPath)) {
 				sw.Write(loaderPrettyfied);
 			}
 		}
@@ -371,6 +377,7 @@ namespace AssetBundleGraph {
 		public static LoaderSaveData RecreateDataOnDisk() {
 			LoaderSaveData lSaveData = new LoaderSaveData();
 			lSaveData.Save();
+            AssetDatabase.Refresh();
 			return lSaveData;
 		}
 
@@ -381,21 +388,21 @@ namespace AssetBundleGraph {
 
 			try {
 				var dataStr = string.Empty;
-				using(var sr = new StreamReader(SaveLoaderDataPath)) {
+				using(var sr = new StreamReader(LoaderSaveDataPath)) {
 					dataStr = sr.ReadToEnd();
 				}
 				var deserialized = Json.Deserialize(dataStr) as Dictionary<string, object>;
 
 				return new LoaderSaveData(deserialized);
 			} catch(Exception e) {
-				Debug.LogError("Failed to deserialize AssetBundleGraph settings. Error:" + e + " File:" + SaveLoaderDataPath);
+				Debug.LogError("Failed to deserialize AssetBundleGraph settings. Error:" + e + " File:" + LoaderSaveDataPath);
 			}
 
 			return new LoaderSaveData();
 		}
 
 		public static bool IsLoaderDataAvailableAtDisk() {
-			return File.Exists(SaveLoaderDataPath);
+			return File.Exists(LoaderSaveDataPath);
 		}
 	}
 }

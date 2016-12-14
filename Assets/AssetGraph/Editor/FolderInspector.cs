@@ -14,24 +14,28 @@ public class FolderInspector : Editor {
 
 	private bool IsValid {
 		get {
-			bool shouldPaintInspector = false;
-			var currentPath = AssetDatabase.GetAssetPath(target);
-			if(Directory.Exists(currentPath)) {
-				if(currentPath != path) {
-					path = currentPath;
-					CheckForLoader();
-				}
 
-				shouldPaintInspector = !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
-			}
-			return shouldPaintInspector;
-		}
+            bool shouldPaintInspector = false;
+            var currentPath = AssetDatabase.GetAssetPath(target);
+            if(Directory.Exists(currentPath)) {
+                if(currentPath != path) {
+                    path = currentPath;
+                    CheckForLoader();
+                }
+                
+                shouldPaintInspector = !(path + "/").Contains(AssetBundleGraphSettings.ASSETBUNDLEGRAPH_PATH);
+            }
+            return shouldPaintInspector;
+        }
 	}
 
-	private void CheckForLoader() {
-		LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
-		loader = loaderSaveData.GetBestLoaderData(path);
-	}
+    private void CheckForLoader() {
+        if(!LoaderSaveData.IsLoaderDataAvailableAtDisk()) {
+            return;
+        }
+        LoaderSaveData loaderSaveData = LoaderSaveData.LoadFromDisk();
+        loader = loaderSaveData.GetBestLoaderData(path);
+    }
 
 	public override void OnInspectorGUI() {
 		base.OnInspectorGUI();
