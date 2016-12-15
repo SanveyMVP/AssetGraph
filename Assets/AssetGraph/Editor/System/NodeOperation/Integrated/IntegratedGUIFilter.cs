@@ -97,7 +97,7 @@ namespace AssetBundleGraph {
 		public const string WildcardDeep = "**";
 		public const char WildcardOneChar = '?';
 
-		public static bool GlobMatch(string pattern, string value) {    
+		private static bool GlobMatch(string pattern, string value) {    
 			bool deep = pattern.Contains(WildcardDeep);
 			if(deep) {
 				pattern = pattern.Replace(WildcardDeep, WildcardMultiChar.ToString());
