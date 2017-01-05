@@ -62,11 +62,12 @@ namespace AssetBundleGraph
 			var split = groupingKeyword.Split(AssetBundleGraphSettings.KEYWORD_WILDCARD);
 			var groupingKeywordPrefix  = split[0];
 			var groupingKeywordPostfix = split[1];
+			var grouping = string.IsNullOrEmpty (groupingKeywordPostfix) ? "(.*)" : "(.*?)";
+			var regex = new Regex(groupingKeywordPrefix + grouping + groupingKeywordPostfix);
 
 			foreach (var source in mergedGroupedSources) {
 				var targetPath = source.GetAbsolutePathOrImportedPath();
 
-				var regex = new Regex(groupingKeywordPrefix + "(.*?)" + groupingKeywordPostfix);
 				var match = regex.Match(targetPath);
 
 				if (match.Success) {
