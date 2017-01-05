@@ -55,7 +55,7 @@ namespace AssetBundleGraph {
 				var output = new Dictionary<string, List<Asset>>();
 
 				foreach(var groupKey in inputGroupAssets.Keys) {
-					var filteringKeyword = string.IsNullOrEmpty(filter.FilterKeyword) ? "*" : filter.FilterKeyword;
+					var filteringKeyword = string.IsNullOrEmpty(filter.FilterKeyword) ? WildcardDeep : filter.FilterKeyword;
 					var assets = inputGroupAssets[groupKey];
 					var filteringAssets = new List<FilterableAsset>();
 					assets.ForEach(a => filteringAssets.Add(new FilterableAsset(a)));
