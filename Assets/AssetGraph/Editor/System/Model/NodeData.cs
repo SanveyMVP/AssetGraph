@@ -180,6 +180,7 @@ namespace AssetBundleGraph {
 		private const string NODE_BUNDLECONFIG_VARIANTS_NAME 	 = "name";
 		private const string NODE_BUNDLECONFIG_VARIANTS_POINTID = "pointId";
 		private const string NODE_BUNDLECONFIG_USE_GROUPASVARIANTS = "useGroupAsVariants";
+		private const string NODE_BUNDLECONFIG_SET_BUNDLE_NAME = "setBundleNameAndVariant";
 
 		//bundlebuilder settings
 		private const string NODE_BUNDLEBUILDER_ENABLEDBUNDLEOPTIONS = "enabledBundleOptions";
@@ -208,6 +209,7 @@ namespace AssetBundleGraph {
 		[SerializeField] private SerializableMultiTargetString m_scriptInstanceData;
 		[SerializeField] private List<Variant> m_variants;
 		[SerializeField] private bool m_bundleConfigUseGroupAsVariants;
+		[SerializeField] private bool m_SetBundleNameAndVariant;
 		[SerializeField] private SerializableMultiTargetInt m_bundleBuilderEnabledBundleOptions;
 		[SerializeField] private SerializableMultiTargetInt m_exporterExportOption;
 
@@ -398,6 +400,21 @@ namespace AssetBundleGraph {
 			}
 		}
 
+		public bool SetBundleNameAndVariant {
+			get {
+				ValidateAccess(
+					NodeKind.BUNDLECONFIG_GUI 
+				);
+				return m_SetBundleNameAndVariant;
+			}
+			set {
+				ValidateAccess(
+					NodeKind.BUNDLECONFIG_GUI 
+				);
+				m_SetBundleNameAndVariant = value;
+			}
+		}
+
 		public SerializableMultiTargetString InstanceData {
 			get {
 				ValidateAccess(
@@ -555,6 +572,9 @@ namespace AssetBundleGraph {
 					if(jsonData.ContainsKey(NODE_BUNDLECONFIG_USE_GROUPASVARIANTS)) {
 						m_bundleConfigUseGroupAsVariants = Convert.ToBoolean(jsonData[NODE_BUNDLECONFIG_USE_GROUPASVARIANTS]);
 					}
+					if(jsonData.ContainsKey(NODE_BUNDLECONFIG_SET_BUNDLE_NAME)) {
+						m_SetBundleNameAndVariant = Convert.ToBoolean(jsonData[NODE_BUNDLECONFIG_SET_BUNDLE_NAME]);
+					}
 					m_variants = new List<Variant>();
 					if(jsonData.ContainsKey(NODE_BUNDLECONFIG_VARIANTS)){
 						var variants = jsonData[NODE_BUNDLECONFIG_VARIANTS] as List<object>;
@@ -655,6 +675,7 @@ namespace AssetBundleGraph {
 			case NodeKind.BUNDLECONFIG_GUI:
 				m_bundleConfigBundleNameTemplate = new SerializableMultiTargetString(AssetBundleGraphSettings.BUNDLECONFIG_BUNDLENAME_TEMPLATE_DEFAULT);
 				m_bundleConfigUseGroupAsVariants = false;
+				m_SetBundleNameAndVariant = false;
 				m_variants = new List<Variant>();
 				break;
 
@@ -713,6 +734,7 @@ namespace AssetBundleGraph {
 			case NodeKind.BUNDLECONFIG_GUI:
 				newData.m_bundleConfigBundleNameTemplate = new SerializableMultiTargetString(m_bundleConfigBundleNameTemplate);
 				newData.m_bundleConfigUseGroupAsVariants = m_bundleConfigUseGroupAsVariants;
+				newData.m_SetBundleNameAndVariant = m_SetBundleNameAndVariant;
 				foreach(var v in m_variants) {
 					newData.AddVariant(v.Name);
 				}
@@ -922,6 +944,7 @@ namespace AssetBundleGraph {
 			case NodeKind.BUNDLECONFIG_GUI:
 				nodeDict[NODE_BUNDLECONFIG_BUNDLENAME_TEMPLATE] = m_bundleConfigBundleNameTemplate.ToJsonDictionary();
 				nodeDict[NODE_BUNDLECONFIG_USE_GROUPASVARIANTS] = m_bundleConfigUseGroupAsVariants;
+				nodeDict[NODE_BUNDLECONFIG_SET_BUNDLE_NAME] = m_SetBundleNameAndVariant;
 				var variantsDict = new List<Dictionary<string, object>>();
 				foreach(var v in m_variants) {
 					var dv = new Dictionary<string, object>();

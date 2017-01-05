@@ -497,6 +497,12 @@ namespace AssetBundleGraph {
 			GUILayout.Space(10f);
 
 			using (new EditorGUILayout.VerticalScope(GUI.skin.box)) {
+				var newSetBundleNameValue = GUILayout.Toggle(node.Data.SetBundleNameAndVariant, "Set Bundle Name And Variant");
+				if(newSetBundleNameValue != node.Data.SetBundleNameAndVariant) {
+					using(new RecordUndoScope("Change Bundle Config", node, true)){
+						node.Data.SetBundleNameAndVariant = newSetBundleNameValue;
+					}
+				}
 
 				var newUseGroupAsVariantValue = GUILayout.Toggle(node.Data.BundleConfigUseGroupAsVariants, "Use input group as variants");
 				if(newUseGroupAsVariantValue != node.Data.BundleConfigUseGroupAsVariants) {

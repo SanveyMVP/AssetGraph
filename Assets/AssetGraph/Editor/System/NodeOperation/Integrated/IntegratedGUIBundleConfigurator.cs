@@ -110,6 +110,10 @@ namespace AssetBundleGraph {
 				} else {
 					output[bundleName] = newBundleSetting;
 				}
+
+				if (node.SetBundleNameAndVariant) {
+					ApplyImportSetting(inputGroupAssets [groupKey], bundleName, variantName);
+				}
 			}
 
 			Output(connectionToOutput, output, null);
@@ -160,6 +164,19 @@ namespace AssetBundleGraph {
 				return bundleName;
 			} else {
 				return bundleName.Replace(AssetBundleGraphSettings.KEYWORD_WILDCARD.ToString(), groupKey);
+			}
+		}
+
+		private void ApplyImportSetting(List<Asset> assets, string bundleName, string variantName) {
+			if(!assets.Any()) {
+				return;
+			}
+
+			foreach(var asset in assets) {
+				var importer = AssetImporter.GetAtPath(asset.importFrom);
+				if (importer != null) {
+					importer.SetAssetBundleNameAndVariant (bundleName, variantName);
+				}
 			}
 		}
 	}
